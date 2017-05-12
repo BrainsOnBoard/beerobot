@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>gigerdatacam.h</itemPath>
       <itemPath>motor.h</itemPath>
       <itemPath>xboxrobot.h</itemPath>
     </logicalFolder>
@@ -45,6 +46,8 @@
       </compileType>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="gigerdatacam.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="motor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="xboxrobot.h" ex="false" tool="3" flavor2="0">
@@ -71,6 +74,8 @@
         </asmTool>
       </compileType>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="gigerdatacam.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="motor.h" ex="false" tool="3" flavor2="0">
       </item>
