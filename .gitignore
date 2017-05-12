@@ -1,0 +1,9 @@
+*.o
+*.a
+
+*~
+
+/nbproject/private
+.dep.inc
+/dist/
+/build/
