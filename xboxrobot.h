@@ -5,26 +5,30 @@
  */
 
 /*
- * File:   xbox.h
+ * File:   xboxrobot.h
  * Author: alex
  *
  * Created on 12 May 2017, 16:27
  */
 
-#ifndef XBOXCONTROLLER_H
-#define XBOXCONTROLLER_H
+#ifndef XBOXROBOT_H
+#define XBOXROBOT_H
 
 #include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <linux/joystick.h>
+#include "motor.h"
 
 #define JS_DEV "/dev/input/js0"
 //#define JS_TRACE
 #define JS_BTN_A  0
 #define JS_BTN_B  1
 #define JS_PAD_LR 6
+
+#define SPEED     0.7
+#define TURNSPEED 1.0
 
 using namespace std;
 
@@ -34,6 +38,8 @@ void listen_controller() {
         cerr << "Error: Could not find joystick (" << fd << ")" << endl;
         exit(1);
     }
+
+    Motor mtr("192.168.1.1", 2000);
 
     js_event e;
     while (1) {
@@ -55,26 +61,26 @@ void listen_controller() {
                 switch (e.number) {
                     case JS_BTN_A:
                         if (e.value)
-                            cout << "A down" << endl;
+                            mtr.tank(SPEED, SPEED);
                         else
-                            cout << "A up" << endl;
+                            mtr.tank(0, 0);
                         break;
                     case JS_BTN_B:
                         if (e.value)
-                            cout << "B down" << endl;
+                            mtr.tank(-SPEED, -SPEED);
                         else
-                            cout << "B up" << endl;
+                            mtr.tank(0, 0);
                         break;
                 }
                 break;
             case JS_EVENT_AXIS:
                 if (e.number == JS_PAD_LR) {
                     if (e.value < 0)
-                        cout << "pressed left" << endl;
+                        mtr.tank(-TURNSPEED, TURNSPEED);
                     else if (e.value > 0)
-                        cout << "pressed right" << endl;
+                        mtr.tank(TURNSPEED, -TURNSPEED);
                     else
-                        cout << "l/r pad up" << endl;
+                        mtr.tank(0, 0);
                 }
                 break;
         }
@@ -83,5 +89,5 @@ void listen_controller() {
     //close(fd);
 }
 
-#endif /* XBOXCONTROLLER_H */
+#endif /* XBOXROBOT_H */
 

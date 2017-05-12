@@ -6,7 +6,7 @@
  */
 
 #include <cstdlib>
-#include "xboxcontroller.h"
+#include "xboxrobot.h"
 
 int main(int, char**) {
 
