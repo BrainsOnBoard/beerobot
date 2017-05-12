@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>motor.h</itemPath>
       <itemPath>xboxcontroller.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -39,6 +40,8 @@
       </compileType>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="motor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="xboxcontroller.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
@@ -63,6 +66,8 @@
         </asmTool>
       </compileType>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="motor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="xboxcontroller.h" ex="false" tool="3" flavor2="0">
       </item>
