@@ -1,7 +1,11 @@
+from __future__ import print_function
 import matplotlib.pyplot as plt
 import math
 import numpy
 #from mpl_toolkits.mplot3d import Axes3D
+
+im_size = (640.0, 480.0)
+outfile = 'gigerdatacam.h'
 
 def vert(x):
 	return (0.000734*(x**2))-(0.1042253*x)+4.9
@@ -159,7 +163,8 @@ while currY>0:
 
 # 
 
-f = open('gigerdatacam.h', 'w')
+print("saving to " + outfile)
+f = open(outfile, 'w')
 
 f.write("#ifndef GIGERDATA_H\n#define GIGERDATA_H\n\nfloat gdata[][4] = {")
 
@@ -176,21 +181,21 @@ for elem in orderedCoords:
 	# convert angles
 	v = radialDistortion(elem[0],elem[1])
 	#f.write("{"+str(v[0])+","+str(v[1])+","+str(elem[2])+","+str(elem[3])+"}, \ \n")
-	if v[0].min() > -0.0 and v[0].min() < 720.0 and v[1].min() > 0.0 and v[1].min() < 480.0:
+	if v[0].min() > 0.0 and v[0].min() < im_size[0] and v[1].min() > 0.0 and v[1].min() < im_size[1]:
 		mooX.append(v[0].min())
 		mooX2.append(elem[0])
 		mooY.append(v[1].min())
 		mooY2.append(elem[1])
 		mooXN2.append(-elem[0])
 		mooZ.append(v[2].min())
-		f.write("{"+str(719-round(v[0].min()))+","+str(479-round(v[1].min()))+","+str(elem[2])+","+str(elem[3])+"},")
+		f.write("{"+str(im_size[0]-1-round(v[0].min()))+","+str(im_size[1]-1-round(v[1].min()))+","+str(elem[2])+","+str(elem[3])+"},")
 		count += 1
 #fig = plt.figure()
 #ax = fig.add_subplot(111, projection='3d')
 #ax.scatter(mooX,mooY,mooZ)# bx
 fig1 = plt.figure(figsize=(8, 6))	
 plt.plot(mooX,mooY,'r.')
-plt.axis([0,720,0,480])
+plt.axis([0,im_size[0],0,im_size[1]])
 plt.xlabel("X pixel location",fontsize="20");
 plt.ylabel("Y pixel location",fontsize="20");
 plt.show()
@@ -209,5 +214,5 @@ plt.show()
 #fig2.savefig("ommmodelfig.pdf",format='pdf')
 
 
-f.write("{0};int gdataLength = {1};\n#endif\n".format("}",count))
+f.write("};\nconst int gdataLength = %d;\nconst int gim_size[] = { %d, %d };\n\n#endif\n" % (count, im_size[0], im_size[1]))
 f.close();
