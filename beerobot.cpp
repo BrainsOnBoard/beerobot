@@ -20,34 +20,28 @@ int main(int, char**) {
     Size sz(720, 480);
     Size sz_out(140,100);
     
-    printf("here...\n");
-
     // to capture webcam output
     VideoCapture cap(0);
+    if (!cap.isOpened()) {
+        cerr << "Error: Could not open webcam" << endl;
+        return 1;
+    }
 
     Mat src, dst;
     dst.create(sz_out, CV_8UC3);
     
-    printf("here1.5...\n");
-
     // create x and y pixel maps
     Mat map_x, map_y;
     map_x.create(sz_out, CV_32FC1);
     map_y.create(sz_out, CV_32FC1);
-    for( int i = 0; i < gdataLength; i++ )
-    {
+    for(int i = 0; i < gdataLength; i++) {
         map_x.at<float>(gdata[i][3],gdata[i][2]) = floor(gdata[i][0]) ;
         map_y.at<float>(gdata[i][3],gdata[i][2]) = floor(gdata[i][1]) ;
     }
 
-    
-    printf("here2...\n");
-
     // display remapped webcam output on loop until user presses Q
     Mat src2;
     Mat disp;
-    
-    if (!cap.isOpened()) printf("OMFG\n");
     
     while (1) {
         cap >> src;
