@@ -21,9 +21,6 @@
 #include <unistd.h>
 #endif
 
-#define DUMMY_DRIVE
-#define DRIVE_TRACE
-
 //----------------------------------------------------------------------------
 // Motor
 //----------------------------------------------------------------------------
@@ -51,6 +48,8 @@ public:
         if (connect(m_Socket, reinterpret_cast<sockaddr*> (&destAddress), sizeof (destAddress)) < 0) {
             throw std::runtime_error("Cannot connect socket to " + address + ":" + std::to_string(port));
         }
+
+        cout << "Connected to " << address << ":" << port << endl;
 #endif
     }
 

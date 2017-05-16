@@ -13,6 +13,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <linux/joystick.h>
+
+// if we're not using the robot then don't actually connect
+#ifndef USE_ROBOT
+#define DUMMY_DRIVE
+#endif
+#define DRIVE_TRACE // additionally output drive commands to console
 #include "motor.h"
 
 #define JS_DEV "/dev/input/js0"
