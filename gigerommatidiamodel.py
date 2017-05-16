@@ -67,7 +67,7 @@ def radialDistortion(x,y):
 startX=60
 startY=70
 
-startPixX=30
+startPixX=34
 startPixY=54
 
 currX=startX
