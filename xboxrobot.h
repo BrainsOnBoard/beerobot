@@ -1,10 +1,4 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * File:   xboxrobot.h
  * Author: alex
  *
@@ -22,17 +16,22 @@
 #include "motor.h"
 
 #define JS_DEV "/dev/input/js0"
-//#define JS_TRACE
+//#define JS_TRACE // displays trace of joystick input in console
 #define JS_BTN_A  0
 #define JS_BTN_B  1
 #define JS_PAD_LR 6
 
-#define SPEED     0.7
-#define TURNSPEED 1.0
+#define SPEED     0.7 // forward/backward driving speed of robot
+#define TURNSPEED 1.0 // turning speed of robot
 
 using namespace std;
 
-void listen_controller() {
+bool do_run_controller = true; // flag to exit controller loop
+
+/*
+ * Listens to controller input and sends appropriate drive command to robot.
+ */
+void run_controller() {
     int fd = open(JS_DEV, O_RDONLY);
     if (fd < 0) {
         cerr << "Error: Could not find joystick (" << fd << ")" << endl;
@@ -42,8 +41,9 @@ void listen_controller() {
     Motor mtr("192.168.1.1", 2000);
 
     js_event e;
-    while (1) {
+    while (do_run_controller) {
 
+        // read from joystick device
         if (read(fd, &e, sizeof (e)) != sizeof (e)) {
             cerr << "Error: Could not read from joystick" << endl;
             exit(1);
@@ -56,16 +56,17 @@ void listen_controller() {
         cout << "time: " << e.time << endl << endl;
 #endif
 
+        // we only care about A, B and left/right button pushes
         switch (e.type) {
             case JS_EVENT_BUTTON:
                 switch (e.number) {
-                    case JS_BTN_A:
+                    case JS_BTN_A: // pressed A
                         if (e.value)
                             mtr.tank(SPEED, SPEED);
                         else
                             mtr.tank(0, 0);
                         break;
-                    case JS_BTN_B:
+                    case JS_BTN_B: // pressed B
                         if (e.value)
                             mtr.tank(-SPEED, -SPEED);
                         else
@@ -75,9 +76,9 @@ void listen_controller() {
                 break;
             case JS_EVENT_AXIS:
                 if (e.number == JS_PAD_LR) {
-                    if (e.value < 0)
+                    if (e.value < 0) // pressed left
                         mtr.tank(-TURNSPEED, TURNSPEED);
-                    else if (e.value > 0)
+                    else if (e.value > 0) // pressed right
                         mtr.tank(TURNSPEED, -TURNSPEED);
                     else
                         mtr.tank(0, 0);
@@ -86,7 +87,8 @@ void listen_controller() {
         }
     }
 
-    //close(fd);
+    // close joystick file descriptor
+    close(fd);
 }
 
 #endif /* XBOXROBOT_H */

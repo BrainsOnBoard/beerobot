@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>beeeye.h</itemPath>
       <itemPath>gigerdatacam.h</itemPath>
       <itemPath>motor.h</itemPath>
       <itemPath>xboxrobot.h</itemPath>
@@ -38,12 +39,17 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <ccTool>
+          <commandLine>-pthread</commandLine>
+        </ccTool>
         <linkerTool>
           <linkerLibItems>
             <linkerOptionItem>`pkg-config --libs opencv`</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="beeeye.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="gigerdatacam.h" ex="false" tool="3" flavor2="0">
@@ -73,6 +79,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="beeeye.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="gigerdatacam.h" ex="false" tool="3" flavor2="0">
