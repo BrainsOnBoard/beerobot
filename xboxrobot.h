@@ -40,8 +40,8 @@ bool do_run_controller = true; // flag to exit controller loop
 void run_controller() {
     int fd = open(JS_DEV, O_RDONLY);
     if (fd < 0) {
-        cerr << "Error: Could not find joystick (" << fd << ")" << endl;
-        exit(1);
+        cout << "Could not find joystick (" << fd << ")" << endl;
+        return;
     }
 
     Motor mtr("192.168.1.1", 2000);
