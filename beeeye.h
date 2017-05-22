@@ -115,6 +115,9 @@ void run_camera() {
             calib_line(src, Point(cent.x - CROSS_SIZE, cent.y), Point(cent.x + CROSS_SIZE, cent.y));
             calib_line(src, Point(cent.x, cent.y - CROSS_SIZE), Point(cent.x, cent.y + CROSS_SIZE));
 
+            circle(src, cent, r_inner, Scalar(0x00, 0x00, 0xff), 2);
+            circle(src, cent, r_outer, Scalar(0xff, 0x00, 0x00), 2);
+
             imshow("calibration", src);
         }
 
