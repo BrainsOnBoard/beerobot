@@ -29,9 +29,11 @@ using namespace cv;
  * User can press Q to quit.
  */
 void run_camera() {
-    // the size of the frame after resizing
-    Size sz(720, 480);
-    Size sz_out(140, 100);
+    Size sz_src(1280, 720);
+    Size sz_dst(1280, 240);
+    Point cent(sz_src.width / 2, sz_src.height / 2);
+    int r_inner = 100;
+    int r_outer = 500;
 
     // to capture webcam output
     VideoCapture cap(VIDEO_DEV);
@@ -40,9 +42,28 @@ void run_camera() {
         exit(1);
     }
 
-    Mat src, dst;
-    dst.create(sz_out, CV_8UC3);
+    // set camera resolution to max (only works on opencv v3+)
+    cap.set(CAP_PROP_FRAME_WIDTH, sz_src.width);
+    cap.set(CAP_PROP_FRAME_HEIGHT, sz_src.height);
 
+    Mat src;
+    Mat dst(sz_dst, CV_8UC3);
+
+    // create pixel maps for unwrapping panoramic images
+    Mat map_x(sz_dst, CV_32FC1);
+    Mat map_y(sz_dst, CV_32FC1);
+    for (int i = 0; i < sz_dst.height; i++) {
+        for (int j = 0; j < sz_dst.width; j++) {
+            float r = ((float) i / (float) sz_dst.height) * (r_outer - r_inner + r_inner);
+            float th = ((float) j / (float) sz_dst.width) * 2 * M_PI;
+            float x = cent.x + r * sin(th);
+            float y = cent.y + r * cos(th);
+            map_x.at<float>(i, j) = x;
+            map_y.at<float>(i, j) = y;
+        }
+    }
+
+    /*
     // create x and y pixel maps
     Mat map_x, map_y;
     map_x.create(sz_out, CV_32FC1);
@@ -52,10 +73,11 @@ void run_camera() {
         map_y.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][1]);
     }
 
-    // display remapped webcam output on loop until user presses Q
     Mat src2;
     Mat disp;
+     */
 
+    // display remapped webcam output on loop until user presses Q
     while (1) {
         cap >> src;
         if (!src.size().width) {
@@ -63,13 +85,15 @@ void run_camera() {
             exit(1);
         }
 
+        remap(src, dst, map_x, map_y, INTER_NEAREST);
+
+        /*
         resize(src, src2, sz);
-
         remap(src2, dst, map_x, map_y, INTER_LINEAR);
-
         resize(dst, disp, sz, 0, 0, INTER_NEAREST);
+         */
 
-        imshow("camera", disp);
+        imshow("camera", dst);
         if ((char) (waitKey(1) & 0xff) == 'q')
             break;
     }
