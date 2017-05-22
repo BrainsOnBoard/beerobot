@@ -58,6 +58,11 @@ void run_camera() {
 
     while (1) {
         cap >> src;
+        if (!src.size().width) {
+            cerr << "Error: Could not read from webcam" << endl;
+            exit(1);
+        }
+
         resize(src, src2, sz);
 
         remap(src2, dst, map_x, map_y, INTER_LINEAR);
@@ -71,4 +76,3 @@ void run_camera() {
 }
 
 #endif /* BEEEYE_H */
-
