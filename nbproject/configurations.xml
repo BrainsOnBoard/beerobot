@@ -18,6 +18,7 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>beerobot.cpp</itemPath>
+      <itemPath>gigerommatidiamodel.py</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -30,7 +31,6 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
       <itemPath>TODO</itemPath>
-      <itemPath>gigerommatidiamodel.py</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -57,6 +57,8 @@
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="gigerdatacam.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="gigerommatidiamodel.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ini.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -90,6 +92,8 @@
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="gigerdatacam.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="gigerommatidiamodel.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ini.h" ex="false" tool="3" flavor2="0">
       </item>
