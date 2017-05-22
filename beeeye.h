@@ -37,11 +37,16 @@ void calib_line(Mat &src, Point p1, Point p2) {
  * User can press Q to quit.
  */
 void run_camera() {
-    Size sz_src(1280, 720);
-    Size sz_dst(1280, 240);
-    Point cent(sz_src.width / 2, sz_src.height / 2);
-    int r_inner = 100;
-    int r_outer = 500;
+
+    // read params from file
+    CamParams p;
+    p.read();
+
+    Size sz_src(p.src_wd, p.src_ht);
+    Size sz_dst(p.dst_wd, p.dst_ht);
+    Point cent(round((double) p.src_wd * p.cent_x), round((double) p.src_ht * p.cent_y));
+    int r_inner = round((double) p.src_ht * p.r_inner);
+    int r_outer = round((double) p.src_ht * p.r_outer);
 
     // to capture webcam output
     VideoCapture cap(VIDEO_DEV);
@@ -123,6 +128,8 @@ void run_camera() {
         }
     }
 
+    // write params to file
+    p.write();
 }
 
 #endif /* BEEEYE_H */
