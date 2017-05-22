@@ -120,6 +120,9 @@ void run_camera() {
 
         switch ((char) (waitKey(1) & 0xff)) {
             case 'c':
+                if (do_calib)
+                    destroyWindow("calibration");
+
                 do_calib = !do_calib;
                 break;
             case 'q':
