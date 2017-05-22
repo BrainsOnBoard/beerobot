@@ -17,11 +17,11 @@ const char* INI_FILE = "beerobot.ini";
 class CamParams {
 private:
 
-    static void get(const dictionary *ini, int &val, const char *str) {
+    static inline void get(const dictionary *ini, int &val, const char *str) {
         val = iniparser_getint(ini, str, val);
     }
 
-    static void get(const dictionary *ini, double &val, const char *str) {
+    static inline void get(const dictionary *ini, double &val, const char *str) {
         val = iniparser_getdouble(ini, str, val);
     }
 

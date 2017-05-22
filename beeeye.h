@@ -28,7 +28,7 @@ using namespace cv;
 
 const int CROSS_SIZE = 20;
 
-void calib_line(Mat &src, Point p1, Point p2) {
+inline void calib_line(Mat &src, Point p1, Point p2) {
     line(src, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
 }
 
