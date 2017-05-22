@@ -24,6 +24,12 @@
 using namespace std;
 using namespace cv;
 
+const int CROSS_SIZE = 20;
+
+void calib_line(Mat &src, Point p1, Point p2) {
+    line(src, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
+}
+
 /*
  * Displays camera output on screen after passing through bee-eye transform.
  * User can press Q to quit.
@@ -77,8 +83,11 @@ void run_camera() {
     Mat disp;
      */
 
+    bool do_calib = false;
+
     // display remapped webcam output on loop until user presses Q
-    while (1) {
+    bool do_run = true;
+    while (do_run) {
         cap >> src;
         if (!src.size().width) {
             cerr << "Error: Could not read from webcam" << endl;
@@ -93,10 +102,25 @@ void run_camera() {
         resize(dst, disp, sz, 0, 0, INTER_NEAREST);
          */
 
-        imshow("camera", dst);
-        if ((char) (waitKey(1) & 0xff) == 'q')
-            break;
+        imshow("unwrapped image", dst);
+
+        if (do_calib) {
+            calib_line(src, Point(cent.x - CROSS_SIZE, cent.y), Point(cent.x + CROSS_SIZE, cent.y));
+            calib_line(src, Point(cent.x, cent.y - CROSS_SIZE), Point(cent.x, cent.y + CROSS_SIZE));
+
+            imshow("calibration", src);
+        }
+
+        switch ((char) (waitKey(1) & 0xff)) {
+            case 'c':
+                do_calib = !do_calib;
+                break;
+            case 'q':
+                do_run = false;
+                break;
+        }
     }
+
 }
 
 #endif /* BEEEYE_H */
