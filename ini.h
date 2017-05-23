@@ -10,6 +10,7 @@
 
 #include <iniparser.h>
 
+using namespace cv;
 using namespace std;
 
 const char* INI_FILE = "beerobot.ini";
@@ -26,35 +27,42 @@ private:
     }
 
 public:
-    int src_wd = 1280;
-    int src_ht = 720;
-    int dst_wd = 1280;
-    int dst_ht = 300;
-    double cent_x = 0.5;
-    double cent_y = 0.5;
-    double r_inner = 0.1;
-    double r_outer = 0.5;
+    Size ssrc, sdst;
+    Point cent;
+    int r_inner, r_outer;
 
     void read() {
+        ssrc = Size(1280, 720);
+        sdst = Size(1280, 400);
+        double dcent_x = 0.5;
+        double dcent_y = 0.5;
+        double dr_inner = 0.1;
+        double dr_outer = 0.5;
+
         dictionary *ini = iniparser_load(INI_FILE);
-        if (!ini) {
+        if (!ini)
             cout << "Could not find " << INI_FILE;
-            return;
+        else {
+            cout << "Reading settings from " << INI_FILE << endl;
+
+            get(ini, this->ssrc.width, "camera:width");
+            get(ini, this->ssrc.height, "camera:height");
+            get(ini, this->sdst.width, "unwrap:width");
+            get(ini, this->sdst.height, "unwrap:height");
+
+            get(ini, dcent_x, "unwrap:cent-x");
+            get(ini, dcent_y, "unwrap:cent-y");
+            get(ini, dr_inner, "unwrap:r-inner");
+            get(ini, dr_outer, "unwrap:r-outer");
+
+            // free memory
+            iniparser_freedict(ini);
         }
 
-        cout << "Reading settings from " << INI_FILE << endl;
-
-        get(ini, this->src_wd, "camera:width");
-        get(ini, this->src_ht, "camera:height");
-        get(ini, this->dst_wd, "unwrap:width");
-        get(ini, this->dst_ht, "unwrap:height");
-        get(ini, this->cent_x, "unwrap:cent-x");
-        get(ini, this->cent_y, "unwrap:cent-y");
-        get(ini, this->r_inner, "unwrap:r-inner");
-        get(ini, this->r_outer, "unwrap:r-outer");
-
-        // free memory
-        iniparser_freedict(ini);
+        this->cent.x = round((double) this->ssrc.width * dcent_x);
+        this->cent.y = round((double) this->ssrc.height * dcent_y);
+        this->r_inner = round((double) this->ssrc.height * dr_inner);
+        this->r_outer = round((double) this->ssrc.height * dr_outer);
     }
 
     void write() {
@@ -65,6 +73,11 @@ public:
             cerr << "Error: Could not create file " << INI_FILE << endl;
             return;
         }
+
+        double dcent_x = (double) cent.x / (double) this->ssrc.width;
+        double dcent_y = (double) cent.y / (double) this->ssrc.height;
+        double dr_inner = (double) this->r_inner / (double) this->ssrc.height;
+        double dr_outer = (double) this->r_outer / (double) this->ssrc.height;
 
         fprintf(ini,
                 "[camera]\n"
@@ -77,30 +90,18 @@ public:
                 "cent-y  = %g\n"
                 "r-inner = %g\n"
                 "r-outer = %g\n",
-                this->src_wd,
-                this->src_ht,
-                this->dst_wd,
-                this->dst_ht,
-                this->cent_x,
-                this->cent_y,
-                this->r_inner,
-                this->r_outer
+                this->ssrc.width,
+                this->ssrc.height,
+                this->sdst.width,
+                this->sdst.height,
+                dcent_x,
+                dcent_y,
+                dr_inner,
+                dr_outer
                 );
 
         fclose(ini);
     }
 };
 
-struct params {
-    int src_wd = 1280;
-    int src_ht = 720;
-    int dst_wd = 1280;
-    int dst_ht = 300;
-    double cent_x = 0.5;
-    double cent_y = 0.5;
-    double r_inner = 0.1;
-    double r_outer = 0.5;
-};
-
 #endif /* INI_H */
-

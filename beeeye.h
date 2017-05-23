@@ -28,8 +28,28 @@ using namespace cv;
 
 const int CROSS_SIZE = 20;
 
+const int KEY_LEFT = 81;
+const int KEY_UP = 82;
+const int KEY_RIGHT = 83;
+const int KEY_DOWN = 84;
+
+const int PX_JUMP = 5;
+
 inline void calib_line(Mat &src, Point p1, Point p2) {
     line(src, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
+}
+
+void create_map(CamParams &p, Mat &map_x, Mat &map_y) {
+    for (int i = 0; i < p.sdst.height; i++) {
+        for (int j = 0; j < p.sdst.width; j++) {
+            float r = ((float) i / (float) p.sdst.height) * (p.r_outer - p.r_inner) + p.r_inner;
+            float th = ((float) j / (float) p.sdst.width) * 2 * M_PI;
+            float x = p.cent.x + r * sin(th);
+            float y = p.cent.y + r * cos(th);
+            map_x.at<float>(i, j) = x;
+            map_y.at<float>(i, j) = y;
+        }
+    }
 }
 
 /*
@@ -42,12 +62,6 @@ void run_camera() {
     CamParams p;
     p.read();
 
-    Size sz_src(p.src_wd, p.src_ht);
-    Size sz_dst(p.dst_wd, p.dst_ht);
-    Point cent(round((double) p.src_wd * p.cent_x), round((double) p.src_ht * p.cent_y));
-    int r_inner = round((double) p.src_ht * p.r_inner);
-    int r_outer = round((double) p.src_ht * p.r_outer);
-
     // to capture webcam output
     VideoCapture cap(VIDEO_DEV);
     if (!cap.isOpened()) {
@@ -56,25 +70,16 @@ void run_camera() {
     }
 
     // set camera resolution to max (only works on opencv v3+)
-    cap.set(CAP_PROP_FRAME_WIDTH, sz_src.width);
-    cap.set(CAP_PROP_FRAME_HEIGHT, sz_src.height);
+    cap.set(CAP_PROP_FRAME_WIDTH, p.ssrc.width);
+    cap.set(CAP_PROP_FRAME_HEIGHT, p.ssrc.height);
 
     Mat src;
-    Mat dst(sz_dst, CV_8UC3);
+    Mat dst(p.sdst, CV_8UC3);
 
     // create pixel maps for unwrapping panoramic images
-    Mat map_x(sz_dst, CV_32FC1);
-    Mat map_y(sz_dst, CV_32FC1);
-    for (int i = 0; i < sz_dst.height; i++) {
-        for (int j = 0; j < sz_dst.width; j++) {
-            float r = ((float) i / (float) sz_dst.height) * (r_outer - r_inner + r_inner);
-            float th = ((float) j / (float) sz_dst.width) * 2 * M_PI;
-            float x = cent.x + r * sin(th);
-            float y = cent.y + r * cos(th);
-            map_x.at<float>(i, j) = x;
-            map_y.at<float>(i, j) = y;
-        }
-    }
+    Mat map_x(p.sdst, CV_32FC1);
+    Mat map_y(p.sdst, CV_32FC1);
+    create_map(p, map_x, map_y);
 
     /*
     // create x and y pixel maps
@@ -112,16 +117,17 @@ void run_camera() {
         imshow("unwrapped image", dst);
 
         if (do_calib) {
-            calib_line(src, Point(cent.x - CROSS_SIZE, cent.y), Point(cent.x + CROSS_SIZE, cent.y));
-            calib_line(src, Point(cent.x, cent.y - CROSS_SIZE), Point(cent.x, cent.y + CROSS_SIZE));
+            calib_line(src, Point(p.cent.x - CROSS_SIZE, p.cent.y), Point(p.cent.x + CROSS_SIZE, p.cent.y));
+            calib_line(src, Point(p.cent.x, p.cent.y - CROSS_SIZE), Point(p.cent.x, p.cent.y + CROSS_SIZE));
 
-            circle(src, cent, r_inner, Scalar(0x00, 0x00, 0xff), 2);
-            circle(src, cent, r_outer, Scalar(0xff, 0x00, 0x00), 2);
+            circle(src, p.cent, p.r_inner, Scalar(0x00, 0x00, 0xff), 2);
+            circle(src, p.cent, p.r_outer, Scalar(0xff, 0x00, 0x00), 2);
 
             imshow("calibration", src);
         }
 
-        switch ((char) (waitKey(1) & 0xff)) {
+        int key = waitKey(1);
+        switch (key & 0xff) {
             case 'c':
                 if (do_calib)
                     destroyWindow("calibration");
@@ -131,6 +137,34 @@ void run_camera() {
             case 'q':
                 do_run = false;
                 break;
+            case KEY_UP:
+                if (do_calib) {
+                    p.cent.y -= PX_JUMP;
+                    create_map(p, map_x, map_y);
+                }
+                break;
+            case KEY_DOWN:
+                if (do_calib) {
+                    p.cent.y += PX_JUMP;
+                    create_map(p, map_x, map_y);
+                }
+                break;
+            case KEY_LEFT:
+                if (do_calib) {
+                    p.cent.x -= PX_JUMP;
+                    create_map(p, map_x, map_y);
+                }
+                break;
+            case KEY_RIGHT:
+                if (do_calib) {
+                    p.cent.x += PX_JUMP;
+                    create_map(p, map_x, map_y);
+                }
+                break;
+                /*case 0xff:
+                    break;
+                default:
+                    cout << "key: " << key << endl;*/
         }
     }
 
