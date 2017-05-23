@@ -126,45 +126,60 @@ void run_camera() {
             imshow("calibration", src);
         }
 
-        int key = waitKey(1);
-        switch (key & 0xff) {
+        int key = waitKey(1) & 0xff;
+        /*if (key != 0xff)
+            cout << "key: " << key << endl;*/
+        switch (key) {
             case 'c':
                 if (do_calib)
                     destroyWindow("calibration");
 
                 do_calib = !do_calib;
                 break;
-            case 'q':
+            case 27: // ESC
                 do_run = false;
                 break;
-            case KEY_UP:
+            default:
                 if (do_calib) {
-                    p.cent.y -= PX_JUMP;
-                    create_map(p, map_x, map_y);
+                    switch (key) {
+                        case 'q':
+                            if (p.r_inner > 0) {
+                                p.r_inner -= PX_JUMP;
+                                create_map(p, map_x, map_y);
+                            }
+                            break;
+                        case 'a':
+                            p.r_inner += PX_JUMP;
+                            create_map(p, map_x, map_y);
+                            break;
+                        case 'w':
+                            if (p.r_outer > 0) {
+                                p.r_outer -= PX_JUMP;
+                                create_map(p, map_x, map_y);
+                            }
+                            break;
+                        case 's':
+                            p.r_inner += PX_JUMP;
+                            create_map(p, map_x, map_y);
+                            break;
+                        case KEY_UP:
+                            p.cent.y -= PX_JUMP;
+                            create_map(p, map_x, map_y);
+                            break;
+                        case KEY_DOWN:
+                            p.cent.y += PX_JUMP;
+                            create_map(p, map_x, map_y);
+                            break;
+                        case KEY_LEFT:
+                            p.cent.x -= PX_JUMP;
+                            create_map(p, map_x, map_y);
+                            break;
+                        case KEY_RIGHT:
+                            p.cent.x += PX_JUMP;
+                            create_map(p, map_x, map_y);
+                            break;
+                    }
                 }
-                break;
-            case KEY_DOWN:
-                if (do_calib) {
-                    p.cent.y += PX_JUMP;
-                    create_map(p, map_x, map_y);
-                }
-                break;
-            case KEY_LEFT:
-                if (do_calib) {
-                    p.cent.x -= PX_JUMP;
-                    create_map(p, map_x, map_y);
-                }
-                break;
-            case KEY_RIGHT:
-                if (do_calib) {
-                    p.cent.x += PX_JUMP;
-                    create_map(p, map_x, map_y);
-                }
-                break;
-                /*case 0xff:
-                    break;
-                default:
-                    cout << "key: " << key << endl;*/
         }
     }
 
