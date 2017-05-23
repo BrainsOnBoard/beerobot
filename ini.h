@@ -27,9 +27,16 @@ private:
     }
 
 public:
+    // source and dest image sizes
     Size ssrc, sdst;
+
+    // calibration values
     Point cent;
     int r_inner, r_outer;
+
+    // x and y pixel maps
+    Mat map_x;
+    Mat map_y;
 
     void read() {
         ssrc = Size(1280, 720);
@@ -59,10 +66,15 @@ public:
             iniparser_freedict(ini);
         }
 
+        // convert relative to absolute pixel values
         this->cent.x = round((double) this->ssrc.width * dcent_x);
         this->cent.y = round((double) this->ssrc.height * dcent_y);
         this->r_inner = round((double) this->ssrc.height * dr_inner);
         this->r_outer = round((double) this->ssrc.height * dr_outer);
+
+        // define our x and y pixel maps
+        this->map_x = Mat(this->sdst, CV_32FC1);
+        this->map_y = Mat(this->sdst, CV_32FC1);
     }
 
     void write() {
@@ -101,6 +113,19 @@ public:
                 );
 
         fclose(ini);
+    }
+
+    void generate_map() {
+        for (int i = 0; i < this->sdst.height; i++) {
+            for (int j = 0; j < this->sdst.width; j++) {
+                float r = ((float) i / (float) this->sdst.height) * (this->r_outer - this->r_inner) + this->r_inner;
+                float th = ((float) j / (float) this->sdst.width) * 2 * M_PI;
+                float x = this->cent.x + r * sin(th);
+                float y = this->cent.y + r * cos(th);
+                this->map_x.at<float>(i, j) = x;
+                this->map_y.at<float>(i, j) = y;
+            }
+        }
     }
 };
 

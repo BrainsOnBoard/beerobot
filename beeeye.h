@@ -39,19 +39,6 @@ inline void calib_line(Mat &src, Point p1, Point p2) {
     line(src, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
 }
 
-void create_map(CamParams &p, Mat &map_x, Mat &map_y) {
-    for (int i = 0; i < p.sdst.height; i++) {
-        for (int j = 0; j < p.sdst.width; j++) {
-            float r = ((float) i / (float) p.sdst.height) * (p.r_outer - p.r_inner) + p.r_inner;
-            float th = ((float) j / (float) p.sdst.width) * 2 * M_PI;
-            float x = p.cent.x + r * sin(th);
-            float y = p.cent.y + r * cos(th);
-            map_x.at<float>(i, j) = x;
-            map_y.at<float>(i, j) = y;
-        }
-    }
-}
-
 /*
  * Displays camera output on screen after passing through bee-eye transform.
  * User can press Q to quit.
@@ -77,9 +64,7 @@ void run_camera() {
     Mat dst(p.sdst, CV_8UC3);
 
     // create pixel maps for unwrapping panoramic images
-    Mat map_x(p.sdst, CV_32FC1);
-    Mat map_y(p.sdst, CV_32FC1);
-    create_map(p, map_x, map_y);
+    p.generate_map();
 
     /*
     // create x and y pixel maps
@@ -106,7 +91,7 @@ void run_camera() {
             exit(1);
         }
 
-        remap(src, dst, map_x, map_y, INTER_NEAREST);
+        remap(src, dst, p.map_x, p.map_y, INTER_NEAREST);
 
         /*
         resize(src, src2, sz);
@@ -145,38 +130,38 @@ void run_camera() {
                         case 'q':
                             if (p.r_inner > 0) {
                                 p.r_inner -= PX_JUMP;
-                                create_map(p, map_x, map_y);
+                                p.generate_map();
                             }
                             break;
                         case 'a':
                             p.r_inner += PX_JUMP;
-                            create_map(p, map_x, map_y);
+                            p.generate_map();
                             break;
                         case 'w':
                             if (p.r_outer > 0) {
                                 p.r_outer -= PX_JUMP;
-                                create_map(p, map_x, map_y);
+                                p.generate_map();
                             }
                             break;
                         case 's':
                             p.r_inner += PX_JUMP;
-                            create_map(p, map_x, map_y);
+                            p.generate_map();
                             break;
                         case KEY_UP:
                             p.cent.y -= PX_JUMP;
-                            create_map(p, map_x, map_y);
+                            p.generate_map();
                             break;
                         case KEY_DOWN:
                             p.cent.y += PX_JUMP;
-                            create_map(p, map_x, map_y);
+                            p.generate_map();
                             break;
                         case KEY_LEFT:
                             p.cent.x -= PX_JUMP;
-                            create_map(p, map_x, map_y);
+                            p.generate_map();
                             break;
                         case KEY_RIGHT:
                             p.cent.x += PX_JUMP;
-                            create_map(p, map_x, map_y);
+                            p.generate_map();
                             break;
                     }
                 }
