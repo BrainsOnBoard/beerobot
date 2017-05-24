@@ -36,7 +36,7 @@ const int KEY_UP = 82;
 const int KEY_RIGHT = 83;
 const int KEY_DOWN = 84;
 
-const int PX_JUMP = 5;
+const int BIG_PX_JUMP = 5;
 
 inline void calib_line(Mat &src, Point p1, Point p2) {
     line(src, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
@@ -101,6 +101,7 @@ void run_camera() {
      */
 
     bool do_calib = false;
+    int px_jump = BIG_PX_JUMP;
 
     // display remapped webcam output on loop until user presses Q
     bool do_run = true;
@@ -144,43 +145,49 @@ void run_camera() {
             case 27: // ESC
                 do_run = false;
                 break;
+            case ' ':
+                if (px_jump == BIG_PX_JUMP)
+                    px_jump = 1;
+                else
+                    px_jump = BIG_PX_JUMP;
+                break;
             default:
                 if (do_calib) {
                     switch (key) {
                         case 'q':
-                            p.r_inner += PX_JUMP;
+                            p.r_inner += px_jump;
                             p.generate_map();
                             break;
                         case 'a':
                             if (p.r_inner > 0) {
-                                p.r_inner -= PX_JUMP;
+                                p.r_inner -= px_jump;
                                 p.generate_map();
                             }
                             break;
                         case 'w':
-                            p.r_outer += PX_JUMP;
+                            p.r_outer += px_jump;
                             p.generate_map();
                             break;
                         case 's':
                             if (p.r_outer > 0) {
-                                p.r_outer -= PX_JUMP;
+                                p.r_outer -= px_jump;
                                 p.generate_map();
                             }
                             break;
                         case KEY_UP:
-                            p.cent.y -= PX_JUMP;
+                            p.cent.y -= px_jump;
                             p.generate_map();
                             break;
                         case KEY_DOWN:
-                            p.cent.y += PX_JUMP;
+                            p.cent.y += px_jump;
                             p.generate_map();
                             break;
                         case KEY_LEFT:
-                            p.cent.x -= PX_JUMP;
+                            p.cent.x -= px_jump;
                             p.generate_map();
                             break;
                         case KEY_RIGHT:
-                            p.cent.x += PX_JUMP;
+                            p.cent.x += px_jump;
                             p.generate_map();
                             break;
                     }
