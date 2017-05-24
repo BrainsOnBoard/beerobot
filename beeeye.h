@@ -128,24 +128,24 @@ void run_camera() {
                 if (do_calib) {
                     switch (key) {
                         case 'q':
+                            p.r_inner += PX_JUMP;
+                            p.generate_map();
+                            break;
+                        case 'a':
                             if (p.r_inner > 0) {
                                 p.r_inner -= PX_JUMP;
                                 p.generate_map();
                             }
                             break;
-                        case 'a':
-                            p.r_inner += PX_JUMP;
+                        case 'w':
+                            p.r_outer += PX_JUMP;
                             p.generate_map();
                             break;
-                        case 'w':
+                        case 's':
                             if (p.r_outer > 0) {
                                 p.r_outer -= PX_JUMP;
                                 p.generate_map();
                             }
-                            break;
-                        case 's':
-                            p.r_inner += PX_JUMP;
-                            p.generate_map();
                             break;
                         case KEY_UP:
                             p.cent.y -= PX_JUMP;
