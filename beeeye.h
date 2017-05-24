@@ -17,10 +17,13 @@
 
 #include "ini.h"
 
+#include <iostream>
+#include <fstream>
+
 #ifdef USE_ROBOT
 #define VIDEO_DEV "http://192.168.1.1:8080/?action=stream"
 #else
-#define VIDEO_DEV 0
+#define VIDEO_DEV get_camera_by_name("USB 2.0 Camera")
 #endif
 
 using namespace std;
@@ -37,6 +40,23 @@ const int PX_JUMP = 5;
 
 inline void calib_line(Mat &src, Point p1, Point p2) {
     line(src, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
+}
+
+int get_camera_by_name(const char* name) {
+    char cname[4096];
+    for (int i = 0;; i++) {
+        string vfn = "/sys/class/video4linux/video" + to_string(i) + "/name";
+        ifstream file(vfn, ios::in);
+        if (!file.is_open())
+            return -1;
+
+        file.read(cname, sizeof (cname));
+        cname[file.gcount() - 1] = 0;
+        file.close();
+
+        if (strcmp(name, cname) == 0)
+            return i;
+    }
 }
 
 /*
