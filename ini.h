@@ -8,7 +8,7 @@
 #ifndef INI_H
 #define INI_H
 
-#include <iniparser.h>
+#include "iniparser/src/iniparser.h"
 
 using namespace cv;
 using namespace std;

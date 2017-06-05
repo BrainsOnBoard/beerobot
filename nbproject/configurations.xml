@@ -48,7 +48,7 @@
         <linkerTool>
           <linkerLibItems>
             <linkerOptionItem>`pkg-config --libs opencv`</linkerOptionItem>
-            <linkerLibLibItem>iniparser</linkerLibLibItem>
+            <linkerLibFileItem>iniparser/libiniparser.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -86,6 +86,13 @@
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerOptionItem>`pkg-config --libs opencv`</linkerOptionItem>
+            <linkerLibFileItem>iniparser/libiniparser.a</linkerLibFileItem>
+          </linkerLibItems>
+          <commandLine>-pthread</commandLine>
+        </linkerTool>
       </compileType>
       <item path="beeeye.h" ex="false" tool="3" flavor2="0">
       </item>

@@ -52,11 +52,13 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=`pkg-config --libs opencv` -liniparser  
+LDLIBSOPTIONS=`pkg-config --libs opencv` iniparser/libiniparser.a  
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot: iniparser/libiniparser.a
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
