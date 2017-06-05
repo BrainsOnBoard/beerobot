@@ -76,29 +76,11 @@ void run_camera() {
         exit(1);
     }
 
-    // set camera resolution to max (only works on opencv v3+)
-    cap.set(CAP_PROP_FRAME_WIDTH, p.ssrc.width);
-    cap.set(CAP_PROP_FRAME_HEIGHT, p.ssrc.height);
-
     Mat src;
     Mat dst(p.sdst, CV_8UC3);
 
     // create pixel maps for unwrapping panoramic images
     p.generate_map();
-
-    /*
-    // create x and y pixel maps
-    Mat map_x, map_y;
-    map_x.create(sz_out, CV_32FC1);
-    map_y.create(sz_out, CV_32FC1);
-    for (int i = 0; i < gdataLength; i++) {
-        map_x.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][0]);
-        map_y.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][1]);
-    }
-
-    Mat src2;
-    Mat disp;
-     */
 
     bool do_calib = false;
     int px_jump = BIG_PX_JUMP;
@@ -113,12 +95,6 @@ void run_camera() {
         }
 
         remap(src, dst, p.map_x, p.map_y, INTER_NEAREST);
-
-        /*
-        resize(src, src2, sz);
-        remap(src2, dst, map_x, map_y, INTER_LINEAR);
-        resize(dst, disp, sz, 0, 0, INTER_NEAREST);
-         */
 
         imshow("unwrapped image", dst);
 

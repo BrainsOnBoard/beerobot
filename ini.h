@@ -39,7 +39,7 @@ public:
     Mat map_y;
 
     void read() {
-        ssrc = Size(1280, 720);
+        ssrc = Size(640, 480);
         sdst = Size(1280, 400);
         double dcent_x = 0.5;
         double dcent_y = 0.5;
@@ -52,8 +52,6 @@ public:
         else {
             cout << "Reading settings from " << INI_FILE << endl;
 
-            get(ini, this->ssrc.width, "camera:width");
-            get(ini, this->ssrc.height, "camera:height");
             get(ini, this->sdst.width, "unwrap:width");
             get(ini, this->sdst.height, "unwrap:height");
 
@@ -92,9 +90,6 @@ public:
         double dr_outer = (double) this->r_outer / (double) this->ssrc.height;
 
         fprintf(ini,
-                "[camera]\n"
-                "width  = %d\n"
-                "height = %d\n\n"
                 "[unwrap]\n"
                 "width   = %d\n"
                 "height  = %d\n"
@@ -102,8 +97,6 @@ public:
                 "cent-y  = %g\n"
                 "r-inner = %g\n"
                 "r-outer = %g\n",
-                this->ssrc.width,
-                this->ssrc.height,
                 this->sdst.width,
                 this->sdst.height,
                 dcent_x,
