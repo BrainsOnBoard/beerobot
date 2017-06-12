@@ -148,6 +148,7 @@ void run_camera() {
                         case 'a':
                             if (p.r_inner > 0) {
                                 p.r_inner -= px_jump;
+                                p.r_inner = max(0, p.r_inner);
                                 p.generate_map();
                             }
                             break;
@@ -158,6 +159,7 @@ void run_camera() {
                         case 's':
                             if (p.r_outer > 0) {
                                 p.r_outer -= px_jump;
+                                p.r_outer = max(0, p.r_outer);
                                 p.generate_map();
                             }
                             break;
