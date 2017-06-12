@@ -5,6 +5,7 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>beeeye.h</itemPath>
+      <itemPath>beeeye_old.h</itemPath>
       <itemPath>gigerdatacam.h</itemPath>
       <itemPath>ini.h</itemPath>
       <itemPath>motor.h</itemPath>
@@ -54,6 +55,8 @@
       </compileType>
       <item path="beeeye.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="beeeye_old.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="gigerdatacam.h" ex="false" tool="3" flavor2="0">
@@ -95,6 +98,8 @@
         </linkerTool>
       </compileType>
       <item path="beeeye.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="beeeye_old.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
       </item>
