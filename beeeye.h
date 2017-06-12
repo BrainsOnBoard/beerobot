@@ -141,22 +141,22 @@ void run_camera() {
             default:
                 if (do_calib) {
                     switch (key) {
-                        case 'q':
+                        case 'w':
                             p.r_inner += px_jump;
                             p.generate_map();
                             break;
-                        case 'a':
+                        case 's':
                             if (p.r_inner > 0) {
                                 p.r_inner -= px_jump;
                                 p.r_inner = max(0, p.r_inner);
                                 p.generate_map();
                             }
                             break;
-                        case 'w':
+                        case 'q':
                             p.r_outer += px_jump;
                             p.generate_map();
                             break;
-                        case 's':
+                        case 'a':
                             if (p.r_outer > 0) {
                                 p.r_outer -= px_jump;
                                 p.r_outer = max(0, p.r_outer);
