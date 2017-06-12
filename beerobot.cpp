@@ -8,8 +8,8 @@
 #include <cstdlib>
 #include <thread> // std::thread
 
-#define USE_ROBOT
 #include "beeeye.h"
+//#define USE_ROBOT
 #include "xboxrobot.h"
 
 #define ENABLE_CONTROLLER
