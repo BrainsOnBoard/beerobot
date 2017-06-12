@@ -39,7 +39,7 @@ public:
     Mat map_y;
 
     void read() {
-        ssrc = Size(640, 480);
+        ssrc = Size(VID_WIDTH, VID_HEIGHT);
         sdst = Size(1280, 400);
         double dcent_x = 0.5;
         double dcent_y = 0.5;
