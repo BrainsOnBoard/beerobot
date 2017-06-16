@@ -31,7 +31,7 @@ using namespace cv;
 void run_camera() {
     // the size of the frame after resizing
     Size sz(720, 480);
-    Size sz_out(140, 100);
+    Size sz_out(eye_size[0], eye_size[1]);
 
     // to capture webcam output
     VideoCapture cap(VIDEO_DEV);

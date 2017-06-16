@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import numpy
 #from mpl_toolkits.mplot3d import Axes3D
 
-im_size = (640.0, 480.0)
+im_size = (1280, 400)
+eye_size = (140, 100)
 outfile = 'gigerdatacam.h'
 
 def vert(x):
@@ -27,8 +28,8 @@ def radialDistortion(x, y):
     camRM = numpy.matrix([[math.cos(camRoll), -math.sin(camRoll), 0], [math.sin(camRoll), math.cos(camRoll), 0], [0, 0, 1]])
     # undo the camera rotation
     # convert x,y into rotations
-    x = (x- 50) / 180 * math.pi
-    y = (y-70) / 180 * math.pi
+    x = (x - eye_size[1] / 2) / 180 * math.pi
+    y = (y - eye_size[0] / 2) / 180 * math.pi
     ommYM = numpy.matrix([[math.cos(x), 0, math.sin(x)], [0, 1, 0], [-math.sin(x), 0, math.cos(x)]])
     ommPM = numpy.matrix([[1, 0, 0], [0, math.cos(y), -math.sin(y)], [0, math.sin(y), math.cos(y)]])
     forwardVect = numpy.array([[0], [0], [1]])
@@ -86,12 +87,12 @@ yPix = []
 scale = 1.0
 scaleV = 1.0
 
-while currY < 140:
+while currY < eye_size[0]:
 
     if (itr % 2) == 0:
         currX += (0.5 * horr(currY) * scale)
 
-    while currX < 140:
+    while currX < eye_size[1]:
         xPoints.append(currX)
         yPoints.append(currY)
         xPix.append(currPixX)
@@ -126,7 +127,7 @@ while currY > 0:
     if (itr % 2) == 0:
         currX += (0.5 * horr(currY) * scale)
 
-    while currX < 140:
+    while currX < eye_size[1]:
         xPoints.append(currX)
         yPoints.append(currY)
         xPix.append(currPixX)
@@ -177,7 +178,7 @@ mooY2 = []
 mooXN2 = []
 mooZ = []
 for elem in orderedCoords:
-    #if elem[1]>=0 and elem[1]<=140 and elem[0]>=0 and elem[0]<=140:
+    #if elem[1]>=0 and elem[1]<=eye_size[1] and elem[0]>=0 and elem[0]<=eye_size[1]:
     # convert angles
     v = radialDistortion(elem[0], elem[1])
     #f.write("{"+str(v[0])+","+str(v[1])+","+str(elem[2])+","+str(elem[3])+"}, \ \n")
@@ -214,5 +215,5 @@ plt.show()
 #fig2.savefig("ommmodelfig.pdf",format='pdf')
 
 
-f.write("};\nconst int gdataLength = %d;\nconst int gim_size[] = { %d, %d };\n\n#endif\n" % (count, im_size[0], im_size[1]))
+f.write("};\nconst int gdataLength = %d;\nconst int gim_size[] = { %d, %d };\nconst int eye_size[] = { %d, %d };\n\n#endif\n" % (count, im_size[0], im_size[1], eye_size[0], eye_size[1]))
 f.close();

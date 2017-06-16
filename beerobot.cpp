@@ -8,8 +8,8 @@
 #include <cstdlib>
 #include <thread> // std::thread
 
-#include "beeeye.h"
 //#define USE_ROBOT
+#include "beeeye.h"
 #include "xboxrobot.h"
 
 #define ENABLE_CONTROLLER
@@ -33,4 +33,3 @@ int main(int, char**) {
 
     return 0;
 }
-

@@ -30,7 +30,7 @@
 #define VID_HEIGHT 1024
 #else
 // USB webcam
-#define VIDEO_DEV get_camera_by_name("USB 2.0 Camera")
+#define VIDEO_DEV 0 //get_camera_by_name("USB 2.0 Camera")
 #define VID_WIDTH 640
 #define VID_HEIGHT 480
 #endif
@@ -76,6 +76,8 @@ int get_camera_by_name(const char* name) {
  */
 void run_camera() {
 
+    Size sz(720, 480);
+
     // read params from file
     CamParams p;
     p.read();
@@ -87,7 +89,20 @@ void run_camera() {
         exit(1);
     }
 
-    Mat src;
+    Size sz_out(eye_size[0], eye_size[1]);
+    Mat dst_eye;
+    dst_eye.create(sz_out, CV_8UC3);
+
+    // create x and y pixel maps
+    Mat map_x, map_y;
+    map_x.create(sz_out, CV_32FC1);
+    map_y.create(sz_out, CV_32FC1);
+    for (int i = 0; i < gdataLength; i++) {
+        map_x.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][0]);
+        map_y.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][1]);
+    }
+
+    Mat src, disp;
     Mat dst(p.sdst, CV_8UC3);
 
     // create pixel maps for unwrapping panoramic images
@@ -106,8 +121,10 @@ void run_camera() {
         }
 
         remap(src, dst, p.map_x, p.map_y, INTER_NEAREST);
+        remap(dst, dst_eye, map_x, map_y, INTER_NEAREST);
+        resize(dst_eye, disp, sz, 0, 0, INTER_LINEAR);
 
-        imshow("unwrapped image", dst);
+        imshow("unwrapped image", disp);
 
         if (do_calib) {
             calib_line(src, Point(p.cent.x - CROSS_SIZE, p.cent.y), Point(p.cent.x + CROSS_SIZE, p.cent.y));
