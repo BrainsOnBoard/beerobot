@@ -98,10 +98,13 @@ void run_camera() {
     map_x.create(sz_out, CV_32FC1);
     map_y.create(sz_out, CV_32FC1);
     for (int i = 0; i < gdataLength; i++) {
-        map_x.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][0]);
-        map_y.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][1]);
-        map_x.at<float>(gdata[i][3], sz.width - 301 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
-        map_y.at<float>(gdata[i][3], sz.width - 301 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
+        // left eye
+        map_x.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][0]);
+        map_y.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][1]);
+
+        // right eye
+        map_x.at<float>(gdata[i][3], sz.width - 316 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
+        map_y.at<float>(gdata[i][3], sz.width - 316 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
     }
 
     Mat src, disp;
