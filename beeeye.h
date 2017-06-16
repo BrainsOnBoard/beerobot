@@ -100,6 +100,8 @@ void run_camera() {
     for (int i = 0; i < gdataLength; i++) {
         map_x.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][0]);
         map_y.at<float>(gdata[i][3], gdata[i][2]) = floor(gdata[i][1]);
+        map_x.at<float>(gdata[i][3], sz.width - 301 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
+        map_y.at<float>(gdata[i][3], sz.width - 301 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
     }
 
     Mat src, disp;
@@ -111,7 +113,7 @@ void run_camera() {
     bool do_calib = false;
     int px_jump = BIG_PX_JUMP;
 
-    // display remapped webcam output on loop until user presses Q
+    // display remapped camera output on loop until user presses escape
     bool do_run = true;
     while (do_run) {
         cap >> src;
