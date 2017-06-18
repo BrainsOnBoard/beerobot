@@ -1,9 +1,0 @@
-- bug: if Q pressed, program only quits if user also presses controller button
-- show camera display even if controller not present
-
-- bee eye:
--- change to using panoramic mirror
--- display is small
--- only one eye displayed
--- eye is off to left with lots of unused pixels
--- "background" is patchy and changes colour with camera input
