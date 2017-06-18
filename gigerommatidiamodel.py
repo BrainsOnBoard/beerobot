@@ -1,3 +1,7 @@
+# This script generates gigerdatacam.h, which contains an array giving the pixel map 
+# to transform a regular image into the bee's-eye view using the Giger model.
+# Code from Alex Cope.
+
 from __future__ import print_function
 import math
 import matplotlib.pyplot as plt
