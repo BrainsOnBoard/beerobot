@@ -18,11 +18,15 @@
 #ifndef USE_ROBOT
 #define DUMMY_DRIVE
 #endif
-#define DRIVE_TRACE // additionally output drive commands to console
-#include "motor.h"
 
-#define JS_DEV "/dev/input/js0"
+#define DRIVE_TRACE // additionally output drive commands to console
+
+#include "motor.h" // for connecting to and sending driving commands to robot
+
+#define JS_DEV "/dev/input/js0" // which joystick device to use
 //#define JS_TRACE // displays trace of joystick input in console
+
+// joystick button IDs
 #define JS_BTN_A  0
 #define JS_BTN_B  1
 #define JS_PAD_LR 6
@@ -38,18 +42,23 @@ bool do_run_controller = true; // flag to exit controller loop
  * Listens to controller input and sends appropriate drive command to robot.
  */
 void run_controller() {
+    
+    // open joystick device
     int fd = open(JS_DEV, O_RDONLY);
     if (fd < 0) {
         cout << "Could not find joystick (" << fd << ")" << endl;
         return;
     }
 
+    // connect to robot
     Motor mtr("192.168.1.1", 2000);
 
-    js_event e;
+    js_event e; // struct for storing joystick events
+    
+    // flag is set to false when user tries to quit program
     while (do_run_controller) {
 
-        // read from joystick device
+        // read from joystick device (blocking)
         if (read(fd, &e, sizeof (e)) != sizeof (e)) {
             cerr << "Error: Could not read from joystick" << endl;
             exit(1);
@@ -98,4 +107,3 @@ void run_controller() {
 }
 
 #endif /* XBOXROBOT_H */
-

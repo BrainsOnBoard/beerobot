@@ -8,9 +8,15 @@
 #include <cstdlib>
 #include <thread> // std::thread
 
+/* If enabled, the program uses the PixPro as a camera and sends drive commands 
+ * to the robot when controller buttons are pushed. Otherwise, the computer's 
+ * webcam is used as a camera and the program does not attempt to connect to the 
+ * robot but shows the commands it would have sent.
+ */
 #define USE_ROBOT
-#include "beeeye.h"
-#include "xboxrobot.h"
+
+#include "beeeye.h" // for image reading/manipulation
+#include "xboxrobot.h" // for using the Xbox controller to drive the robot
 
 #define ENABLE_CONTROLLER
 
