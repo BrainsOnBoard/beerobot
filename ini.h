@@ -124,7 +124,7 @@ public:
             for (int j = 0; j < this->sdst.width; j++) {
                 float r = ((float) i / (float) this->sdst.height) * (this->r_outer - this->r_inner) + this->r_inner;
                 float th = ((float) j / (float) this->sdst.width) * 2 * M_PI;
-                float x = this->cent.x + r * sin(th);
+                float x = this->cent.x - r * sin(th);
                 float y = this->cent.y + r * cos(th);
                 this->map_x.at<float>(i, j) = x;
                 this->map_y.at<float>(i, j) = y;
