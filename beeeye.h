@@ -103,7 +103,7 @@ void run_camera() {
     dst_eye.create(sz_out, CV_8UC3);
     
     // ultimate output size, after the unwrapping and bee-eye transformations
-    Size sz(720, 480);
+    Size sz(970, 1046);
 
     // create x and y pixel maps
     Mat map_x, map_y;
@@ -115,8 +115,8 @@ void run_camera() {
         map_y.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][1]);
 
         // right eye
-        map_x.at<float>(gdata[i][3], sz.width - 316 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
-        map_y.at<float>(gdata[i][3], sz.width - 316 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
+        map_x.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
+        map_y.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
     }
 
     // input and final output image matrices
