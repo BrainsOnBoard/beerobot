@@ -22,12 +22,12 @@
 
 #ifdef USE_ROBOT
 // Surveyor's webcam stream
-//#define VIDEO_DEV "http://192.168.1.1:8080/?action=stream"
+//#define VIDEO_DEV "http://192.168.1.1:8080/?action=stream?dummy_parameter=bee.mjpg"
 //#define VID_WIDTH 640
 //#define VID_HEIGHT 480
 
 // Kodak PixPro
-#define VIDEO_DEV "http://172.16.0.254:9176"
+#define VIDEO_DEV "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg"
 #define VID_WIDTH 1024
 #define VID_HEIGHT 1024
 #else
@@ -93,7 +93,7 @@ void run_camera() {
     // to capture webcam output
     VideoCapture cap(VIDEO_DEV);
     if (!cap.isOpened()) {
-        cerr << "Error: Could not open webcam" << endl;
+        cerr << "Error: Could not open webcam (" << VIDEO_DEV << ")" << endl;
         exit(1);
     }
 
@@ -103,7 +103,7 @@ void run_camera() {
     dst_eye.create(sz_out, CV_8UC3);
     
     // ultimate output size, after the unwrapping and bee-eye transformations
-    Size sz(720, 480);
+    Size sz(970, 1046);
 
     // create x and y pixel maps
     Mat map_x, map_y;
@@ -115,8 +115,8 @@ void run_camera() {
         map_y.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][1]);
 
         // right eye
-        map_x.at<float>(gdata[i][3], sz.width - 316 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
-        map_y.at<float>(gdata[i][3], sz.width - 316 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
+        map_x.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
+        map_y.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
     }
 
     // input and final output image matrices
