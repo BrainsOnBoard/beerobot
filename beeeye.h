@@ -20,22 +20,17 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef USE_ROBOT
-// Surveyor's webcam stream
+// Kodak PixPro
+#define VIDEO_DEV get_camera_by_name("Kodak Co.") //"http://172.16.0.254:9176/;dummy_parameter=bee.mjpg"
+#define VID_WIDTH 1440
+#define VID_HEIGHT 1440
+
+//// Surveyor's webcam stream
 //#define VIDEO_DEV "http://192.168.1.1:8080/?action=stream?dummy_parameter=bee.mjpg"
+//// USB webcam
+//#define VIDEO_DEV 0 //get_camera_by_name("USB 2.0 Camera")
 //#define VID_WIDTH 640
 //#define VID_HEIGHT 480
-
-// Kodak PixPro
-#define VIDEO_DEV "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg"
-#define VID_WIDTH 1024
-#define VID_HEIGHT 1024
-#else
-// USB webcam
-#define VIDEO_DEV 0 //get_camera_by_name("USB 2.0 Camera")
-#define VID_WIDTH 640
-#define VID_HEIGHT 480
-#endif
 
 #include "ini.h"
 
@@ -96,6 +91,10 @@ void run_camera() {
         cerr << "Error: Could not open webcam (" << VIDEO_DEV << ")" << endl;
         exit(1);
     }
+
+    // set resolution
+    cap.set(CAP_PROP_FRAME_WIDTH, p.ssrc.width);
+    cap.set(CAP_PROP_FRAME_HEIGHT, p.ssrc.height);
 
     // for the bee-eye transformation
     Size sz_out(eye_size[0], eye_size[1]);
