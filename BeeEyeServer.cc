@@ -22,14 +22,13 @@ using namespace cv;
 #define LISTEN_PORT 1234
 
 BeeEyeServer::BeeEyeServer()
-    : HttpServer(LISTEN_PORT), cap(VIDEO_DEV)
-{
+: HttpServer(LISTEN_PORT), cap(VIDEO_DEV) {
     // to capture webcam output
     if (!this->cap.isOpened()) {
         cerr << "Error: Could not open webcam (" << VIDEO_DEV << ")" << endl;
         exit(1);
     }
-    
+
     // set resolution
     this->cap.set(CAP_PROP_FRAME_WIDTH, this->params.ssrc.width);
     this->cap.set(CAP_PROP_FRAME_HEIGHT, this->params.ssrc.height);
@@ -61,94 +60,100 @@ BeeEyeServer::~BeeEyeServer() {
 void BeeEyeServer::handle_request(int connfd, char* path) {
     cout << "PATH: " << path << endl << endl;
     
-    if(strcmp(path, "/") != 0) {
+    if (strcmp(path, "/") == 0) {
+        ifstream fs("index.html");
+        if(fs.is_open()) {
+            fs.seekg(0, ios::end);
+            int length = fs.tellg();
+            fs.seekg(0, ios::beg);
+            char buff[length];
+            fs.read(buff, length);
+            const string header = "HTTP/1.1 200 OK\r\n"
+                    "Content-type: text/html\r\n"
+                    "Content-length: " + to_string(length) + "\r\n\r\n";
+            write(connfd, header.c_str(), header.length());
+            write(connfd, buff, length);
+        }
+    } else if (strcmp(path, "/stream.mjpg") == 0) {
+        const char* msg = "HTTP/1.1 200 OK\r\n"
+                "Content-Type: multipart/x-mixed-replace;boundary=--boundary\r\n"
+                "Cache-Control: no-store\r\n"
+                "Pragma: no-cache\r\n"
+                "Connection: close\r\n"
+                "\r\n";
+        if (write(connfd, msg, strlen(msg)) < 0) {
+            close(connfd);
+            cout << "Connection closed" << endl;
+            return;
+        }
+
+        // for the bee-eye transformation
+        Size sz_out(eye_size[0], eye_size[1]);
+        Mat dst_eye;
+        dst_eye.create(sz_out, CV_8UC3);
+
+        // ultimate output size, after the unwrapping and bee-eye transformations
+        Size sz(970, 1046);
+
+        // input and final output image matrices
+        Mat src, disp;
+        Mat dst(this->params.sdst, CV_8UC3);
+        vector<uchar> buff;
+        for (;;) {
+            this->cap >> src;
+            if (src.size().width == 0) {
+                cerr << "Error: Could not read from webcam" << endl;
+                close(connfd);
+                cout << "Connection closed" << endl;
+                return;
+            }
+
+            /* perform two transformations:
+             * - unwrap panoramic image
+             * - bee eye
+             * 
+             * (this could be done in a single step with the correct pixel map, but 
+             * this way is easier for now and works...) */
+            remap(src, dst, this->params.map_x, this->params.map_y, INTER_NEAREST);
+            remap(dst, dst_eye, this->map_x, this->map_y, INTER_NEAREST);
+
+            // resize the image we get out so it's large enough to see properly
+            resize(dst_eye, disp, sz, 0, 0, INTER_LINEAR);
+
+            imencode(".jpg", disp, buff);
+
+            const string header = "--boundary\r\n"
+                    "Content-type: image/jpeg\r\n"
+                    "Content-length: " + to_string(buff.size()) + "\r\n\r\n";
+            write(connfd, header.c_str(), header.length());
+            write(connfd, buff.data(), buff.size());
+        }
+    } else {
         const char* msg = "HTTP/1.1 404 Not Found\r\n\r\n";
         cout << "404" << endl;
         write(connfd, msg, strlen(msg));
-        close(connfd);
-        cout << "Connection closed" << endl;
-        return;
     }
-
-    const char* msg = "HTTP/1.1 200 OK\r\n"
-            "Content-Type: multipart/x-mixed-replace;boundary=--boundary\r\n"
-            "Cache-Control: no-store\r\n"
-            "Pragma: no-cache\r\n"
-            "Connection: close\r\n"
-            "\r\n";
-    if(write(connfd, msg, strlen(msg)) < 0) {
-        close(connfd);
-        cout << "Connection closed" << endl;
-        return;
-    }
-    
-    // for the bee-eye transformation
-    Size sz_out(eye_size[0], eye_size[1]);
-    Mat dst_eye;
-    dst_eye.create(sz_out, CV_8UC3);
-    
-    // ultimate output size, after the unwrapping and bee-eye transformations
-    Size sz(970, 1046);
-
-    // input and final output image matrices
-    Mat src, disp;
-    Mat dst(this->params.sdst, CV_8UC3);
-    vector<uchar> buff;
-    for(;;) {
-        this->cap >> src;
-        if (src.size().width == 0) {
-            cerr << "Error: Could not read from webcam" << endl;
-            close(connfd);
-            cout << "Connection closed" << endl;
-            return;
-        }
-        
-        /* perform two transformations:
-         * - unwrap panoramic image
-         * - bee eye
-         * 
-         * (this could be done in a single step with the correct pixel map, but 
-         * this way is easier for now and works...) */
-        remap(src, dst, this->params.map_x, this->params.map_y, INTER_NEAREST);
-        remap(dst, dst_eye, this->map_x, this->map_y, INTER_NEAREST);
-        
-        // resize the image we get out so it's large enough to see properly
-        resize(dst_eye, disp, sz, 0, 0, INTER_LINEAR);
-        
-        imencode(".jpg", disp, buff);
-        
-        const string header = "--boundary\r\n"
-                "Content-type: image/jpeg\r\n"
-                "Content-length: " + to_string(buff.size()) + "\r\n\r\n";
-        if (write(connfd, header.c_str(), header.length()) < 0 || 
-            write(connfd, buff.data(), buff.size()) < 0) {
-            close(connfd);
-            cout << "Connection closed" << endl;
-            return;
-        }
-    }
+    close(connfd);
+    cout << "Connection closed" << endl;
 }
 
 BeeEyeServer BeeEyeServer::Instance;
-void BeeEyeServer::run_server()
-{
+
+void BeeEyeServer::run_server() {
     BeeEyeServer::Instance.run();
 }
 
-void BeeEyeServer::run()
-{
+void BeeEyeServer::run() {
     serve(&handle_request_server);
 }
 
-void BeeEyeServer::handle_request_server(int connfd, char* path)
-{
+void BeeEyeServer::handle_request_server(int connfd, char* path) {
     BeeEyeServer::Instance.handle_request(connfd, path);
 }
 
-int get_camera_by_name(const char* name)
-{
+int get_camera_by_name(const char* name) {
     char cname[4096];
-    
+
     // iterate through devices video0, video1 etc. reading the device name from sysfs
     // until the correct device is found
     for (int i = 0;; i++) {
