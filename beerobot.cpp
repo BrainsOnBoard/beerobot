@@ -15,21 +15,21 @@
  */
 #define USE_ROBOT
 
-#include "beeeye.h" // for image reading/manipulation
+#include "BeeEyeServer.h"
 #include "xboxrobot.h" // for using the Xbox controller to drive the robot
 
 #define ENABLE_CONTROLLER
 
-int main(int, char**) {
-
-    thread tcamera(run_camera); // thread for displaying camera output on screen
+int main(int, char**)
+{
+    thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen
 
 #ifdef ENABLE_CONTROLLER
     thread tcontroller(run_controller); // thread for handling controller button presses
 #endif
 
-    // wait for the camera thread to finish
-    tcamera.join();
+    // wait for the server thread to finish
+    tserver.join();
 
 #ifdef ENABLE_CONTROLLER
     // camera thread ends when user quits, so we must now stop controller thread

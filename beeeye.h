@@ -80,10 +80,8 @@ int get_camera_by_name(const char* name) {
  * User can press escape to quit.
  */
 void run_camera() {
-
     // read params from beerobot.ini
     CamParams p;
-    p.read();
 
     // to capture webcam output
     VideoCapture cap(VIDEO_DEV);

@@ -35,6 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/BeeEyeServer.o \
+	${OBJECTDIR}/HttpServer.o \
 	${OBJECTDIR}/beerobot.o
 
 
@@ -63,6 +65,16 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot: iniparser/libiniparser.a
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot ${OBJECTFILES} ${LDLIBSOPTIONS} -pthread
+
+${OBJECTDIR}/BeeEyeServer.o: BeeEyeServer.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/BeeEyeServer.o BeeEyeServer.cc
+
+${OBJECTDIR}/HttpServer.o: HttpServer.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/HttpServer.o HttpServer.cc
 
 ${OBJECTDIR}/beerobot.o: beerobot.cpp
 	${MKDIR} -p ${OBJECTDIR}

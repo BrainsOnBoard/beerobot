@@ -4,6 +4,8 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>BeeEyeServer.h</itemPath>
+      <itemPath>HttpServer.h</itemPath>
       <itemPath>beeeye.h</itemPath>
       <itemPath>gigerdatacam.h</itemPath>
       <itemPath>ini.h</itemPath>
@@ -17,6 +19,8 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>BeeEyeServer.cc</itemPath>
+      <itemPath>HttpServer.cc</itemPath>
       <itemPath>beerobot.cpp</itemPath>
       <itemPath>gigerommatidiamodel.py</itemPath>
     </logicalFolder>
@@ -51,6 +55,14 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="BeeEyeServer.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="BeeEyeServer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="HttpServer.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HttpServer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beeeye.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
@@ -94,6 +106,14 @@
           <commandLine>-pthread</commandLine>
         </linkerTool>
       </compileType>
+      <item path="BeeEyeServer.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="BeeEyeServer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="HttpServer.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HttpServer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beeeye.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">

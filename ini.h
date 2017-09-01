@@ -15,7 +15,7 @@ using namespace cv;
 using namespace std;
 
 // file we're reading our settings from and writing to
-const char* INI_FILE = "beerobot.ini";
+#define INI_FILE "beerobot.ini"
 
 class CamParams {
 private:
@@ -41,9 +41,9 @@ public:
     // x and y pixel maps
     Mat map_x;
     Mat map_y;
-
-    // read parameters in from ini file
-    void read() {
+    
+    // read parameters from ini file
+    CamParams() {
         ssrc = Size(VID_WIDTH, VID_HEIGHT);
         sdst = Size(1280, 400);
         double dcent_x = 0.5;
