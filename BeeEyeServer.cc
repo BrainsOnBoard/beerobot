@@ -18,7 +18,7 @@
 using namespace std;
 using namespace cv;
 
-#define VIDEO_DEV get_camera_by_name("Kodak Co.") //"http://172.16.0.254:9176/;dummy_parameter=bee.mjpg"
+#define VIDEO_DEV get_camera_by_name("PIXPRO SP360 4K")
 #define LISTEN_PORT 1234
 
 BeeEyeServer::BeeEyeServer()
