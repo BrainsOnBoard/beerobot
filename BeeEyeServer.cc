@@ -159,14 +159,17 @@ int get_camera_by_name(const char* name) {
     for (int i = 0;; i++) {
         string vfn = "/sys/class/video4linux/video" + to_string(i) + "/name";
         ifstream file(vfn, ios::in);
-        if (!file.is_open())
-            return -1;
+        if (!file.is_open()) {
+            cout << "Warning: Could not find video device " << name << ". Using default instead." << endl;
+            return 0;
+        }
 
         file.read(cname, sizeof (cname));
         cname[file.gcount() - 1] = 0; // delete the last char, which is always newline
         file.close();
 
-        if (strcmp(name, cname) == 0) // we've found the correct device
+        if (strcmp(name, cname) == 0) { // we've found the correct device
             return i;
+        }
     }
 }
