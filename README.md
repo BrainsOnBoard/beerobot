@@ -6,7 +6,7 @@ You should be able to compile it by running `make` in the main folder.
 The [iniparser library](https://github.com/ndevilla/iniparser) for handling .ini files is included as a git submodule, but you may have to do:
 
 ```
-git submodule update
+git submodule update --init
 ```
 
 to download it before you run `make`.
