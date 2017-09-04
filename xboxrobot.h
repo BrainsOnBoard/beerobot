@@ -42,7 +42,7 @@ bool do_run_controller = true; // flag to exit controller loop
  * Listens to controller input and sends appropriate drive command to robot.
  */
 void run_controller() {
-    
+
     // open joystick device
     int fd = open(JS_DEV, O_RDONLY);
     if (fd < 0) {
@@ -54,7 +54,7 @@ void run_controller() {
     Motor mtr("192.168.1.1", 2000);
 
     js_event e; // struct for storing joystick events
-    
+
     // flag is set to false when user tries to quit program
     while (do_run_controller) {
 

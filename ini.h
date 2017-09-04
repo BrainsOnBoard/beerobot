@@ -21,11 +21,13 @@ class CamParams {
 private:
 
     // read an int from the ini file
+
     static inline void get(const dictionary *ini, int &val, const char *str) {
         val = iniparser_getint(ini, str, val);
     }
 
     // read a double from the ini file
+
     static inline void get(const dictionary *ini, double &val, const char *str) {
         val = iniparser_getdouble(ini, str, val);
     }
@@ -41,8 +43,9 @@ public:
     // x and y pixel maps
     Mat map_x;
     Mat map_y;
-    
+
     // read parameters from ini file
+
     CamParams() {
         ssrc = Size(VID_WIDTH, VID_HEIGHT);
         sdst = Size(1280, 400);
@@ -81,6 +84,7 @@ public:
     }
 
     // write the parameters to ini file
+
     void write() {
         cout << "Writing settings to " << INI_FILE << endl;
 
@@ -119,6 +123,7 @@ public:
     }
 
     // generate a new pixel map, based on the current calibration settings
+
     void generate_map() {
         for (int i = 0; i < this->sdst.height; i++) {
             for (int j = 0; j < this->sdst.width; j++) {

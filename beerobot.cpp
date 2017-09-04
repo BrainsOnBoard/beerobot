@@ -15,13 +15,12 @@
  */
 #define USE_ROBOT
 
-#include "BeeEyeServer.h"
+#include "beeeyeserver.h"
 #include "xboxrobot.h" // for using the Xbox controller to drive the robot
 
 #define ENABLE_CONTROLLER
 
-int main(int, char**)
-{
+int main(int, char**) {
     thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen
 
 #ifdef ENABLE_CONTROLLER

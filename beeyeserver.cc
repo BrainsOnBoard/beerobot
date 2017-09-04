@@ -1,7 +1,5 @@
-
-#include "BeeEyeServer.h"
-
-#include "HttpServer.h"
+#include "beeeyeserver.h"
+#include "httpserver.h"
 
 #include <iostream>
 #include <fstream>
@@ -24,43 +22,36 @@ using namespace cv;
 BeeEyeServer::BeeEyeServer()
 : HttpServer(LISTEN_PORT), cap(VIDEO_DEV) {
     // to capture webcam output
-    if (!this->cap.isOpened()) {
-        cerr << "Error: Could not open webcam (" << VIDEO_DEV << ")" << endl;
+    if (!cap.isOpened()) {
+        cerr << "Error: Could not open webcam" << endl;
         exit(1);
     }
 
     // set resolution
-    this->cap.set(CAP_PROP_FRAME_WIDTH, this->params.ssrc.width);
-    this->cap.set(CAP_PROP_FRAME_HEIGHT, this->params.ssrc.height);
+    cap.set(CAP_PROP_FRAME_WIDTH, params.ssrc.width);
+    cap.set(CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
 
     // create x and y pixel maps
     Size sz_out(eye_size[0], eye_size[1]);
-    this->map_x.create(sz_out, CV_32FC1);
-    this->map_y.create(sz_out, CV_32FC1);
+    map_x.create(sz_out, CV_32FC1);
+    map_y.create(sz_out, CV_32FC1);
     for (int i = 0; i < gdataLength; i++) {
         // left eye
-        this->map_x.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][0]);
-        this->map_y.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][1]);
+        map_x.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][0]);
+        map_y.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][1]);
 
         // right eye
-        this->map_x.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
-        this->map_y.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
+        map_x.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) = gim_size[0] - floor(gdata[i][0]);
+        map_y.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) = floor(gdata[i][1]);
     }
 
     // create pixel maps for unwrapping panoramic images
-    this->params.generate_map();
+    params.generate_map();
 }
-
-/*BeeEyeServer::BeeEyeServer(const BeeEyeServer& orig) {
-}
-
-BeeEyeServer::~BeeEyeServer() {
-}*/
 
 bool BeeEyeServer::handle_request(int connfd, char* path) {
-    cout << "CONNECTION: " << connfd << endl;
-    cout << "PATH: " << path << endl << endl;
-    
+    cout << "Requested: " << path << endl;
+
     bool closeconn = false;
 
     if (strcmp(path, "/") == 0) {
@@ -70,17 +61,17 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
             fs.seekg(0, ios::end);
             int length = fs.tellg();
             fs.seekg(0, ios::beg);
-            
+
             // read file into buffer
             char buff[length];
             fs.read(buff, length);
-            
+
             // send along to client along with HTTP header
             const string header = "HTTP/1.1 200 OK\r\n"
                     "Content-type: text/html\r\n"
                     "Content-length: " + to_string(length) + "\r\n\r\n";
             if (send(connfd, header.c_str(), header.length(), MSG_NOSIGNAL) == -1 ||
-                send(connfd, buff, length, MSG_NOSIGNAL) == -1) {
+                    send(connfd, buff, length, MSG_NOSIGNAL) == -1) {
                 cerr << "Error writing" << endl;
                 closeconn = true;
             }
@@ -99,35 +90,35 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
             closeconn = true;
             goto close;
         }
-        
+
         // for the bee-eye transformation
         Size sz_out(eye_size[0], eye_size[1]);
         Mat dst_eye;
         dst_eye.create(sz_out, CV_8UC3);
-       
+
         // ultimate output size, after the unwrapping and bee-eye transformations
         Size sz(970, 1046);
 
         // input and final output image matrices
         Mat src, disp;
-        Mat dst(this->params.sdst, CV_8UC3);
+        Mat dst(params.sdst, CV_8UC3);
         vector<uchar> buff;
         for (;;) {
-            this->cap >> src;
+            cap >> src;
             if (src.size().width == 0) {
                 cerr << "Error: Could not read from webcam" << endl;
                 closeconn = true;
                 goto close;
             }
-            
+
             /* perform two transformations:
              * - unwrap panoramic image
              * - bee eye
              * 
              * (this could be done in a single step with the correct pixel map, but 
              * this way is easier for now and works...) */
-            remap(src, dst, this->params.map_x, this->params.map_y, INTER_NEAREST);
-            remap(dst, dst_eye, this->map_x, this->map_y, INTER_NEAREST);
+            remap(src, dst, params.map_x, params.map_y, INTER_NEAREST);
+            remap(dst, dst_eye, map_x, map_y, INTER_NEAREST);
 
             // resize the image we get out so it's large enough to see properly
             resize(dst_eye, disp, sz, 0, 0, INTER_LINEAR);
@@ -139,8 +130,6 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
             const string header = "--jpegboundary\r\n"
                     "Content-Type: image/jpeg\r\n"
                     "Content-Length: " + to_string(buff.size()) + "\r\n\r\n";
-            char bigbuff[header.length() + buff.size()];
-            strcpy(bigbuff, header.c_str());
             int val = send(connfd, header.c_str(), header.length(), MSG_NOSIGNAL);
             if (val == -1) {
                 cerr << "Error writing JPEG header" << endl;
@@ -156,10 +145,11 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
     } else {
         const char* msg = "HTTP/1.1 404 Not Found\r\n\r\n";
         send(connfd, msg, strlen(msg), MSG_NOSIGNAL);
+        cout << "404 page not found" << endl;
         closeconn = true;
     }
-    
-    close:
+
+close:
     if (closeconn) {
         cout << "Closing connection " << connfd << endl;
         close(connfd);
@@ -175,7 +165,7 @@ void BeeEyeServer::run_server() {
 }
 
 void BeeEyeServer::run() {
-    serve(&handle_request_server);
+    serve(&handle_request_server, NULL);
 }
 
 bool BeeEyeServer::handle_request_server(int connfd, char* path) {

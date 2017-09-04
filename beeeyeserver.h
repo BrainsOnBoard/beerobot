@@ -11,13 +11,12 @@
 #define VID_HEIGHT 1440
 #include "ini.h"
 
-#include "HttpServer.h"
+#include "httpserver.h"
 
-class BeeEyeServer : public HttpServer
-{
+class BeeEyeServer : public HttpServer {
 public:
     static BeeEyeServer Instance;
-    
+
     BeeEyeServer();
     BeeEyeServer(const BeeEyeServer& orig);
     //virtual ~BeeEyeServer();
