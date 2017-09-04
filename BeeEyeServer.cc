@@ -82,6 +82,7 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
             if (send(connfd, header.c_str(), header.length(), MSG_NOSIGNAL) == -1 ||
                 send(connfd, buff, length, MSG_NOSIGNAL) == -1) {
                 cerr << "Error writing" << endl;
+                closeconn = true;
             }
         }
     } else if (strcmp(path, "/stream.mjpg") == 0) {
@@ -95,10 +96,10 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
                 "Connection: close\r\n\r\n";
         if (send(connfd, msg, strlen(msg), MSG_NOSIGNAL) == -1) {
             cerr << "Error writing" << endl;
+            closeconn = true;
             goto close;
         }
-        //cout << "wrote header" << endl;
-
+        
         // for the bee-eye transformation
         Size sz_out(eye_size[0], eye_size[1]);
         Mat dst_eye;
@@ -115,6 +116,7 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
             this->cap >> src;
             if (src.size().width == 0) {
                 cerr << "Error: Could not read from webcam" << endl;
+                closeconn = true;
                 goto close;
             }
             
@@ -137,15 +139,14 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
             const string header = "--jpegboundary\r\n"
                     "Content-Type: image/jpeg\r\n"
                     "Content-Length: " + to_string(buff.size()) + "\r\n\r\n";
-            //cout << header;
             char bigbuff[header.length() + buff.size()];
             strcpy(bigbuff, header.c_str());
             int val = send(connfd, header.c_str(), header.length(), MSG_NOSIGNAL);
             if (val == -1) {
                 cerr << "Error writing JPEG header" << endl;
+                closeconn = true;
                 break;
             }
-            //cout << "len: " << header.length() << "; val: " << val << endl;
             if (send(connfd, buff.data(), buff.size(), MSG_NOSIGNAL) == -1) {
                 cerr << "Error writing JPEG data" << endl;
                 closeconn = true;
@@ -155,14 +156,12 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
     } else {
         const char* msg = "HTTP/1.1 404 Not Found\r\n\r\n";
         send(connfd, msg, strlen(msg), MSG_NOSIGNAL);
-    }
-    
-    if (errno != 0) {
-        cerr << "Got error " << errno << endl;
+        closeconn = true;
     }
     
     close:
     if (closeconn) {
+        cout << "Closing connection " << connfd << endl;
         close(connfd);
         return true;
     }
