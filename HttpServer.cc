@@ -26,7 +26,8 @@
 using namespace std;
 
 HttpServer::HttpServer(int port) {
-    struct sockaddr_in serv_addr; 
+    struct sockaddr_in serv_addr;
+    int on = 1;
 
     if ((this->listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         goto error;
@@ -41,6 +42,9 @@ HttpServer::HttpServer(int port) {
         goto error;
     }
     if (listen(this->listenfd, 10)) {
+        goto error;
+    }
+    if (setsockopt(this->listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) {
         goto error;
     }
     cout << "Listening on port " << port << endl;
