@@ -72,10 +72,10 @@ ${OBJECTDIR}/beeeye.o: beeeye.cc
 	${RM} "$@.d"
 	$(COMPILE.cc) -g `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/beeeye.o beeeye.cc
 
-${OBJECTDIR}/beerobot.o: beerobot.cpp
+${OBJECTDIR}/beerobot.o: beerobot.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/beerobot.o beerobot.cpp
+	$(COMPILE.cc) -g `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/beerobot.o beerobot.cc
 
 ${OBJECTDIR}/beeyeserver.o: beeyeserver.cc
 	${MKDIR} -p ${OBJECTDIR}

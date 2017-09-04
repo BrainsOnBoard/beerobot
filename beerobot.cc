@@ -1,5 +1,5 @@
 /*
- * File:   beerobot.cpp
+ * File:   beerobot.cc
  * Author: alex
  *
  * Created on 12 May 2017, 13:38
