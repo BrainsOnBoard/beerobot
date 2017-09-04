@@ -36,8 +36,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/beeeye.o \
+	${OBJECTDIR}/beeeyeserver.o \
 	${OBJECTDIR}/beerobot.o \
-	${OBJECTDIR}/beeyeserver.o \
 	${OBJECTDIR}/httpserver.o
 
 
@@ -72,15 +72,15 @@ ${OBJECTDIR}/beeeye.o: beeeye.cc
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/beeeye.o beeeye.cc
 
+${OBJECTDIR}/beeeyeserver.o: beeeyeserver.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/beeeyeserver.o beeeyeserver.cc
+
 ${OBJECTDIR}/beerobot.o: beerobot.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/beerobot.o beerobot.cc
-
-${OBJECTDIR}/beeyeserver.o: beeyeserver.cc
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/beeyeserver.o beeyeserver.cc
 
 ${OBJECTDIR}/httpserver.o: httpserver.cc
 	${MKDIR} -p ${OBJECTDIR}

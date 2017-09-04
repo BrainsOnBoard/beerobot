@@ -22,8 +22,8 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>beeeye.cc</itemPath>
+      <itemPath>beeeyeserver.cc</itemPath>
       <itemPath>beerobot.cc</itemPath>
-      <itemPath>beeyeserver.cc</itemPath>
       <itemPath>gigerommatidiamodel.py</itemPath>
       <itemPath>httpserver.cc</itemPath>
     </logicalFolder>
@@ -76,11 +76,11 @@
       </item>
       <item path="beeeyeconfig.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="beeeyeserver.cc" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="beeeyeserver.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot.cc" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="beeyeserver.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="camparams.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -133,11 +133,11 @@
       </item>
       <item path="beeeyeconfig.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="beeeyeserver.cc" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="beeeyeserver.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot.cc" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="beeyeserver.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="camparams.h" ex="false" tool="3" flavor2="0">
       </item>
