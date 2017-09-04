@@ -5,7 +5,6 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>beeeye.h</itemPath>
-      <itemPath>beeeye_old.h</itemPath>
       <itemPath>beeeyeconfig.h</itemPath>
       <itemPath>beeeyeserver.h</itemPath>
       <itemPath>camparams.h</itemPath>
@@ -131,8 +130,6 @@
       <item path="beeeye.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="beeeye.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="beeeye_old.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beeeyeconfig.h" ex="false" tool="3" flavor2="0">
       </item>
