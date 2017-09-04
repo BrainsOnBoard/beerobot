@@ -13,7 +13,8 @@
  * webcam is used as a camera and the program does not attempt to connect to the 
  * robot but shows the commands it would have sent.
  */
-#define USE_ROBOT
+//#define USE_SURVEYOR
+#define USE_ARDUINO
 
 #include "beeeye.h" // for image reading/manipulation
 #include "xboxrobot.h" // for using the Xbox controller to drive the robot

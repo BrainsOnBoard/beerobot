@@ -20,21 +20,26 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef USE_ROBOT
-// Surveyor's webcam stream
-//#define VIDEO_DEV "http://192.168.1.1:8080/?action=stream?dummy_parameter=bee.mjpg"
-//#define VID_WIDTH 640
-//#define VID_HEIGHT 480
+#if defined(USE_SURVEYOR)
+    // Surveyor's webcam stream
+    //#define VIDEO_DEV "http://192.168.1.1:8080/?action=stream?dummy_parameter=bee.mjpg"
+    //#define VID_WIDTH 640
+    //#define VID_HEIGHT 480
 
-// Kodak PixPro
-#define VIDEO_DEV "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg"
-#define VID_WIDTH 1024
-#define VID_HEIGHT 1024
+    // Kodak PixPro
+    #define VIDEO_DEV "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg"
+    #define VID_WIDTH 1024
+    #define VID_HEIGHT 1024
+#elif defined(USE_ARDUINO)
+    // USB connnected Kodak PixPro
+    #define VIDEO_DEV 0 //get_camera_by_name("USB 2.0 Camera")
+    #define VID_WIDTH 640
+    #define VID_HEIGHT 480
 #else
-// USB webcam
-#define VIDEO_DEV 0 //get_camera_by_name("USB 2.0 Camera")
-#define VID_WIDTH 640
-#define VID_HEIGHT 480
+    // USB webcam
+    #define VIDEO_DEV 0 //get_camera_by_name("USB 2.0 Camera")
+    #define VID_WIDTH 640
+    #define VID_HEIGHT 480
 #endif
 
 #include "ini.h"
