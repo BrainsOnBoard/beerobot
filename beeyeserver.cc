@@ -10,7 +10,7 @@ using namespace cv;
 #define LISTEN_PORT 1234
 
 bool BeeEyeServer::run_request;
-BeeEyeServer BeeEyeServer::Instance;
+BeeEyeServer* BeeEyeServer::Instance;
 
 BeeEyeServer::BeeEyeServer() : HttpServer(LISTEN_PORT)
 {
@@ -106,7 +106,8 @@ close:
 void BeeEyeServer::run_server()
 {
     BeeEyeServer::run_request = true;
-    BeeEyeServer::Instance.run();
+    BeeEyeServer::Instance = new BeeEyeServer();
+    BeeEyeServer::Instance->run();
 }
 
 void BeeEyeServer::run()
@@ -128,7 +129,7 @@ void BeeEyeServer::run()
 
 bool BeeEyeServer::handle_request_server(int connfd, char* path)
 {
-    return BeeEyeServer::Instance.handle_request(connfd, path);
+    return BeeEyeServer::Instance->handle_request(connfd, path);
 }
 
 void BeeEyeServer::kill_request_server()
@@ -138,5 +139,5 @@ void BeeEyeServer::kill_request_server()
 
 void BeeEyeServer::stop_server()
 {
-    BeeEyeServer::Instance.~HttpServer();
+    BeeEyeServer::Instance->~HttpServer();
 }

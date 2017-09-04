@@ -47,17 +47,7 @@ inline bool BeeEye::get_image(Mat &imorig)
     return imorig.size().width != 0;
 }
 
-inline void BeeEye::get_unwrapped_image(Mat &imunwrap, Mat &imorig)
-{
-    remap(imorig, imunwrap, params.map_x, params.map_y, INTER_NEAREST);
-}
-
-inline void BeeEye::get_eye_view(Mat &view, Mat &imunwrap)
-{
-    remap(imunwrap, view, map_x, map_y, INTER_NEAREST);
-}
-
-bool BeeEye::get_eye_view(Mat &view)
+void BeeEye::get_eye_view(Mat &view, Mat &imorig)
 {
     /* perform two transformations:
      * - unwrap panoramic image
@@ -65,17 +55,21 @@ bool BeeEye::get_eye_view(Mat &view)
      *
      * (this could be done in a single step with the correct pixel map, but
      * this way is easier for now and works...) */
-    if (!get_image(imorig)) {
-        return false;
-    }
-
-    get_unwrapped_image(imunwrap, imorig);
-    get_eye_view(imeye, imunwrap);
+    remap(imorig, imunwrap, params.map_x, params.map_y, INTER_NEAREST);
+    remap(imunwrap, imeye, map_x, map_y, INTER_NEAREST);
 
     // resize the image we get out so it's large enough to see properly
     Size sz(970, 1046);
     resize(imeye, view, sz, 0, 0, INTER_LINEAR);
+}
 
+bool BeeEye::get_eye_view(Mat& view)
+{
+    if (!get_image(imorig)) {
+        return false;
+    }
+
+    get_eye_view(view, imorig);
     return true;
 }
 

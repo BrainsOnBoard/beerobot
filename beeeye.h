@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   beeeye.h
  * Author: ad374
  *
@@ -18,15 +18,14 @@
 
 class BeeEye {
 public:
+    CamParams params;
+
     BeeEye();
-    //virtual ~BeeEye();
-    
+
     bool get_image(Mat &imorig);
-    void get_unwrapped_image(Mat &imunwrap, Mat &imorig);
     void get_eye_view(Mat &view, Mat &imunwrap);
     bool get_eye_view(Mat &view);
 private:
-    CamParams params;
     VideoCapture cap;
     Mat map_x, map_y;
     Mat imorig, imunwrap, imeye;

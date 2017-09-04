@@ -8,19 +8,27 @@
 #include <cstdlib>
 #include <thread> // std::thread
 
-/* If enabled, the program uses the PixPro as a camera and sends drive commands 
- * to the robot when controller buttons are pushed. Otherwise, the computer's 
- * webcam is used as a camera and the program does not attempt to connect to the 
+/* If enabled, the program uses the PixPro as a camera and sends drive commands
+ * to the robot when controller buttons are pushed. Otherwise, the computer's
+ * webcam is used as a camera and the program does not attempt to connect to the
  * robot but shows the commands it would have sent.
  */
 #define USE_ROBOT
 
 #include "beeeyeserver.h"
+#include "beeeyeconfig.h"
 #include "xboxrobot.h" // for using the Xbox controller to drive the robot
 
 #define ENABLE_CONTROLLER
 
-int main(int, char**) {
+int main(int argc, char** argv)
+{
+    if (argc > 1 && strcmp(argv[1], "--config") == 0) {
+        cout << "Running config program" << endl;
+        run_eye_config();
+        return 0;
+    }
+
     thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen
 
 #ifdef ENABLE_CONTROLLER

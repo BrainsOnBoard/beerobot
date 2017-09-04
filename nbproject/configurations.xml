@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>beeeye.h</itemPath>
       <itemPath>beeeye_old.h</itemPath>
+      <itemPath>beeeyeconfig.h</itemPath>
       <itemPath>beeeyeserver.h</itemPath>
       <itemPath>camparams.h</itemPath>
       <itemPath>gigerdatacam.h</itemPath>
@@ -74,6 +75,8 @@
       </item>
       <item path="beeeye.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="beeeyeconfig.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beeeyeserver.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot.cpp" ex="false" tool="1" flavor2="0">
@@ -130,6 +133,8 @@
       <item path="beeeye.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beeeye_old.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="beeeyeconfig.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beeeyeserver.h" ex="false" tool="3" flavor2="0">
       </item>

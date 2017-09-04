@@ -9,7 +9,7 @@
 
 class BeeEyeServer : public HttpServer {
 public:
-    static BeeEyeServer Instance;
+    static BeeEyeServer* Instance;
     static void run_server();
     static void stop_server();
 
@@ -20,7 +20,7 @@ public:
     bool handle_request(int connfd, char* path);
 private:
     BeeEye eye;
-    
+
     static bool run_request;
     static bool handle_request_server(int connfd, char* path);
     static void kill_request_server();
