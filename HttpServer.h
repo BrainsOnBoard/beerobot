@@ -23,7 +23,7 @@
 class HttpServer {
 public:
     HttpServer(int port);
-    void serve(void (*)(int, char*));
+    void serve(bool (*)(int, char*));
     virtual ~HttpServer();
 private:
     int listenfd;

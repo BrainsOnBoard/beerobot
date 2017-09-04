@@ -65,11 +65,11 @@ size_t indexof(const char* str, char c) {
     return str[i] ? i : -1;
 }
 
-void HttpServer::serve(void (*handle_request)(int, char*)) {
+void HttpServer::serve(bool (*handle_request)(int, char*)) {
     cout << "Serving forever..." << endl;
     
     char buff[1025];
-    while(1) {
+    for(;;) {
         int connfd = accept(this->listenfd, (struct sockaddr*)NULL, NULL);
         cout << "Accepting connection " << connfd << endl;
 
@@ -103,8 +103,8 @@ void HttpServer::serve(void (*handle_request)(int, char*)) {
             strncpy(path, src, sp2);
             path[sp2] = 0;
             
-            if(handle_request) {
-                handle_request(connfd, path);
+            if(handle_request && handle_request(connfd, path)) {
+                break;
             }
         }
     }

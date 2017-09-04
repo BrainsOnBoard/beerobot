@@ -22,9 +22,9 @@ public:
     BeeEyeServer(const BeeEyeServer& orig);
     //virtual ~BeeEyeServer();
     void run();
-    void handle_request(int connfd, char* path);
+    bool handle_request(int connfd, char* path);
     static void run_server();
-    static void handle_request_server(int connfd, char* path);
+    static bool handle_request_server(int connfd, char* path);
 private:
     CamParams params;
     VideoCapture cap;

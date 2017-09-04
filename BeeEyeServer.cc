@@ -57,9 +57,11 @@ BeeEyeServer::BeeEyeServer()
 BeeEyeServer::~BeeEyeServer() {
 }*/
 
-void BeeEyeServer::handle_request(int connfd, char* path) {
+bool BeeEyeServer::handle_request(int connfd, char* path) {
     cout << "CONNECTION: " << connfd << endl;
     cout << "PATH: " << path << endl << endl;
+    
+    bool closeconn = false;
 
     if (strcmp(path, "/") == 0) {
         ifstream fs("index.html");
@@ -146,6 +148,7 @@ void BeeEyeServer::handle_request(int connfd, char* path) {
             //cout << "len: " << header.length() << "; val: " << val << endl;
             if (send(connfd, buff.data(), buff.size(), MSG_NOSIGNAL) == -1) {
                 cerr << "Error writing JPEG data" << endl;
+                closeconn = true;
                 break;
             }
         }
@@ -159,8 +162,11 @@ void BeeEyeServer::handle_request(int connfd, char* path) {
     }
     
     close:
-    //close(connfd);
-    cout << "done" << endl;
+    if (closeconn) {
+        close(connfd);
+        return true;
+    }
+    return false;
 }
 
 BeeEyeServer BeeEyeServer::Instance;
@@ -173,8 +179,8 @@ void BeeEyeServer::run() {
     serve(&handle_request_server);
 }
 
-void BeeEyeServer::handle_request_server(int connfd, char* path) {
-    BeeEyeServer::Instance.handle_request(connfd, path);
+bool BeeEyeServer::handle_request_server(int connfd, char* path) {
+    return BeeEyeServer::Instance.handle_request(connfd, path);
 }
 
 int get_camera_by_name(const char* name) {
