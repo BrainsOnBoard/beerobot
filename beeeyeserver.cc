@@ -92,12 +92,14 @@ bool BeeEyeServer::handle_request(int connfd, char* path)
         const char* msg = "HTTP/1.1 404 Not Found\r\n\r\n";
         send(connfd, msg, strlen(msg), MSG_NOSIGNAL);
         cout << "404 page not found" << endl;
+        closeconn = true;
     }
 
 close:
     if (!run_request || closeconn) {
         cout << "Closing connection " << connfd << endl;
         close(connfd);
+
         return true;
     }
     return false;
