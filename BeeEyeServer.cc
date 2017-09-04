@@ -58,40 +58,50 @@ BeeEyeServer::~BeeEyeServer() {
 }*/
 
 void BeeEyeServer::handle_request(int connfd, char* path) {
+    cout << "CONNECTION: " << connfd << endl;
     cout << "PATH: " << path << endl << endl;
-    
+
     if (strcmp(path, "/") == 0) {
         ifstream fs("index.html");
-        if(fs.is_open()) {
+        if (fs.is_open()) {
+            // get file length
             fs.seekg(0, ios::end);
             int length = fs.tellg();
             fs.seekg(0, ios::beg);
+            
+            // read file into buffer
             char buff[length];
             fs.read(buff, length);
+            
+            // send along to client along with HTTP header
             const string header = "HTTP/1.1 200 OK\r\n"
                     "Content-type: text/html\r\n"
                     "Content-length: " + to_string(length) + "\r\n\r\n";
-            write(connfd, header.c_str(), header.length());
-            write(connfd, buff, length);
+            if (send(connfd, header.c_str(), header.length(), MSG_NOSIGNAL) == -1 ||
+                send(connfd, buff, length, MSG_NOSIGNAL) == -1) {
+                cerr << "Error writing" << endl;
+            }
         }
     } else if (strcmp(path, "/stream.mjpg") == 0) {
         const char* msg = "HTTP/1.1 200 OK\r\n"
-                "Content-Type: multipart/x-mixed-replace;boundary=--boundary\r\n"
-                "Cache-Control: no-store\r\n"
+                "Content-Type: multipart/x-mixed-replace;boundary=--jpegboundary\r\n"
+                "Content-Encoding: identity\r\n"
+                "Cache-Control: no-cache\r\n"
+                "Max-Age: 0\r\n"
+                "Expires: 0\r\n"
                 "Pragma: no-cache\r\n"
-                "Connection: close\r\n"
-                "\r\n";
-        if (write(connfd, msg, strlen(msg)) < 0) {
-            close(connfd);
-            cout << "Connection closed" << endl;
-            return;
+                "Connection: close\r\n\r\n";
+        if (send(connfd, msg, strlen(msg), MSG_NOSIGNAL) == -1) {
+            cerr << "Error writing" << endl;
+            goto close;
         }
+        //cout << "wrote header" << endl;
 
         // for the bee-eye transformation
         Size sz_out(eye_size[0], eye_size[1]);
         Mat dst_eye;
         dst_eye.create(sz_out, CV_8UC3);
-
+       
         // ultimate output size, after the unwrapping and bee-eye transformations
         Size sz(970, 1046);
 
@@ -103,11 +113,9 @@ void BeeEyeServer::handle_request(int connfd, char* path) {
             this->cap >> src;
             if (src.size().width == 0) {
                 cerr << "Error: Could not read from webcam" << endl;
-                close(connfd);
-                cout << "Connection closed" << endl;
-                return;
+                goto close;
             }
-
+            
             /* perform two transformations:
              * - unwrap panoramic image
              * - bee eye
@@ -120,21 +128,39 @@ void BeeEyeServer::handle_request(int connfd, char* path) {
             // resize the image we get out so it's large enough to see properly
             resize(dst_eye, disp, sz, 0, 0, INTER_LINEAR);
 
+            // convert image to JPEG; store in buff
             imencode(".jpg", disp, buff);
 
-            const string header = "--boundary\r\n"
-                    "Content-type: image/jpeg\r\n"
-                    "Content-length: " + to_string(buff.size()) + "\r\n\r\n";
-            write(connfd, header.c_str(), header.length());
-            write(connfd, buff.data(), buff.size());
+            // send a header + JPEG data
+            const string header = "--jpegboundary\r\n"
+                    "Content-Type: image/jpeg\r\n"
+                    "Content-Length: " + to_string(buff.size()) + "\r\n\r\n";
+            //cout << header;
+            char bigbuff[header.length() + buff.size()];
+            strcpy(bigbuff, header.c_str());
+            int val = send(connfd, header.c_str(), header.length(), MSG_NOSIGNAL);
+            if (val == -1) {
+                cerr << "Error writing JPEG header" << endl;
+                break;
+            }
+            //cout << "len: " << header.length() << "; val: " << val << endl;
+            if (send(connfd, buff.data(), buff.size(), MSG_NOSIGNAL) == -1) {
+                cerr << "Error writing JPEG data" << endl;
+                break;
+            }
         }
     } else {
         const char* msg = "HTTP/1.1 404 Not Found\r\n\r\n";
-        cout << "404" << endl;
-        write(connfd, msg, strlen(msg));
+        send(connfd, msg, strlen(msg), MSG_NOSIGNAL);
     }
-    close(connfd);
-    cout << "Connection closed" << endl;
+    
+    if (errno != 0) {
+        cerr << "Got error " << errno << endl;
+    }
+    
+    close:
+    //close(connfd);
+    cout << "done" << endl;
 }
 
 BeeEyeServer BeeEyeServer::Instance;
