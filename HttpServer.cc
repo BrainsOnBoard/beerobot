@@ -67,15 +67,24 @@ void HttpServer::serve(void (*handle_request)(int, char*)) {
     char buff[1025];
     while(1) {
         int connfd = accept(this->listenfd, (struct sockaddr*)NULL, NULL);
-        cout << "Accepting connection" << endl;
-        
+        cout << "Accepting connection " << connfd << endl;
+
         int len;
-        while((len = read(connfd, buff, sizeof(buff)-1)) > 0) {
+        for(;;) {
+            while((len = read(connfd, buff, sizeof(buff)-1)) == 0) {
+                //cout << "trying to read" << endl;
+                usleep(250000);
+            }
+            if (len == -1) {
+                cerr << "Error while reading" << endl;
+                break;
+            }
+            
             buff[len] = 0;
             cout << "<<< " << buff << endl;
             
             size_t sp = indexof(buff,' ');
-            if(sp == -1 || strncmp(buff,"GET",sp)) {
+            if(sp == -1 || strncmp(buff, "GET", sp)) {
                 cerr << "Error: Bad message" << endl;
                 continue;
             }
