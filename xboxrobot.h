@@ -21,7 +21,13 @@
 
 #define DRIVE_TRACE // additionally output drive commands to console
 
-#include "motor.h" // for connecting to and sending driving commands to robot
+#if defined(USE_SURVEYOR)
+    #include "motor.h" // for connecting to and sending driving commands to robot
+#elif defined(USE_ARDUINO)
+    #include "motor_i2c.h" // for connecting to and sending driving commands to robot
+#else
+    #include "motor_dummy.h"
+#endif
 
 #define JS_DEV "/dev/input/js0" // which joystick device to use
 //#define JS_TRACE // displays trace of joystick input in console
@@ -51,8 +57,14 @@ void run_controller() {
     }
 
     // connect to robot
+#if defined(USE_SURVEYOR)
     Motor mtr("192.168.1.1", 2000);
-
+#elif defined(USE_ARDUINO)
+    MotorI2C mtr;
+#else
+    MotorDummy mtr
+#endif
+    
     js_event e; // struct for storing joystick events
 
     // flag is set to false when user tries to quit program

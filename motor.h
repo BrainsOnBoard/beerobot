@@ -29,7 +29,6 @@ class Motor {
 public:
 
     Motor(const std::string &address, unsigned int port) {
-#ifndef DUMMY_DRIVE
         // Create socket
         m_Socket = socket(AF_INET, SOCK_STREAM, 0);
         if (m_Socket < 0) {
@@ -50,7 +49,6 @@ public:
         }
 
         cout << "Connected to " << address << ":" << port << endl;
-#endif
     }
 
     ~Motor() {
@@ -79,13 +77,10 @@ public:
 #ifdef DRIVE_TRACE
         std::cout << "command: " << command;
 #endif
-
-#ifndef DUMMY_DRIVE
         // Write command to socket
         if (write(m_Socket, command, strlen(command)) < 0) {
             throw std::runtime_error("Cannot write to socket");
         }
-#endif
     }
 
 private:

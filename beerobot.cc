@@ -13,7 +13,8 @@
  * webcam is used as a camera and the program does not attempt to connect to the
  * robot but shows the commands it would have sent.
  */
-#define USE_ROBOT
+//#define USE_SURVEYOR
+#define USE_ARDUINO
 
 #include "beeeyeserver.h"
 #include "beeeyeconfig.h"
