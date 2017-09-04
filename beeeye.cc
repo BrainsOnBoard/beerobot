@@ -40,7 +40,7 @@ BeeEye::BeeEye() : cap(VIDEO_DEV)
     imeye.create(sz_out, CV_8UC3);
 }
 
-inline bool BeeEye::get_image(Mat &imorig)
+bool BeeEye::get_image(Mat &imorig)
 {
     // read frame from camera
     cap >> imorig;
