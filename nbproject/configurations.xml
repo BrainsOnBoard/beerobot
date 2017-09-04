@@ -124,7 +124,6 @@
             <linkerOptionItem>`pkg-config --libs opencv`</linkerOptionItem>
             <linkerLibFileItem>iniparser/libiniparser.a</linkerLibFileItem>
           </linkerLibItems>
-          <commandLine>-pthread</commandLine>
         </linkerTool>
       </compileType>
       <item path="beeeye.cc" ex="false" tool="1" flavor2="0">

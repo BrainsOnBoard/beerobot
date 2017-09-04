@@ -65,7 +65,7 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot: iniparser/libiniparser.a
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot ${OBJECTFILES} ${LDLIBSOPTIONS} -pthread
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/beerobot ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/beeeye.o: beeeye.cc
 	${MKDIR} -p ${OBJECTDIR}
