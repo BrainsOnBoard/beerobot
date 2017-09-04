@@ -5,8 +5,8 @@
  * Created on 22 May 2017, 21:11
  */
 
-#ifndef INI_H
-#define INI_H
+#ifndef CAMPARAMS_H
+#define CAMPARAMS_H
 
 // this code relies on the iniparser library, included as a git submodule
 #include "iniparser/src/iniparser.h"
@@ -21,13 +21,11 @@ class CamParams {
 private:
 
     // read an int from the ini file
-
     static inline void get(const dictionary *ini, int &val, const char *str) {
         val = iniparser_getint(ini, str, val);
     }
 
     // read a double from the ini file
-
     static inline void get(const dictionary *ini, double &val, const char *str) {
         val = iniparser_getdouble(ini, str, val);
     }
@@ -45,7 +43,6 @@ public:
     Mat map_y;
 
     // read parameters from ini file
-
     CamParams() {
         ssrc = Size(VID_WIDTH, VID_HEIGHT);
         sdst = Size(1280, 400);
@@ -84,7 +81,6 @@ public:
     }
 
     // write the parameters to ini file
-
     void write() {
         cout << "Writing settings to " << INI_FILE << endl;
 
@@ -123,7 +119,6 @@ public:
     }
 
     // generate a new pixel map, based on the current calibration settings
-
     void generate_map() {
         for (int i = 0; i < this->sdst.height; i++) {
             for (int j = 0; j < this->sdst.width; j++) {
@@ -138,4 +133,4 @@ public:
     }
 };
 
-#endif /* INI_H */
+#endif /* CAMPARAMS_H */

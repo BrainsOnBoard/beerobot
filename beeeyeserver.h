@@ -4,14 +4,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#define VID_WIDTH 1440
-#define VID_HEIGHT 1440
-#include "ini.h"
-
 #include "httpserver.h"
+#include "beeeye.h"
 
 class BeeEyeServer : public HttpServer {
 public:
@@ -25,15 +19,10 @@ public:
     void run();
     bool handle_request(int connfd, char* path);
 private:
-    CamParams params;
-    VideoCapture cap;
-    Mat map_x, map_y;
+    BeeEye eye;
     
     static bool run_request;
     static bool handle_request_server(int connfd, char* path);
     static void kill_request_server();
 };
-
-// get the number for a camera with a given name (-1 if not found)
-int get_camera_by_name(const char* name);
 #endif
