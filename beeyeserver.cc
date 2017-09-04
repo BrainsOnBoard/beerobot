@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <signal.h>
 
 // opencv includes
 // (note that the program won't work with older versions of opencv v2;
@@ -18,6 +19,9 @@ using namespace cv;
 
 #define VIDEO_DEV get_camera_by_name("PIXPRO SP360 4K")
 #define LISTEN_PORT 1234
+
+bool BeeEyeServer::run_request;
+BeeEyeServer BeeEyeServer::Instance;
 
 BeeEyeServer::BeeEyeServer()
 : HttpServer(LISTEN_PORT), cap(VIDEO_DEV) {
@@ -103,7 +107,7 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
         Mat src, disp;
         Mat dst(params.sdst, CV_8UC3);
         vector<uchar> buff;
-        for (;;) {
+        while (run_request) {
             cap >> src;
             if (src.size().width == 0) {
                 cerr << "Error: Could not read from webcam" << endl;
@@ -146,11 +150,10 @@ bool BeeEyeServer::handle_request(int connfd, char* path) {
         const char* msg = "HTTP/1.1 404 Not Found\r\n\r\n";
         send(connfd, msg, strlen(msg), MSG_NOSIGNAL);
         cout << "404 page not found" << endl;
-        closeconn = true;
     }
 
 close:
-    if (closeconn) {
+    if (!run_request || closeconn) {
         cout << "Closing connection " << connfd << endl;
         close(connfd);
         return true;
@@ -158,18 +161,36 @@ close:
     return false;
 }
 
-BeeEyeServer BeeEyeServer::Instance;
-
 void BeeEyeServer::run_server() {
+    BeeEyeServer::run_request = true;
     BeeEyeServer::Instance.run();
 }
 
 void BeeEyeServer::run() {
+    struct sigaction sigIntHandler;
+
+    sigIntHandler.sa_handler = [](int) {
+        //BeeEyeServer::stop_server();
+        exit(0);
+    };
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+
+    sigaction(SIGINT, &sigIntHandler, NULL);
+
     serve(&handle_request_server, NULL);
 }
 
 bool BeeEyeServer::handle_request_server(int connfd, char* path) {
     return BeeEyeServer::Instance.handle_request(connfd, path);
+}
+
+void BeeEyeServer::kill_request_server() {
+    BeeEyeServer::run_request = false;
+}
+
+void BeeEyeServer::stop_server() {
+    BeeEyeServer::Instance.~HttpServer();
 }
 
 int get_camera_by_name(const char* name) {

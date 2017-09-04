@@ -19,6 +19,10 @@ HttpServer::HttpServer(int port) {
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         goto error;
     }
+    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof (on)) < 0) {
+        goto error;
+    }
+    
     memset(&serv_addr, '0', sizeof (serv_addr));
 
     serv_addr.sin_family = AF_INET;
@@ -31,9 +35,6 @@ HttpServer::HttpServer(int port) {
     if (listen(listenfd, 10)) {
         goto error;
     }
-    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof (on)) < 0) {
-        goto error;
-    }
     cout << "Listening on port " << port << endl;
 
     return;
@@ -44,6 +45,16 @@ error:
 }
 
 HttpServer::~HttpServer() {
+    cout << "Server shutting down" << endl;
+
+    if (running) {
+        running = false;
+        if (kill_request) {
+            kill_request();
+        }
+    } else {
+        close(listenfd);
+    }
 }
 
 size_t indexof(const char* str, char c) {
@@ -52,18 +63,23 @@ size_t indexof(const char* str, char c) {
     return str[i] ? i : -1;
 }
 
-void HttpServer::serve(bool (*handle_request)(int, char*)) {
-    cout << "Serving forever..." << endl;
+void HttpServer::serve(bool (*handle_request)(int, char*), void (*kill_request)()) {
+    running = true;
+    this->kill_request = kill_request;
 
     char buff[1025];
-    for (;;) {
-        int connfd = accept(listenfd, (struct sockaddr*) NULL, NULL);
+    int connfd = -1;
+    while (running) {
+        connfd = accept(listenfd, (struct sockaddr*) NULL, NULL);
         cout << "Accepting connection " << connfd << endl;
 
         int len;
-        for (;;) {
-            while ((len = read(connfd, buff, sizeof (buff) - 1)) == 0) {
+        while (running) {
+            while (running && (len = read(connfd, buff, sizeof (buff) - 1)) == 0) {
                 usleep(250000);
+            }
+            if (!running) {
+                break;
             }
             if (len == -1) {
                 cerr << "Error while reading" << endl;
@@ -87,9 +103,13 @@ void HttpServer::serve(bool (*handle_request)(int, char*)) {
             strncpy(path, src, sp2);
             path[sp2] = 0;
 
-            if (handle_request && handle_request(connfd, path)) {
+            if (!running || (handle_request && handle_request(connfd, path))) {
                 break;
             }
         }
     }
+    
+    cout << "Stopping listening" << endl;
+    close(connfd);
+    close(listenfd);
 }
