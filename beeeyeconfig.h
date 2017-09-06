@@ -136,10 +136,12 @@ void run_eye_config(int videodev, int vwidth, int vheight, bool calib_enabled) {
         }
     }
 
-    // write params to file
-    // in particular we want to remember our calibration settings so we don't
-    // have to recalibrate the next time we start the program
-    eye.params.write();
+    if (calib_enabled) {
+        // write params to file
+        // in particular we want to remember our calibration settings so we don't
+        // have to recalibrate the next time we start the program
+        eye.params.write();
+    }
 }
 
 #endif /* BEEEYECONFIG_H */
