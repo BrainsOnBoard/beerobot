@@ -8,7 +8,7 @@
 #include "beeeye.h"
 #include "gigerdatacam.h"
 
-BeeEye::BeeEye(int videodev) : cap(videodev)
+BeeEye::BeeEye(int videodev, int vwidth, int vheight) : cap(videodev), params(vwidth, vheight)
 {
     if (!cap.isOpened()) {
         cerr << "Error: Could not open webcam" << endl;

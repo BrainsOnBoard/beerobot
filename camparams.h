@@ -42,9 +42,9 @@ public:
     Mat map_x;
     Mat map_y;
 
-    // read parameters from ini file
-    CamParams() {
-        ssrc = Size(VID_WIDTH, VID_HEIGHT);
+    /* read parameters from ini file */
+    CamParams(int vwidth, int vheight) {
+        ssrc = Size(vwidth, vheight);
         sdst = Size(1280, 400);
         double dcent_x = 0.5;
         double dcent_y = 0.5;
@@ -80,7 +80,7 @@ public:
         this->map_y = Mat(this->sdst, CV_32FC1);
     }
 
-    // write the parameters to ini file
+    /* write the parameters to ini file */
     void write() {
         cout << "Writing settings to " << INI_FILE << endl;
 
@@ -118,7 +118,7 @@ public:
         fclose(ini);
     }
 
-    // generate a new pixel map, based on the current calibration settings
+    /* generate a new pixel map, based on the current calibration settings */
     void generate_map() {
         for (int i = 0; i < this->sdst.height; i++) {
             for (int j = 0; j < this->sdst.width; j++) {

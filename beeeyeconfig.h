@@ -31,8 +31,8 @@ inline void calib_line(Mat &imorig, Point p1, Point p2) {
     line(imorig, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
 }
 
-void run_eye_config(int videodev, bool calib_enabled) {
-    BeeEye eye(videodev);
+void run_eye_config(int videodev, int vwidth, int vheight, bool calib_enabled) {
+    BeeEye eye(videodev, vwidth, vheight);
 
     bool do_calib = false; // whether calibration screen is visible or not
     int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration (either 1 or 5)
