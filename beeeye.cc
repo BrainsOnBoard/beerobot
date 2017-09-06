@@ -10,19 +10,21 @@
 
 BeeEye::BeeEye(vid_t* vid) : params(vid)
 {
-    if (vid->dev_char) {
-        cap = new VideoCapture(vid->dev_char);
-    } else {
-        cap = new VideoCapture(vid->dev_int);
-    }
-    if (!cap->isOpened()) {
-        cerr << "Error: Could not open webcam" << endl;
-        exit(1);
-    }
+    if (vid->dev_int != -1) {
+        if (vid->dev_char) {
+            cap = new VideoCapture(vid->dev_char);
+        } else {
+            cap = new VideoCapture(vid->dev_int);
+        }
+        if (!cap->isOpened()) {
+            cerr << "Error: Could not open webcam" << endl;
+            exit(1);
+        }
 
-    // set resolution
-    cap->set(CAP_PROP_FRAME_WIDTH, params.ssrc.width);
-    cap->set(CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
+        // set resolution
+        cap->set(CAP_PROP_FRAME_WIDTH, params.ssrc.width);
+        cap->set(CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
+    }
 
     // create x and y pixel maps
     Size sz_out(eye_size[0], eye_size[1]);
@@ -52,7 +54,12 @@ bool BeeEye::get_image(Mat &imorig)
     return imorig.size().width != 0;
 }
 
-void BeeEye::get_eye_view(Mat &view, Mat &imorig)
+void BeeEye::get_unwrapped_image(Mat &imunwrap, Mat &imorig)
+{
+    remap(imorig, imunwrap, params.map_x, params.map_y, INTER_NEAREST);
+}
+
+void BeeEye::get_eye_view(Mat &view, Mat &imunwrap)
 {
     /* perform two transformations:
      * - unwrap panoramic image
@@ -60,7 +67,6 @@ void BeeEye::get_eye_view(Mat &view, Mat &imorig)
      *
      * (this could be done in a single step with the correct pixel map, but
      * this way is easier for now and works...) */
-    remap(imorig, imunwrap, params.map_x, params.map_y, INTER_NEAREST);
     remap(imunwrap, imeye, map_x, map_y, INTER_NEAREST);
 
     // resize the image we get out so it's large enough to see properly
@@ -74,6 +80,7 @@ bool BeeEye::get_eye_view(Mat& view)
         return false;
     }
 
-    get_eye_view(view, imorig);
+    get_unwrapped_image(imunwrap, imorig);
+    get_eye_view(view, imunwrap);
     return true;
 }

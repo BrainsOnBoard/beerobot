@@ -23,6 +23,7 @@ public:
     BeeEye(vid_t* vid);
 
     bool get_image(Mat &imorig);
+    void get_unwrapped_image(Mat &unwrap, Mat &imorig);
     void get_eye_view(Mat &view, Mat &imunwrap);
     bool get_eye_view(Mat &view);
 private:

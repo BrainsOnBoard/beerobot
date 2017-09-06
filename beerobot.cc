@@ -16,6 +16,7 @@
 //#define USE_SURVEYOR
 #define USE_ARDUINO
 
+#include "imagefile.h"
 #include "beeeyeserver.h"
 #include "beeeyeconfig.h"
 #include "beeeyeviewer.h"
@@ -36,7 +37,7 @@ int main(int argc, char** argv)
     if (argc > 1) {
         vid_t* vid = NULL;
         bool config = false;
-        for (int i = 1; i < min(argc, 3); i++) {
+        for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "--config") == 0) {
                 if (config) {
                     showusage();
@@ -51,12 +52,13 @@ int main(int argc, char** argv)
                 vid = get_pixpro_wifi();
             } else if (strcmp(argv[1], "--viewer") == 0) {
                 run_eye_viewer(argv[2], 1234);
-                return 0;
-            } else {
+            } else if (config || !process_file(argv[i])) {
                 showusage();
             }
         }
-        run_eye_config(vid, config);
+        if (vid) {
+            run_eye_config(vid, config);
+        }
         return 0;
     }
 

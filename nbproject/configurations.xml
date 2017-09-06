@@ -11,6 +11,7 @@
       <itemPath>gigerdatacam.h</itemPath>
       <itemPath>httpclient.h</itemPath>
       <itemPath>httpserver.h</itemPath>
+      <itemPath>imagefile.h</itemPath>
       <itemPath>motor.h</itemPath>
       <itemPath>videotype.h</itemPath>
       <itemPath>xboxrobot.h</itemPath>
@@ -100,6 +101,8 @@
       </item>
       <item path="httpserver.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="imagefile.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>
       <item path="motor.h" ex="false" tool="3" flavor2="0">
@@ -163,6 +166,8 @@
       <item path="httpserver.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="httpserver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imagefile.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>
