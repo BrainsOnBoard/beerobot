@@ -24,10 +24,15 @@
 
 int main(int argc, char** argv)
 {
-    if (argc > 1 && strcmp(argv[1], "--config") == 0) {
-        cout << "Running config program" << endl;
-        run_eye_config();
-        return 0;
+    if (argc > 1) {
+        if (strcmp(argv[1], "--config") == 0) {
+            cout << "Running config program" << endl;
+            run_eye_config(true);
+            return 0;
+        } else if (strcmp(argv[1], "usb") == 0) {
+            run_eye_config(false);
+            return 0;
+        }
     }
 
     thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen

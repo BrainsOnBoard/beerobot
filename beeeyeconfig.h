@@ -27,13 +27,11 @@ const int BIG_PX_JUMP = 5;
 
 // draws a line for the calibration cross
 
-inline void calib_line(Mat &imorig, Point p1, Point p2)
-{
+inline void calib_line(Mat &imorig, Point p1, Point p2) {
     line(imorig, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
 }
 
-void run_eye_config()
-{
+void run_eye_config(bool calib_enabled) {
     BeeEye eye;
 
     bool do_calib = false; // whether calibration screen is visible or not
@@ -71,64 +69,66 @@ void run_eye_config()
         /*if (key != 0xff)
             cout << "key: " << key << endl;*/
         switch (key) {
-        case 'c': // toggle display of calibration screen
-            if (do_calib) // we have to close window explicitly
-                destroyWindow("calibration");
+            case 'c': // toggle display of calibration screen
+                if (calib_enabled) {
+                    if (do_calib) // we have to close window explicitly
+                        destroyWindow("calibration");
 
-            do_calib = !do_calib;
-            break;
-        case KB_ESC: // quit program
-            do_run = false;
-            break;
-        default:
-            if (do_calib) {
-                switch (key) {
-                case ' ': // toggle 1px/5px jumps when moving/resizing
-                    if (px_jump == BIG_PX_JUMP)
-                        px_jump = 1;
-                    else
-                        px_jump = BIG_PX_JUMP;
-                    break;
-                case 'w': // make inner circle bigger
-                    eye.params.r_inner += px_jump;
-                    eye.params.generate_map();
-                    break;
-                case 's': // make inner circle smaller
-                    if (eye.params.r_inner > 0) {
-                        eye.params.r_inner -= px_jump;
-                        eye.params.r_inner = max(0, eye.params.r_inner);
-                        eye.params.generate_map();
-                    }
-                    break;
-                case 'q': // make outer circle bigger
-                    eye.params.r_outer += px_jump;
-                    eye.params.generate_map();
-                    break;
-                case 'a': // make outer circle smaller
-                    if (eye.params.r_outer > 0) {
-                        eye.params.r_outer -= px_jump;
-                        eye.params.r_outer = max(0, eye.params.r_outer);
-                        eye.params.generate_map();
-                    }
-                    break;
-                case KB_UP: // move centre up
-                    eye.params.cent.y -= px_jump;
-                    eye.params.generate_map();
-                    break;
-                case KB_DOWN: // move centre down
-                    eye.params.cent.y += px_jump;
-                    eye.params.generate_map();
-                    break;
-                case KB_LEFT: // move centre left
-                    eye.params.cent.x -= px_jump;
-                    eye.params.generate_map();
-                    break;
-                case KB_RIGHT: // move centre right
-                    eye.params.cent.x += px_jump;
-                    eye.params.generate_map();
-                    break;
+                    do_calib = !do_calib;
                 }
-            }
+                break;
+            case KB_ESC: // quit program
+                do_run = false;
+                break;
+            default:
+                if (do_calib) {
+                    switch (key) {
+                        case ' ': // toggle 1px/5px jumps when moving/resizing
+                            if (px_jump == BIG_PX_JUMP)
+                                px_jump = 1;
+                            else
+                                px_jump = BIG_PX_JUMP;
+                            break;
+                        case 'w': // make inner circle bigger
+                            eye.params.r_inner += px_jump;
+                            eye.params.generate_map();
+                            break;
+                        case 's': // make inner circle smaller
+                            if (eye.params.r_inner > 0) {
+                                eye.params.r_inner -= px_jump;
+                                eye.params.r_inner = max(0, eye.params.r_inner);
+                                eye.params.generate_map();
+                            }
+                            break;
+                        case 'q': // make outer circle bigger
+                            eye.params.r_outer += px_jump;
+                            eye.params.generate_map();
+                            break;
+                        case 'a': // make outer circle smaller
+                            if (eye.params.r_outer > 0) {
+                                eye.params.r_outer -= px_jump;
+                                eye.params.r_outer = max(0, eye.params.r_outer);
+                                eye.params.generate_map();
+                            }
+                            break;
+                        case KB_UP: // move centre up
+                            eye.params.cent.y -= px_jump;
+                            eye.params.generate_map();
+                            break;
+                        case KB_DOWN: // move centre down
+                            eye.params.cent.y += px_jump;
+                            eye.params.generate_map();
+                            break;
+                        case KB_LEFT: // move centre left
+                            eye.params.cent.x -= px_jump;
+                            eye.params.generate_map();
+                            break;
+                        case KB_RIGHT: // move centre right
+                            eye.params.cent.x += px_jump;
+                            eye.params.generate_map();
+                            break;
+                    }
+                }
         }
     }
 
