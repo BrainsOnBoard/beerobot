@@ -12,7 +12,7 @@ using namespace cv;
 bool BeeEyeServer::run_request;
 BeeEyeServer* BeeEyeServer::Instance;
 
-BeeEyeServer::BeeEyeServer() : HttpServer(LISTEN_PORT)
+BeeEyeServer::BeeEyeServer() : HttpServer(LISTEN_PORT), eye(get_pixpro_usb())
 {
 }
 

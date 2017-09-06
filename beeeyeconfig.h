@@ -25,14 +25,13 @@ const int KB_ESC = 27;
 // number of pixels to move/resize things by in calibration mode
 const int BIG_PX_JUMP = 5;
 
-// draws a line for the calibration cross
-
+/* draws a line for the calibration cross */
 inline void calib_line(Mat &imorig, Point p1, Point p2) {
     line(imorig, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
 }
 
-void run_eye_config(bool calib_enabled) {
-    BeeEye eye;
+void run_eye_config(vid_t* vid, bool calib_enabled) {
+    BeeEye eye(vid);
 
     bool do_calib = false; // whether calibration screen is visible or not
     int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration (either 1 or 5)
@@ -136,10 +135,12 @@ void run_eye_config(bool calib_enabled) {
         }
     }
 
-    // write params to file
-    // in particular we want to remember our calibration settings so we don't
-    // have to recalibrate the next time we start the program
-    eye.params.write();
+    if (calib_enabled) {
+        // write params to file
+        // in particular we want to remember our calibration settings so we don't
+        // have to recalibrate the next time we start the program
+        eye.params.write();
+    }
 }
 
 #endif /* BEEEYECONFIG_H */

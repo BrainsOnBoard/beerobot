@@ -8,27 +8,28 @@
 #ifndef CAMPARAMS_H
 #define CAMPARAMS_H
 
+#include "videotype.h"
+
 // this code relies on the iniparser library, included as a git submodule
 #include "iniparser/src/iniparser.h"
 
 using namespace cv;
 using namespace std;
 
-// file we're reading our settings from and writing to
-#define INI_FILE "beerobot.ini"
-
 class CamParams {
 private:
 
-    // read an int from the ini file
+    /* read an int from the ini file */
     static inline void get(const dictionary *ini, int &val, const char *str) {
         val = iniparser_getint(ini, str, val);
     }
 
-    // read a double from the ini file
+    /* read a double from the ini file */
     static inline void get(const dictionary *ini, double &val, const char *str) {
         val = iniparser_getdouble(ini, str, val);
     }
+
+    const char* fpath;
 
 public:
     // source and dest image sizes
@@ -42,20 +43,22 @@ public:
     Mat map_x;
     Mat map_y;
 
-    // read parameters from ini file
-    CamParams() {
-        ssrc = Size(VID_WIDTH, VID_HEIGHT);
+    /* read parameters from ini file */
+    CamParams(vid_t* vid) {
+        ssrc = Size(vid->width, vid->height);
         sdst = Size(1280, 400);
         double dcent_x = 0.5;
         double dcent_y = 0.5;
         double dr_inner = 0.1;
         double dr_outer = 0.5;
 
-        dictionary *ini = iniparser_load(INI_FILE);
+        fpath = vid->ini_file;
+
+        dictionary *ini = iniparser_load(vid->ini_file);
         if (!ini)
-            cout << "Could not find " << INI_FILE;
+            cout << "Could not find " << fpath;
         else {
-            cout << "Reading settings from " << INI_FILE << endl;
+            cout << "Reading settings from " << fpath << endl;
 
             get(ini, this->sdst.width, "unwrap:width");
             get(ini, this->sdst.height, "unwrap:height");
@@ -80,14 +83,14 @@ public:
         this->map_y = Mat(this->sdst, CV_32FC1);
     }
 
-    // write the parameters to ini file
+    /* write the parameters to ini file */
     void write() {
-        cout << "Writing settings to " << INI_FILE << endl;
+        cout << "Writing settings to " << fpath << endl;
 
         // open file for writing
-        FILE *ini = fopen(INI_FILE, "w");
+        FILE *ini = fopen(fpath, "w");
         if (!ini) {
-            cerr << "Error: Could not create file " << INI_FILE << endl;
+            cerr << "Error: Could not create file " << fpath << endl;
             return;
         }
 
@@ -118,7 +121,7 @@ public:
         fclose(ini);
     }
 
-    // generate a new pixel map, based on the current calibration settings
+    /* generate a new pixel map, based on the current calibration settings */
     void generate_map() {
         for (int i = 0; i < this->sdst.height; i++) {
             for (int j = 0; j < this->sdst.width; j++) {

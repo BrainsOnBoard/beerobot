@@ -39,8 +39,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/beeeyeserver.o \
 	${OBJECTDIR}/beerobot.o \
 	${OBJECTDIR}/httpclient.o \
-	${OBJECTDIR}/httpserver.o
-
+	${OBJECTDIR}/httpserver.o \
+	${OBJECTDIR}/videotype.o
 
 # C Compiler Flags
 CFLAGS=
@@ -92,6 +92,12 @@ ${OBJECTDIR}/httpclient.o: httpclient.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/httpclient.o httpclient.cc
+
+${OBJECTDIR}/videotype.o: videotype.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/videotype.o videotype.cc
+
 # Subprojects
 .build-subprojects:
 
