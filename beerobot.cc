@@ -57,6 +57,7 @@ int main(int argc, char** argv)
             }
         }
         run_eye_config(vid, config);
+        return 0;
     }
 
     thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen
