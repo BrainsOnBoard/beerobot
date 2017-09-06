@@ -42,6 +42,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/httpserver.o \
 	${OBJECTDIR}/videotype.o
 
+
 # C Compiler Flags
 CFLAGS=
 
@@ -83,15 +84,15 @@ ${OBJECTDIR}/beerobot.o: beerobot.cc
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/beerobot.o beerobot.cc
 
-${OBJECTDIR}/httpserver.o: httpserver.cc
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/httpserver.o httpserver.cc
-
 ${OBJECTDIR}/httpclient.o: httpclient.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/httpclient.o httpclient.cc
+
+${OBJECTDIR}/httpserver.o: httpserver.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/httpserver.o httpserver.cc
 
 ${OBJECTDIR}/videotype.o: videotype.cc
 	${MKDIR} -p ${OBJECTDIR}
