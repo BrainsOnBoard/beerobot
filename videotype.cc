@@ -48,7 +48,7 @@ vid_t* get_pixpro_usb()
     vid->dev_char = NULL;
     vid->width = 1440;
     vid->height = 1440;
-    vid->ini_file = "beerobot.ini";
+    vid->ini_file = "beerobot_usb.ini";
     return vid;
 }
 
@@ -58,5 +58,5 @@ vid_t* get_pixpro_wifi()
     vid->dev_char = "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg";
     vid->width = 1024;
     vid->height = 1024;
-    vid->ini_file = "beerobot.ini";
+    vid->ini_file = "beerobot_wifi.ini";
 }

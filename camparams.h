@@ -16,9 +16,6 @@
 using namespace cv;
 using namespace std;
 
-// file we're reading our settings from and writing to
-#define INI_FILE "beerobot.ini"
-
 class CamParams {
 private:
 
@@ -31,6 +28,8 @@ private:
     static inline void get(const dictionary *ini, double &val, const char *str) {
         val = iniparser_getdouble(ini, str, val);
     }
+
+    const char* fpath;
 
 public:
     // source and dest image sizes
@@ -53,11 +52,13 @@ public:
         double dr_inner = 0.1;
         double dr_outer = 0.5;
 
-        dictionary *ini = iniparser_load(INI_FILE);
+        fpath = vid->ini_file;
+
+        dictionary *ini = iniparser_load(vid->ini_file);
         if (!ini)
-            cout << "Could not find " << INI_FILE;
+            cout << "Could not find " << fpath;
         else {
-            cout << "Reading settings from " << INI_FILE << endl;
+            cout << "Reading settings from " << fpath << endl;
 
             get(ini, this->sdst.width, "unwrap:width");
             get(ini, this->sdst.height, "unwrap:height");
@@ -84,12 +85,12 @@ public:
 
     /* write the parameters to ini file */
     void write() {
-        cout << "Writing settings to " << INI_FILE << endl;
+        cout << "Writing settings to " << fpath << endl;
 
         // open file for writing
-        FILE *ini = fopen(INI_FILE, "w");
+        FILE *ini = fopen(fpath, "w");
         if (!ini) {
-            cerr << "Error: Could not create file " << INI_FILE << endl;
+            cerr << "Error: Could not create file " << fpath << endl;
             return;
         }
 
