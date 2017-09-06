@@ -22,20 +22,37 @@
 
 #define ENABLE_CONTROLLER
 
+using namespace std;
+
+void showusage()
+{
+    cout << "Usage: beerobot [--config] [usb|wifi]" << endl;
+    exit(1);
+}
+
 int main(int argc, char** argv)
 {
     if (argc > 1) {
-        if (strcmp(argv[1], "--config") == 0) {
-            cout << "Running config program" << endl;
-            run_eye_config(get_pixpro_usb(), true);
-            return 0;
-        } else if (strcmp(argv[1], "usb") == 0) {
-            run_eye_config(get_pixpro_usb(), false);
-            return 0;
-        } else if (strcmp(argv[1], "wifi") == 0) {
-            run_eye_config(get_pixpro_wifi(), false);
-            return 0;
+        vid_t* vid = NULL;
+        bool config = false;
+        for (int i = 1; i < min(argc, 3); i++) {
+            if (strcmp(argv[i], "--config") == 0) {
+                if (config) {
+                    showusage();
+                }
+
+                config = true;
+            } else if (vid) {
+                showusage();
+            } else if (strcmp(argv[1], "usb") == 0) {
+                vid = get_pixpro_usb();
+            } else if (strcmp(argv[1], "wifi") == 0) {
+                vid = get_pixpro_wifi();
+            } else {
+                showusage();
+            }
         }
+        run_eye_config(vid, config);
     }
 
     thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen
