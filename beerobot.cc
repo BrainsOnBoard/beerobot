@@ -18,6 +18,7 @@
 
 #include "beeeyeserver.h"
 #include "beeeyeconfig.h"
+#include "beeeyeviewer.h"
 #include "xboxrobot.h" // for using the Xbox controller to drive the robot
 
 #define ENABLE_CONTROLLER
@@ -29,6 +30,9 @@ int main(int argc, char** argv)
             cout << "Running config program" << endl;
             run_eye_config(true);
             return 0;
+        } else if (strcmp(argv[1], "--viewer") == 0) {
+            cout << "Running viewer program" << endl;
+            run_eye_viewer(argv[2], 1234);
         } else if (strcmp(argv[1], "usb") == 0) {
             run_eye_config(false);
             return 0;

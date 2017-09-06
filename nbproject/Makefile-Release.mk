@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/beeeye.o \
 	${OBJECTDIR}/beeeyeserver.o \
 	${OBJECTDIR}/beerobot.o \
+	${OBJECTDIR}/httpclient.o \
 	${OBJECTDIR}/httpserver.o
 
 
@@ -87,6 +88,10 @@ ${OBJECTDIR}/httpserver.o: httpserver.cc
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/httpserver.o httpserver.cc
 
+${OBJECTDIR}/httpclient.o: httpclient.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/httpclient.o httpclient.cc
 # Subprojects
 .build-subprojects:
 
