@@ -8,6 +8,8 @@
 #ifndef CAMPARAMS_H
 #define CAMPARAMS_H
 
+#include "videotype.h"
+
 // this code relies on the iniparser library, included as a git submodule
 #include "iniparser/src/iniparser.h"
 
@@ -20,12 +22,12 @@ using namespace std;
 class CamParams {
 private:
 
-    // read an int from the ini file
+    /* read an int from the ini file */
     static inline void get(const dictionary *ini, int &val, const char *str) {
         val = iniparser_getint(ini, str, val);
     }
 
-    // read a double from the ini file
+    /* read a double from the ini file */
     static inline void get(const dictionary *ini, double &val, const char *str) {
         val = iniparser_getdouble(ini, str, val);
     }
@@ -43,8 +45,8 @@ public:
     Mat map_y;
 
     /* read parameters from ini file */
-    CamParams(int vwidth, int vheight) {
-        ssrc = Size(vwidth, vheight);
+    CamParams(vid_t* vid) {
+        ssrc = Size(vid->width, vid->height);
         sdst = Size(1280, 400);
         double dcent_x = 0.5;
         double dcent_y = 0.5;

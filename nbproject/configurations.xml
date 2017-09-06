@@ -11,6 +11,7 @@
       <itemPath>gigerdatacam.h</itemPath>
       <itemPath>httpserver.h</itemPath>
       <itemPath>motor.h</itemPath>
+      <itemPath>videotype.h</itemPath>
       <itemPath>xboxrobot.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -26,6 +27,7 @@
       <itemPath>beerobot.cc</itemPath>
       <itemPath>gigerommatidiamodel.py</itemPath>
       <itemPath>httpserver.cc</itemPath>
+      <itemPath>videotype.cc</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -96,6 +98,10 @@
       </item>
       <item path="motor.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="videotype.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="videotype.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="xboxrobot.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
@@ -151,6 +157,10 @@
       <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>
       <item path="motor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="videotype.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="videotype.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="xboxrobot.h" ex="false" tool="3" flavor2="0">
       </item>
