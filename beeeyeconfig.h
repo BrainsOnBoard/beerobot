@@ -39,6 +39,10 @@ void run_eye_config(bool calib_enabled) {
 
     Mat imorig, view;
 
+    // set opencv window to display full screen
+    cvNamedWindow("bee view", CV_WINDOW_NORMAL);
+    setWindowProperty("bee view", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
+
     // display remapped camera output on loop until user presses escape
     for (bool do_run = true; do_run;) {
         if (!eye.get_image(imorig)) {
@@ -49,7 +53,7 @@ void run_eye_config(bool calib_enabled) {
         eye.get_eye_view(view, imorig);
 
         // show image
-        imshow("unwrapped image", view);
+        imshow("bee view", view);
 
         if (do_calib) { // then show calibration screen
             // draw calibration cross at what we've chose as the center
