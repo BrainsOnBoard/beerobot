@@ -30,7 +30,7 @@ class BeeEye {
 public:
     CamParams params;
 
-    BeeEye();
+    BeeEye(int videodev);
 
     bool get_image(Mat &imorig);
     void get_eye_view(Mat &view, Mat &imunwrap);

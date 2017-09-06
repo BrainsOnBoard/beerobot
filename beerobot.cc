@@ -27,10 +27,10 @@ int main(int argc, char** argv)
     if (argc > 1) {
         if (strcmp(argv[1], "--config") == 0) {
             cout << "Running config program" << endl;
-            run_eye_config(true);
+            run_eye_config(VIDEO_DEV, true);
             return 0;
         } else if (strcmp(argv[1], "usb") == 0) {
-            run_eye_config(false);
+            run_eye_config(VIDEO_DEV, false);
             return 0;
         }
     }
