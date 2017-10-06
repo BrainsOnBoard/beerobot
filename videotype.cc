@@ -23,17 +23,12 @@ int get_camera_by_name(const char* name)
 
     // iterate through devices video0, video1 etc. reading the device name from sysfs
     // until the correct device is found
-    for (int i = 0;; i++) {
+    int defcam = -1;
+    for (int i = 0; i < 10; i++) {
         string vfn = "/sys/class/video4linux/video" + to_string(i) + "/name";
         ifstream file(vfn, ios::in);
         if (!file.is_open()) {
-            if (i == 0) {
-                cerr << "Error: Could not find video device " << name << " and there are no other cameras attached" << endl;
-                exit(1);
-            }
-
-            cerr << "Warning: Could not find video device " << name << ". Using default instead." << endl;
-            return 0;
+            continue;
         }
 
         file.read(cname, sizeof (cname));
@@ -43,7 +38,18 @@ int get_camera_by_name(const char* name)
         if (strcmp(name, cname) == 0) { // we've found the correct device
             return i;
         }
+        if (defcam == -1) {
+            defcam = i;
+        }
     }
+
+    if (defcam == -1) {
+        cerr << "Error: Could not find video device " << name << " and there are no other cameras attached" << endl;
+        exit(1);
+    }
+
+    cerr << "Warning: Could not find video device " << name << ". Using default instead." << endl;
+    return defcam;
 }
 
 vid_t* get_pixpro_usb()
