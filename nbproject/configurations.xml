@@ -7,10 +7,12 @@
       <itemPath>beeeye.h</itemPath>
       <itemPath>beeeyeconfig.h</itemPath>
       <itemPath>beeeyeserver.h</itemPath>
+      <itemPath>beeeyeviewer.h</itemPath>
       <itemPath>camparams.h</itemPath>
       <itemPath>gigerdatacam.h</itemPath>
       <itemPath>httpclient.h</itemPath>
       <itemPath>httpserver.h</itemPath>
+      <itemPath>i2c_interface.h</itemPath>
       <itemPath>imagefile.h</itemPath>
       <itemPath>motor.h</itemPath>
       <itemPath>videotype.h</itemPath>
@@ -55,6 +57,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -85,6 +90,8 @@
       </item>
       <item path="beeeyeserver.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="beeeyeviewer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beerobot.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="camparams.h" ex="false" tool="3" flavor2="0">
@@ -100,6 +107,8 @@
       <item path="httpserver.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="httpserver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="i2c_interface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="imagefile.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -151,6 +160,8 @@
       </item>
       <item path="beeeyeserver.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="beeeyeviewer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beerobot.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="camparams.h" ex="false" tool="3" flavor2="0">
@@ -166,6 +177,8 @@
       <item path="httpserver.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="httpserver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="i2c_interface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="imagefile.h" ex="false" tool="3" flavor2="0">
       </item>
