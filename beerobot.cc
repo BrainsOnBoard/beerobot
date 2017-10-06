@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 {
     bool controllerflag = false;
     bool controller = true;
-    bool run_viewer = false;
+    char* viewer_ip = NULL;
     if (argc > 1) {
         vid_t* vid = NULL;
         bool config = false;
@@ -66,11 +66,11 @@ int main(int argc, char** argv)
             } else if (strcmp(argv[i], "wifi") == 0) {
                 vid = get_pixpro_wifi();
             } else if (strcmp(argv[i], "viewer") == 0) {
-                if (argc < 3) {
+                if (argc < i + 2) {
                     showusage();
                     return 1;
                 } else {
-                    run_viewer = true;
+                    viewer_ip = argv[++i];
                 }
             } else if (strcmp(argv[i], "--controller") == 0) {
                 if (controllerflag) {
@@ -93,8 +93,8 @@ int main(int argc, char** argv)
                 return 1;
             }
         }
-        if (run_viewer) {
-            HttpClient client(argv[2], 1234);
+        if (viewer_ip) {
+            HttpClient client(viewer_ip, 1234);
             if (controllerflag && controller) {
                 startcontroller(&client);
             }
