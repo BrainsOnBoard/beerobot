@@ -12,7 +12,8 @@
 
 using namespace std;
 
-HttpServer::HttpServer(int port) {
+HttpServer::HttpServer(int port)
+{
     struct sockaddr_in serv_addr;
     int on = 1;
 
@@ -22,7 +23,7 @@ HttpServer::HttpServer(int port) {
     if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof (on)) < 0) {
         goto error;
     }
-    
+
     memset(&serv_addr, '0', sizeof (serv_addr));
 
     serv_addr.sin_family = AF_INET;
@@ -37,6 +38,10 @@ HttpServer::HttpServer(int port) {
     }
     cout << "Listening on port " << port << endl;
 
+    for (int i = 0; i < MAX_THREADS; i++) {
+        threads[i].server = this;
+    }
+
     return;
 
 error:
@@ -44,7 +49,8 @@ error:
     exit(1);
 }
 
-HttpServer::~HttpServer() {
+HttpServer::~HttpServer()
+{
     cout << "Server shutting down" << endl;
 
     if (running) {
@@ -57,59 +63,100 @@ HttpServer::~HttpServer() {
     }
 }
 
-size_t indexof(const char* str, char c) {
+size_t indexof(const char* str, char c)
+{
     size_t i = 0;
     for (; str[i] && str[i] != c; i++);
     return str[i] ? i : -1;
 }
 
-void HttpServer::serve(bool (*handle_request)(int, char*), void (*kill_request)()) {
+void HttpServer::serve(bool (*handle_request)(int, char*), void (*kill_request)())
+{
     running = true;
     this->kill_request = kill_request;
+    this->handle_request = handle_request;
 
-    char buff[1025];
     int connfd = -1;
+    connthread* cthread;
     while (running) {
         connfd = accept(listenfd, (struct sockaddr*) NULL, NULL);
         cout << "Accepting connection " << connfd << endl;
 
-        int len;
-        while (running) {
-            while (running && (len = read(connfd, buff, sizeof (buff) - 1)) == 0) {
-                usleep(250000);
-            }
-            if (!running) {
-                break;
-            }
-            if (len == -1) {
-                cerr << "Error while reading" << endl;
-                break;
-            }
-            buff[len] = 0;
+        cthread = NULL;
 
-            size_t sp = indexof(buff, ' ');
-            if (sp == -1 || strncmp(buff, "GET", sp)) {
-                cerr << "Error: Bad message" << endl;
-                continue;
+        bool threadwarn = false;
+        for (;;) {
+            for (int i = 0; i < MAX_THREADS; i++) {
+                if (!threads[i].isrunning) {
+                    cthread = &threads[i];
+                    break;
+                }
             }
 
-            char* src = &buff[sp + 1];
-            size_t sp2 = indexof(src, ' ');
-            if (sp2 == -1) {
-                cerr << "Error: Bad message" << endl;
-                continue;
-            }
-            char path[sp2 + 1];
-            strncpy(path, src, sp2);
-            path[sp2] = 0;
-
-            if (!running || (handle_request && handle_request(connfd, path))) {
+            if (cthread) {
                 break;
             }
+
+            if (!threadwarn) {
+                cout << "All threads are busy" << endl;
+                threadwarn = true;
+            }
+
+            // all threads busy: sleep
+            usleep(500000);
         }
+
+        cthread->isrunning = true;
+        cthread->connfd = connfd;
+        pthread_create((pthread_t*) cthread, NULL, run_thread, cthread);
     }
-    
+
     cout << "Stopping listening" << endl;
     close(connfd);
     close(listenfd);
+}
+
+void* HttpServer::run_thread(void* ptr)
+{
+    connthread* cthread = (connthread*) ptr;
+    char buff[1025];
+
+    int len;
+    while (cthread->server->running) {
+        while (cthread->server->running && (len = read(cthread->connfd, buff, sizeof (buff) - 1)) == 0) {
+            usleep(250000);
+        }
+        if (!cthread->server->running) {
+            break;
+        }
+        if (len == -1) {
+            cerr << "Error while reading" << endl;
+            break;
+        }
+        buff[len] = 0;
+
+        size_t sp = indexof(buff, ' ');
+        if (sp == -1 || strncmp(buff, "GET", sp)) {
+            cerr << "Error: Bad message" << endl;
+            continue;
+        }
+
+        char* src = &buff[sp + 1];
+        size_t sp2 = indexof(src, ' ');
+        if (sp2 == -1) {
+            cerr << "Error: Bad message" << endl;
+            continue;
+        }
+        char path[sp2 + 1];
+        strncpy(path, src, sp2);
+        path[sp2] = 0;
+
+        if (!cthread->server->running || (cthread->server->handle_request &&
+                cthread->server->handle_request(cthread->connfd, path))) {
+            break;
+        }
+    }
+
+    cthread->isrunning = false;
+    cout << "Thread stopping" << endl;
 }
