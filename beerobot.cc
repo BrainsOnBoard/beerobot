@@ -36,10 +36,11 @@ void showusage()
     exit(1);
 }
 
-void startcontroller(Motor* mtr)
+pthread_t* startcontroller(Motor* mtr)
 {
-    pthread_t cthread;
-    pthread_create(&cthread, NULL, &run_controller, mtr);
+    pthread_t* cthread = new pthread_t;
+    pthread_create(cthread, NULL, &run_controller, mtr);
+    return cthread;
 }
 
 int main(int argc, char** argv)
@@ -94,7 +95,8 @@ int main(int argc, char** argv)
             }
         }
         if (viewer_ip) {
-            HttpClient client(viewer_ip, 1234);
+            controller = controllerflag && controller;
+            HttpClient client(viewer_ip, 1234, controller);
             if (controllerflag && controller) {
                 startcontroller(&client);
             }

@@ -15,7 +15,7 @@
 
 using namespace std;
 
-HttpClient::HttpClient(const std::string &address, int port) : m_Socket(-1), m_HttpHeaderRead(false)
+HttpClient::HttpClient(const std::string &address, int port, bool connect_motor) : m_Socket(-1), m_HttpHeaderRead(false)
 {
     // Create socket
     m_Socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -37,6 +37,20 @@ HttpClient::HttpClient(const std::string &address, int port) : m_Socket(-1), m_H
     }
 
     printf("Connected\n");
+
+    if (connect_motor) {
+        m_moveSocket = socket(AF_INET, SOCK_STREAM, 0);
+        if (m_Socket < 0) {
+            throw std::runtime_error("Cannot open socket");
+        }
+
+        // Connect socket
+        if (connect(m_moveSocket, reinterpret_cast<sockaddr*> (&destAddress), sizeof (destAddress)) < 0) {
+            throw std::runtime_error("Cannot connect socket to " + address + ":" + std::to_string(port));
+        }
+
+        printf("Connected to motor socket\n");
+    }
 
     // Make get request
     const char *getRequest = "GET /stream.mjpg HTTP /1.1\r\n";
@@ -171,7 +185,7 @@ void HttpClient::tank(float left, float right)
 
     // Make get request
     const string getRequest = "GET /move?l=" + to_string(left) + "&r=" + to_string(right) + " HTTP/1.1\r\n";
-    if (write(m_Socket, getRequest.c_str(), getRequest.length()) < 0) {
+    if (write(m_moveSocket, getRequest.c_str(), getRequest.length()) < 0) {
         throw std::runtime_error("Cannot make GET request");
     }
 }
