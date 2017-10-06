@@ -89,6 +89,7 @@ void HttpServer::serve(bool (*handle_request)(int, char*), void (*kill_request)(
             for (int i = 0; i < MAX_THREADS; i++) {
                 if (!threads[i].isrunning) {
                     cthread = &threads[i];
+                    cout << "Handling request on thread " << i << endl;
                     break;
                 }
             }
