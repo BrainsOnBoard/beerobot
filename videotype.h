@@ -18,7 +18,7 @@ struct vid_t {
 };
 
 /* get the number for a camera with a given name (-1 if not found) */
-int get_camera_by_name(const char* name);
+int get_camera_by_name(const string name);
 
 // different video devices
 vid_t* get_pixpro_usb();

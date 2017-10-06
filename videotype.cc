@@ -17,7 +17,7 @@
 using namespace std;
 
 /* get the number for a camera with a given name (-1 if not found) */
-int get_camera_by_name(const char* name)
+int get_camera_by_name(const string name)
 {
     char cname[4096];
 
@@ -35,7 +35,7 @@ int get_camera_by_name(const char* name)
         cname[file.gcount() - 1] = 0; // delete the last char, which is always newline
         file.close();
 
-        if (strcmp(name, cname) == 0) { // we've found the correct device
+        if (string(cname).compare(0, name.length(), name) == 0) { // we've found the correct device
             return i;
         }
         if (defcam == -1) {
