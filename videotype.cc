@@ -27,7 +27,12 @@ int get_camera_by_name(const char* name)
         string vfn = "/sys/class/video4linux/video" + to_string(i) + "/name";
         ifstream file(vfn, ios::in);
         if (!file.is_open()) {
-            cout << "Warning: Could not find video device " << name << ". Using default instead." << endl;
+            if (i == 0) {
+                cerr << "Error: Could not find video device " << name << " and there are no other cameras attached" << endl;
+                exit(1);
+            }
+
+            cerr << "Warning: Could not find video device " << name << ". Using default instead." << endl;
             return 0;
         }
 
