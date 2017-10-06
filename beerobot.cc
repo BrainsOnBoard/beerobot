@@ -108,35 +108,17 @@ int main(int argc, char** argv)
         }
     }
 
-    thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen
-
+    Motor* mtr = NULL;
 #ifdef ENABLE_CONTROLLER
-    /*if (!controllerflag || controller) {
-        thread tcontroller(run_controller); // thread for handling controller button presses
-
-        // camera thread ends when user quits, so we must now stop controller thread
-        do_run_controller = false;
-        tcontroller.join(); // wait for thread to finish
-    } else {
-        cout << "Use of controller is disabled" << endl;
-    }*/
-    controller = !controllerflag || controller;
-#else
-    controller = false;
-#endif
-
-#ifdef ENABLE_CONTROLLER
-    if (controller) {
+    if (!controllerflag || controller) {
         // connect to robot
 #if defined(USE_SURVEYOR)
-        MotorSurveyor mtr("192.168.1.1", 2000);
+        mtr = new MotorSurveyor("192.168.1.1", 2000);
+        startcontroller(mtr);
 #elif defined(USE_ARDUINO)
-        MotorI2C mtr;
-#else
-        Motor mtr;
+        mtr = new MotorI2C();
+        startcontroller(mtr);
 #endif
-
-        startcontroller(&mtr);
     } else {
 #endif
         cout << "Use of controller is disabled" << endl;
@@ -144,8 +126,12 @@ int main(int argc, char** argv)
     }
 #endif
 
+    // start thread for displaying camera output on screen
+    pthread_t tserver;
+    pthread_create(&tserver, NULL, BeeEyeServer::run_server, mtr);
+
     // wait for the server thread to finish
-    tserver.join();
+    pthread_join(tserver, NULL);
 
     do_run_controller = false;
 

@@ -13,8 +13,9 @@ using namespace cv;
 bool BeeEyeServer::run_request;
 BeeEyeServer* BeeEyeServer::Instance;
 
-BeeEyeServer::BeeEyeServer() : HttpServer(LISTEN_PORT), eye(get_pixpro_usb())
+BeeEyeServer::BeeEyeServer(Motor* mtr) : HttpServer(LISTEN_PORT), eye(get_pixpro_usb())
 {
+    this->mtr = mtr;
 }
 
 bool getfloat(const string str, float &f)
@@ -135,7 +136,12 @@ bool BeeEyeServer::handle_request(int connfd, char* path)
             closeconn = !getfloat(spath.substr(eq), move[param]);
         }
         if (!closeconn) {
-            cout << "MOVE " << move[0] << ", " << move[1] << endl;
+            if (mtr) {
+                mtr->tank(move[0], move[1]);
+            } else {
+                cout << "Motor not connected" << endl;
+                cout << "MOVE " << move[0] << ", " << move[1] << endl;
+            }
         }
 
         const char* msg = "HTTP/1.1 200 OK\r\n"
@@ -159,10 +165,10 @@ close:
     return false;
 }
 
-void BeeEyeServer::run_server()
+void* BeeEyeServer::run_server(void* mtr)
 {
     BeeEyeServer::run_request = true;
-    BeeEyeServer::Instance = new BeeEyeServer();
+    BeeEyeServer::Instance = new BeeEyeServer((Motor*) mtr);
     BeeEyeServer::Instance->run();
 }
 
