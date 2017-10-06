@@ -168,4 +168,10 @@ bool HttpClient::get_image(cv::Mat &imorig)
 void HttpClient::tank(float left, float right)
 {
     cout << "HTTP: left: " << left << ", right: " << right << endl;
+
+    // Make get request
+    const string getRequest = "GET /move?l=" + to_string(left) + "&r=" + to_string(right) + " HTTP/1.1\r\n";
+    if (write(m_Socket, getRequest.c_str(), getRequest.length()) < 0) {
+        throw std::runtime_error("Cannot make GET request");
+    }
 }
