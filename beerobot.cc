@@ -46,7 +46,7 @@ pthread_t* startcontroller(Motor* mtr)
 int main(int argc, char** argv)
 {
     bool controllerflag = false;
-    bool controller = true;
+    bool controller = false;
     char* viewer_ip = NULL;
     if (argc > 1) {
         vid_t* vid = NULL;
@@ -108,23 +108,23 @@ int main(int argc, char** argv)
         }
     }
 
-    Motor* mtr = NULL;
 #ifdef ENABLE_CONTROLLER
-    if (!controllerflag || controller) {
-        // connect to robot
+    controller = !controllerflag || controller;
+#endif
+
+    Motor* mtr = NULL;
 #if defined(USE_SURVEYOR)
-        mtr = new MotorSurveyor("192.168.1.1", 2000);
+    mtr = new MotorSurveyor("192.168.1.1", 2000);
+    if (controller)
         startcontroller(mtr);
 #elif defined(USE_ARDUINO)
-        mtr = new MotorI2C();
+    mtr = new MotorI2C();
+    if (controller)
         startcontroller(mtr);
 #endif
-    } else {
-#endif
+
+    if (!controller)
         cout << "Use of controller is disabled" << endl;
-#ifdef ENABLE_CONTROLLER
-    }
-#endif
 
     // start thread for displaying camera output on screen
     pthread_t tserver;
