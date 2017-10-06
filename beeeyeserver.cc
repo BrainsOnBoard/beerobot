@@ -16,6 +16,20 @@ BeeEyeServer::BeeEyeServer() : HttpServer(LISTEN_PORT), eye(get_pixpro_usb())
 {
 }
 
+bool getfloat(const string str, float &f)
+{
+    bool ret = false;
+    try {
+        f = stof(str, NULL);
+        ret = f >= -1.0 && f <= 1.0;
+    } catch (const std::invalid_argument& ia) {
+    }
+    if (!ret) {
+        cerr << "Bad value: " << str << endl;
+    }
+    return ret;
+}
+
 bool BeeEyeServer::handle_request(int connfd, char* path)
 {
     bool closeconn = false;
@@ -88,6 +102,45 @@ bool BeeEyeServer::handle_request(int connfd, char* path)
                 break;
             }
         }
+    } else if (string(path).compare(0, 6, "/move?") == 0) {
+        string spath = string(path);
+        float move[2];
+        int param = 3;
+        int eq;
+        for (int i = 6, start = 6; i < spath.length(); i++) {
+            if (spath[i] == '=' && i - start > 0) {
+                eq = i + 1;
+                string pname = spath.substr(start, i - start);
+                if (pname == "l") {
+                    param = 0;
+                } else if (pname == "r") {
+                    param = 1;
+                } else {
+                    cout << "Bad URL parameter: " << pname << endl;
+                    param = 2;
+                }
+            } else if (spath[i] == '&') {
+                if (param < 2) {
+                    if (!getfloat(spath.substr(eq, i - eq), move[param])) {
+                        closeconn = true;
+                        break;
+                    }
+                }
+                start = i + 1;
+                param = 3;
+            }
+        }
+        if (!closeconn && param < 2) {
+            closeconn = !getfloat(spath.substr(eq), move[param]);
+        }
+        if (!closeconn) {
+            cout << "MOVE " << move[0] << ", " << move[1] << endl;
+        }
+
+        const char* msg = "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/plain\r\n"
+                "Content-Length: 0\r\n\r\n";
+        send(connfd, msg, strlen(msg), MSG_NOSIGNAL);
     } else {
         const char* msg = "HTTP/1.1 404 Not Found\r\n\r\n";
         send(connfd, msg, strlen(msg), MSG_NOSIGNAL);
