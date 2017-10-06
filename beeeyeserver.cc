@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <signal.h>
+#include <thread>
 
 #include "beeeyeserver.h"
 
@@ -12,8 +13,9 @@ using namespace cv;
 bool BeeEyeServer::run_request;
 BeeEyeServer* BeeEyeServer::Instance;
 
-BeeEyeServer::BeeEyeServer() : HttpServer(LISTEN_PORT), eye(get_pixpro_usb())
+BeeEyeServer::BeeEyeServer(bool start_controller) : HttpServer(LISTEN_PORT), eye(get_pixpro_usb())
 {
+    this->start_controller = start_controller;
 }
 
 bool getfloat(const string str, float &f)
@@ -161,7 +163,7 @@ close:
 void BeeEyeServer::run_server()
 {
     BeeEyeServer::run_request = true;
-    BeeEyeServer::Instance = new BeeEyeServer();
+    BeeEyeServer::Instance = new BeeEyeServer(false);
     BeeEyeServer::Instance->run();
 }
 

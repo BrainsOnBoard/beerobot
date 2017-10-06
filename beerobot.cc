@@ -16,6 +16,10 @@
 //#define USE_SURVEYOR
 #define USE_ARDUINO
 
+#include "motor.h"
+#include "motor_surveyor.h"
+#include "motor_i2c.h"
+
 #include "imagefile.h"
 #include "beeeyeserver.h"
 #include "beeeyeconfig.h"
@@ -32,10 +36,17 @@ void showusage()
     exit(1);
 }
 
+void startcontroller(Motor* mtr)
+{
+    pthread_t cthread;
+    pthread_create(&cthread, NULL, &run_controller, mtr);
+}
+
 int main(int argc, char** argv)
 {
     bool controllerflag = false;
     bool controller = true;
+    bool run_viewer = false;
     if (argc > 1) {
         vid_t* vid = NULL;
         bool config = false;
@@ -59,8 +70,7 @@ int main(int argc, char** argv)
                     showusage();
                     return 1;
                 } else {
-                    run_eye_viewer(argv[2], 1234);
-                    return 0;
+                    run_viewer = true;
                 }
             } else if (strcmp(argv[i], "--controller") == 0) {
                 if (controllerflag) {
@@ -83,7 +93,14 @@ int main(int argc, char** argv)
                 return 1;
             }
         }
-        if (vid) {
+        if (run_viewer) {
+            HttpClient client(argv[2], 1234);
+            if (controllerflag && controller) {
+                startcontroller(&client);
+            }
+            run_eye_viewer(client);
+            return 0;
+        } else if (vid) {
             run_eye_config(vid, config);
             return 0;
         }
@@ -92,7 +109,7 @@ int main(int argc, char** argv)
     thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen
 
 #ifdef ENABLE_CONTROLLER
-    if (!controllerflag || controller) {
+    /*if (!controllerflag || controller) {
         thread tcontroller(run_controller); // thread for handling controller button presses
 
         // camera thread ends when user quits, so we must now stop controller thread
@@ -100,11 +117,35 @@ int main(int argc, char** argv)
         tcontroller.join(); // wait for thread to finish
     } else {
         cout << "Use of controller is disabled" << endl;
+    }*/
+    controller = !controllerflag || controller;
+#else
+    controller = false;
+#endif
+
+#ifdef ENABLE_CONTROLLER
+    if (controller) {
+        // connect to robot
+#if defined(USE_SURVEYOR)
+        MotorSurveyor mtr("192.168.1.1", 2000);
+#elif defined(USE_ARDUINO)
+        MotorI2C mtr;
+#else
+        Motor mtr;
+#endif
+
+        startcontroller(&mtr);
+    } else {
+#endif
+        cout << "Use of controller is disabled" << endl;
+#ifdef ENABLE_CONTROLLER
     }
 #endif
 
     // wait for the server thread to finish
     tserver.join();
+
+    do_run_controller = false;
 
     return 0;
 }

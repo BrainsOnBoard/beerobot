@@ -13,16 +13,19 @@ public:
     static void run_server();
     static void stop_server();
 
-    BeeEyeServer();
+    BeeEyeServer(bool start_controller);
     BeeEyeServer(const BeeEyeServer& orig);
     //virtual ~BeeEyeServer();
     void run();
     bool handle_request(int connfd, char* path);
 private:
     BeeEye eye;
+    bool start_controller;
 
     static bool run_request;
     static bool handle_request_server(int connfd, char* path);
     static void kill_request_server();
 };
+
+bool getfloat(const string str, float &f);
 #endif

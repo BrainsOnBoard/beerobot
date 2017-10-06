@@ -15,8 +15,8 @@
       <itemPath>i2c_interface.h</itemPath>
       <itemPath>imagefile.h</itemPath>
       <itemPath>motor.h</itemPath>
-      <itemPath>motor_dummy.h</itemPath>
       <itemPath>motor_i2c.h</itemPath>
+      <itemPath>motor_surveyor.h</itemPath>
       <itemPath>videotype.h</itemPath>
       <itemPath>xboxrobot.h</itemPath>
     </logicalFolder>
@@ -118,9 +118,9 @@
       </item>
       <item path="motor.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="motor_dummy.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="motor_i2c.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="motor_surveyor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="videotype.cc" ex="false" tool="1" flavor2="0">
       </item>
@@ -192,9 +192,9 @@
       </item>
       <item path="motor.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="motor_dummy.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="motor_i2c.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="motor_surveyor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="videotype.cc" ex="false" tool="1" flavor2="0">
       </item>

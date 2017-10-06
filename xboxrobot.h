@@ -14,20 +14,7 @@
 #include <fcntl.h>
 #include <linux/joystick.h>
 
-// if we're not using the robot then don't actually connect
-#ifndef USE_ROBOT
-#define DUMMY_DRIVE
-#endif
-
 #define DRIVE_TRACE // additionally output drive commands to console
-
-#if defined(USE_SURVEYOR)
-    #include "motor.h" // for connecting to and sending driving commands to robot
-#elif defined(USE_ARDUINO)
-    #include "motor_i2c.h" // for connecting to and sending driving commands to robot
-#else
-    #include "motor_dummy.h"
-#endif
 
 #define JS_DEV "/dev/input/js0" // which joystick device to use
 //#define JS_TRACE // displays trace of joystick input in console
@@ -47,24 +34,17 @@ bool do_run_controller = true; // flag to exit controller loop
 /*
  * Listens to controller input and sends appropriate drive command to robot.
  */
-void run_controller() {
+void* run_controller(void *ptr) {
+
+    Motor *mtr = (Motor*) ptr;
 
     // open joystick device
     int fd = open(JS_DEV, O_RDONLY);
     if (fd < 0) {
         cout << "Could not find joystick (" << fd << ")" << endl;
-        return;
+        return NULL;
     }
 
-    // connect to robot
-#if defined(USE_SURVEYOR)
-    Motor mtr("192.168.1.1", 2000);
-#elif defined(USE_ARDUINO)
-    MotorI2C mtr;
-#else
-    MotorDummy mtr
-#endif
-    
     js_event e; // struct for storing joystick events
 
     // flag is set to false when user tries to quit program
@@ -89,26 +69,26 @@ void run_controller() {
                 switch (e.number) {
                     case JS_BTN_A: // pressed A
                         if (e.value)
-                            mtr.tank(SPEED, SPEED);
+                            mtr->tank(SPEED, SPEED);
                         else
-                            mtr.tank(0, 0);
+                            mtr->tank(0, 0);
                         break;
                     case JS_BTN_B: // pressed B
                         if (e.value)
-                            mtr.tank(-SPEED, -SPEED);
+                            mtr->tank(-SPEED, -SPEED);
                         else
-                            mtr.tank(0, 0);
+                            mtr->tank(0, 0);
                         break;
                 }
                 break;
             case JS_EVENT_AXIS:
                 if (e.number == JS_PAD_LR) {
                     if (e.value < 0) // pressed left
-                        mtr.tank(-TURNSPEED, TURNSPEED);
+                        mtr->tank(-TURNSPEED, TURNSPEED);
                     else if (e.value > 0) // pressed right
-                        mtr.tank(TURNSPEED, -TURNSPEED);
+                        mtr->tank(TURNSPEED, -TURNSPEED);
                     else
-                        mtr.tank(0, 0);
+                        mtr->tank(0, 0);
                 }
                 break;
         }
