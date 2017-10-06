@@ -109,7 +109,7 @@ int main(int argc, char** argv)
     }
 
 #ifdef ENABLE_CONTROLLER
-    controller = !controllerflag || controller;
+    controller = controllerflag && controller;
 #endif
 
     Motor* mtr = NULL;
