@@ -28,12 +28,14 @@ using namespace std;
 
 void showusage()
 {
-    cout << "Usage: beerobot [--config] [usb|wifi|viewer [ip]]" << endl;
+    cout << "Usage: beerobot [--config|--controller|--no-controller] [usb|wifi|viewer [ip]]" << endl;
     exit(1);
 }
 
 int main(int argc, char** argv)
 {
+    bool controllerflag = false;
+    bool controller = true;
     if (argc > 1) {
         vid_t* vid = NULL;
         bool config = false;
@@ -41,45 +43,68 @@ int main(int argc, char** argv)
             if (strcmp(argv[i], "--config") == 0) {
                 if (config) {
                     showusage();
+                    return 1;
                 }
 
                 config = true;
             } else if (vid) {
                 showusage();
-            } else if (strcmp(argv[1], "usb") == 0) {
+                return 1;
+            } else if (strcmp(argv[i], "usb") == 0) {
                 vid = get_pixpro_usb();
-            } else if (strcmp(argv[1], "wifi") == 0) {
+            } else if (strcmp(argv[i], "wifi") == 0) {
                 vid = get_pixpro_wifi();
-            } else if (strcmp(argv[1], "viewer") == 0) {
+            } else if (strcmp(argv[i], "viewer") == 0) {
                 if (argc < 3) {
                     showusage();
+                    return 1;
                 } else {
                     run_eye_viewer(argv[2], 1234);
+                    return 0;
+                }
+            } else if (strcmp(argv[i], "--controller") == 0) {
+                if (controllerflag) {
+                    showusage();
+                    return 1;
+                } else {
+                    controllerflag = true;
+                    controller = true;
+                }
+            } else if (strcmp(argv[i], "--no-controller") == 0) {
+                if (controllerflag) {
+                    showusage();
+                    return 1;
+                } else {
+                    controllerflag = true;
+                    controller = false;
                 }
             } else if (config || !process_file(argv[i])) {
                 showusage();
+                return 1;
             }
         }
         if (vid) {
             run_eye_config(vid, config);
+            return 0;
         }
-        return 0;
     }
 
     thread tserver(BeeEyeServer::run_server); // thread for displaying camera output on screen
 
 #ifdef ENABLE_CONTROLLER
-    thread tcontroller(run_controller); // thread for handling controller button presses
+    if (!controllerflag || controller) {
+        thread tcontroller(run_controller); // thread for handling controller button presses
+
+        // camera thread ends when user quits, so we must now stop controller thread
+        do_run_controller = false;
+        tcontroller.join(); // wait for thread to finish
+    } else {
+        cout << "Use of controller is disabled" << endl;
+    }
 #endif
 
     // wait for the server thread to finish
     tserver.join();
-
-#ifdef ENABLE_CONTROLLER
-    // camera thread ends when user quits, so we must now stop controller thread
-    do_run_controller = false;
-    tcontroller.join(); // wait for thread to finish
-#endif
 
     return 0;
 }
