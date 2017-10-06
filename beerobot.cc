@@ -28,7 +28,7 @@ using namespace std;
 
 void showusage()
 {
-    cout << "Usage: beerobot [--config] [usb|wifi]" << endl;
+    cout << "Usage: beerobot [--config] [usb|wifi|viewer [ip]]" << endl;
     exit(1);
 }
 
@@ -50,8 +50,12 @@ int main(int argc, char** argv)
                 vid = get_pixpro_usb();
             } else if (strcmp(argv[1], "wifi") == 0) {
                 vid = get_pixpro_wifi();
-            } else if (strcmp(argv[1], "--viewer") == 0) {
-                run_eye_viewer(argv[2], 1234);
+            } else if (strcmp(argv[1], "viewer") == 0) {
+                if (argc < 3) {
+                    showusage();
+                } else {
+                    run_eye_viewer(argv[2], 1234);
+                }
             } else if (config || !process_file(argv[i])) {
                 showusage();
             }
