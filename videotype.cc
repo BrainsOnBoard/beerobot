@@ -38,9 +38,8 @@ int get_camera_by_name(const string name)
         if (string(cname).compare(0, name.length(), name) == 0) { // we've found the correct device
             return i;
         }
-        if (defcam == -1) {
-            defcam = i;
-        }
+
+        defcam = i;
     }
 
     if (defcam == -1) {
