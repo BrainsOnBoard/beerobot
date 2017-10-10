@@ -24,6 +24,8 @@ public:
     //----------------------------------------------------------------------------
 
     virtual void tank(float left, float right) {
+        std::cout << "DRIVE " << left << ", " << right << std::endl;
+
         // Convert standard (-1,1) values to bytes in order to send to I2C slave
         uint8_t buffer[2] = {floatToI2C(right), floatToI2C(left)};
 

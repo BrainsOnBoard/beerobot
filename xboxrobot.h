@@ -30,11 +30,33 @@
 using namespace std;
 
 bool do_run_controller = true; // flag to exit controller loop
+enum DriveState {
+    dstop = 0,
+    dforward,
+    dbackward,
+    dleft,
+    dright
+};
+DriveState drivecur = dstop;
+DriveState drivelast = dstop;
+
+void pop_drivestate(DriveState olddrive) {
+    if (drivecur == olddrive || (olddrive == dleft && drivecur == dright)) {
+        drivecur = drivelast;
+    }
+    drivelast = dstop;
+}
+
+void push_drivestate(DriveState newdrive) {
+    drivelast = drivecur;
+    drivecur = newdrive;
+}
 
 /*
  * Listens to controller input and sends appropriate drive command to robot.
  */
 void* run_controller(void *ptr) {
+    cout << "Running controller service" << endl;
 
     Motor *mtr = (Motor*) ptr;
 
@@ -69,28 +91,49 @@ void* run_controller(void *ptr) {
                 switch (e.number) {
                     case JS_BTN_A: // pressed A
                         if (e.value)
-                            mtr->tank(SPEED, SPEED);
+                            push_drivestate(dforward);
                         else
-                            mtr->tank(0, 0);
+                            pop_drivestate(dforward);
                         break;
                     case JS_BTN_B: // pressed B
                         if (e.value)
-                            mtr->tank(-SPEED, -SPEED);
+                            push_drivestate(dbackward);
                         else
-                            mtr->tank(0, 0);
+                            pop_drivestate(dbackward);
                         break;
                 }
                 break;
             case JS_EVENT_AXIS:
                 if (e.number == JS_PAD_LR) {
-                    if (e.value < 0) // pressed left
-                        mtr->tank(-TURNSPEED, TURNSPEED);
-                    else if (e.value > 0) // pressed right
-                        mtr->tank(TURNSPEED, -TURNSPEED);
+                    if (e.value < 0) // pressed dleft
+                        //mtr->tank(-TURNSPEED, TURNSPEED);
+                        push_drivestate(dleft);
+                    else if (e.value > 0) // pressed dright
+                        push_drivestate(dright);
                     else
-                        mtr->tank(0, 0);
+                        // actually handles left and right scenarios
+                        pop_drivestate(dleft);
                 }
                 break;
+            default:
+                continue;
+        }
+
+        switch (drivecur) {
+            case dforward:
+                mtr->tank(SPEED, SPEED);
+                break;
+            case dbackward:
+                mtr->tank(-SPEED, -SPEED);
+                break;
+            case dleft:
+                mtr->tank(-TURNSPEED, TURNSPEED);
+                break;
+            case dright:
+                mtr->tank(TURNSPEED, -TURNSPEED);
+                break;
+            default:
+                mtr->tank(0, 0);
         }
     }
 
