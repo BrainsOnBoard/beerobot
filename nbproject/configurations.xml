@@ -23,9 +23,9 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
-      <itemPath>beerobot_usb.ini</itemPath>
-      <itemPath>beerobot_webcam.ini</itemPath>
-      <itemPath>beerobot_wifi.ini</itemPath>
+      <itemPath>beerobot_pixpro_usb.ini</itemPath>
+      <itemPath>beerobot_pixpro_wifi.ini</itemPath>
+      <itemPath>beerobot_webcam_usb.ini</itemPath>
       <itemPath>index.html</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -88,11 +88,11 @@
       </item>
       <item path="beerobot.cc" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="beerobot_usb.ini" ex="false" tool="3" flavor2="0">
+      <item path="beerobot_pixpro_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="beerobot_webcam.ini" ex="false" tool="3" flavor2="0">
+      <item path="beerobot_pixpro_wifi.ini" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="beerobot_wifi.ini" ex="false" tool="3" flavor2="0">
+      <item path="beerobot_webcam_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
       <item path="camparams.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -168,11 +168,11 @@
       </item>
       <item path="beerobot.cc" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="beerobot_usb.ini" ex="false" tool="3" flavor2="0">
+      <item path="beerobot_pixpro_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="beerobot_webcam.ini" ex="false" tool="3" flavor2="0">
+      <item path="beerobot_pixpro_wifi.ini" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="beerobot_wifi.ini" ex="false" tool="3" flavor2="0">
+      <item path="beerobot_webcam_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
       <item path="camparams.h" ex="false" tool="3" flavor2="0">
       </item>
