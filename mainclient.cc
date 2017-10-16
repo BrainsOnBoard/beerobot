@@ -40,7 +40,14 @@ MainClient::~MainClient()
 
 void MainClient::tank(float left, float right)
 {
+    // don't send a command if it's the same as the last one
+    if (left == oldleft && right == oldright)
+        return;
+
     int len = sprintf(buff, "TNK %g %g\n", left, right);
     if (!send(connfd, buff, len))
         throw new runtime_error(string("Could not send steering command: ") + strerror(errno));
+
+    oldleft = left;
+    oldright = right;
 }
