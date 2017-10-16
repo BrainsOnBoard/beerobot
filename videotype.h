@@ -21,7 +21,7 @@ struct vid_t {
 int get_camera_by_name(const string name);
 
 // different video devices
-vid_t* get_pixpro_usb();
+vid_t* get_usb();
 vid_t* get_pixpro_wifi();
 
 #endif /* VIDEOTYPE_H */

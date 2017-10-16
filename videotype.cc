@@ -61,7 +61,7 @@ int get_camera_by_name(const string name0, const string name1, int &selected)
     return defcam;
 }
 
-vid_t* get_pixpro_usb()
+vid_t* get_usb()
 {
     vid_t* vid = new vid_t;
     int sel;

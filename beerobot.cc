@@ -65,7 +65,7 @@ int main(int argc, char** argv)
                 showusage();
                 return 1;
             } else if (strcmp(argv[i], "usb") == 0) {
-                vid = get_pixpro_usb();
+                vid = get_usb();
             } else if (strcmp(argv[i], "wifi") == 0) {
                 vid = get_pixpro_wifi();
             } else if (strcmp(argv[i], "viewer") == 0) {
