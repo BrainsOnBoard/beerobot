@@ -1,20 +1,15 @@
-
-/*
- * File:   mainclient.h
- * Author: ad374
- *
- * Created on 13 October 2017, 17:41
- */
-
 #pragma once
 
 #include <string>
+#include "motor.h"
+#include "socketcommon.h"
 
-class MainClient {
+class MainClient : public Motor {
 public:
     MainClient(const std::string host, const int port);
     virtual ~MainClient();
-    static void run_client(MainClient *client);
+    virtual void tank(float left, float right);
 private:
-    void run();
+    int connfd = -1;
+    char buff[buffsize];
 };

@@ -42,6 +42,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/httpserver.o \
 	${OBJECTDIR}/mainclient.o \
 	${OBJECTDIR}/mainserver.o \
+	${OBJECTDIR}/socketcommon.o \
 	${OBJECTDIR}/videotype.o
 
 
@@ -105,6 +106,11 @@ ${OBJECTDIR}/mainserver.o: mainserver.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mainserver.o mainserver.cc
+
+${OBJECTDIR}/socketcommon.o: socketcommon.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/socketcommon.o socketcommon.cc
 
 ${OBJECTDIR}/videotype.o: videotype.cc
 	${MKDIR} -p ${OBJECTDIR}

@@ -1,18 +1,14 @@
-
-/*
- * File:   mainserver.h
- * Author: ad374
- *
- * Created on 13 October 2017, 17:26
- */
-
 #pragma once
+
+#include "motor.h"
 
 class MainServer {
 public:
-    MainServer(int port);
+    MainServer(int port, Motor* mtr);
     virtual ~MainServer();
-    void run();
+    static void* run_server(void* mtr);
 private:
     int listenfd;
+    Motor *mtr;
+    void run();
 };

@@ -98,18 +98,13 @@ int main(int argc, char** argv)
         }
 
         if (viewer_ip) {
-            MainClient mclient(viewer_ip, 2000);
-            thread tmclient(&MainClient::run_client, &mclient);
-            tmclient.join();
-            return 0;
-
             // code run by client (connecting to robot)
             controller = controllerflag && controller;
-            HttpClient client(viewer_ip, 1234, controller);
-            if (controllerflag && controller) {
-                startcontroller(&client);
-            }
+            MainClient mclient(viewer_ip, 2000);
+            if (controllerflag && controller)
+                startcontroller(&mclient);
 
+            HttpClient client(viewer_ip, 1234, controller);
             run_eye_viewer(client);
             return 0;
         } else if (vid) {
@@ -139,8 +134,13 @@ int main(int argc, char** argv)
     pthread_t tserver;
     pthread_create(&tserver, NULL, BeeEyeServer::run_server, mtr);
 
-    // wait for the server thread to finish
+    // begin code run by server (robot)
+    pthread_t tmserver;
+    pthread_create(&tmserver, NULL, MainServer::run_server, mtr);
+
+    // wait for the server threads to finish
     pthread_join(tserver, NULL);
+    pthread_join(tmserver, NULL);
 
     do_run_controller = false;
 

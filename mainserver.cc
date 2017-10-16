@@ -1,19 +1,13 @@
 #include "mainserver.h"
+#include "socketcommon.h"
+
 #include <iostream>
-
-// for sockets
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <string.h>
 #include <cstring>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-
 
 using namespace std;
 
-MainServer::MainServer(int port)
+MainServer::MainServer(int port, Motor *mtr) : mtr(mtr)
 {
     struct sockaddr_in serv_addr;
     int on = 1;
@@ -54,6 +48,34 @@ MainServer::~MainServer()
 void MainServer::run()
 {
     int connfd = accept(listenfd, NULL, NULL);
-    send(connfd, "HI\n", 3, MSG_NOSIGNAL);
+    if (!send(connfd, "HI\n", 3))
+        throw new runtime_error("Could not write to socket");
+
+    char buff[buffsize];
+    string sbuff;
+    int len;
+    float left, right;
+    while ((len = readline(connfd, buff)) > 0) {
+        sbuff = string(buff);
+        if (sbuff.compare(0, 4, "TNK ") != 0)
+            throw new runtime_error("Error: Unknown command received");
+
+        size_t space = sbuff.rfind(' ');
+        if (space == string::npos)
+            throw new runtime_error("Error: Bad command");
+
+        left = stof(sbuff.substr(4, space - 4));
+        right = stof(sbuff.substr(space + 1));
+        mtr->tank(left, right);
+    }
+    if (len == -1)
+        throw new runtime_error(string("Error: ") + strerror(errno));
+
     close(connfd);
+}
+
+void* MainServer::run_server(void* mtr)
+{
+    MainServer srv(2000, (Motor*) mtr);
+    srv.run();
 }

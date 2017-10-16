@@ -19,6 +19,7 @@
       <itemPath>motor.h</itemPath>
       <itemPath>motor_i2c.h</itemPath>
       <itemPath>motor_surveyor.h</itemPath>
+      <itemPath>socketcommon.h</itemPath>
       <itemPath>videotype.h</itemPath>
       <itemPath>xboxrobot.h</itemPath>
     </logicalFolder>
@@ -41,6 +42,7 @@
       <itemPath>httpserver.cc</itemPath>
       <itemPath>mainclient.cc</itemPath>
       <itemPath>mainserver.cc</itemPath>
+      <itemPath>socketcommon.cc</itemPath>
       <itemPath>videotype.cc</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -132,6 +134,10 @@
       </item>
       <item path="motor_surveyor.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="socketcommon.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="socketcommon.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="videotype.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="videotype.h" ex="false" tool="3" flavor2="0">
@@ -219,6 +225,10 @@
       <item path="motor_i2c.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="motor_surveyor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="socketcommon.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="socketcommon.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="videotype.cc" ex="false" tool="1" flavor2="0">
       </item>
