@@ -118,26 +118,21 @@ int main(int argc, char** argv)
             return 0;
         }
     }
-
-    // begin code run by server (robot)
-
-
 #ifdef ENABLE_CONTROLLER
     controller = controllerflag && controller;
 #endif
 
-    Motor* mtr = NULL;
 #if defined(USE_SURVEYOR)
-    mtr = new MotorSurveyor("192.168.1.1", 2000);
-    if (controller)
-        startcontroller(mtr);
+    Motor* mtr = new MotorSurveyor("192.168.1.1", 2000);
 #elif defined(USE_ARDUINO)
-    mtr = new MotorI2C();
-    if (controller)
-        startcontroller(mtr);
+    Motor* mtr = new MotorI2C();
+#else
+    Motor* mtr = new Motor();
 #endif
 
-    if (!controller)
+    if (controller)
+        startcontroller(mtr);
+    else
         cout << "Use of controller is disabled" << endl;
 
     // start thread for HTTP server
