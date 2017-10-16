@@ -1,6 +1,8 @@
 #include "socketcommon.h"
 #include <cstring>
 
+#define SOCKET_TRACE
+
 using namespace std;
 
 int readline(int connfd, char* buff)
@@ -15,13 +17,21 @@ int readline(int connfd, char* buff)
         throw new runtime_error("Error: Received message does not end in \\n");
 
     buff[len] = 0;
+
+#ifdef SOCKET_TRACE
     cout << "<<< " << buff << endl;
+#endif
+
     return len;
 }
 
 bool send(int connfd, const char* msg, int len)
 {
     bool ok = send(connfd, msg, len, MSG_NOSIGNAL) != -1;
+
+#ifdef SOCKET_TRACE
     cout << ">>> " << msg;
+#endif
+
     return ok;
 }
