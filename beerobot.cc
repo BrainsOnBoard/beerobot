@@ -39,11 +39,10 @@ void showusage()
     exit(1);
 }
 
-pthread_t* startcontroller(Motor* mtr)
+void startcontroller(Motor* mtr)
 {
     pthread_t* cthread = new pthread_t;
     pthread_create(cthread, NULL, &run_controller, mtr);
-    return cthread;
 }
 
 int main(int argc, char** argv)
