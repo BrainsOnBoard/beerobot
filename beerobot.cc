@@ -20,6 +20,9 @@
 #include "motor_surveyor.h"
 #include "motor_i2c.h"
 
+#include "mainserver.h"
+#include "mainclient.h"
+
 #include "imagefile.h"
 #include "beeeyeserver.h"
 #include "beeeyeconfig.h"
@@ -94,19 +97,31 @@ int main(int argc, char** argv)
                 return 1;
             }
         }
+
         if (viewer_ip) {
+            MainClient mclient(viewer_ip, 2000);
+            thread tmclient(&MainClient::run_client, &mclient);
+            tmclient.join();
+            return 0;
+
+            // code run by client (connecting to robot)
             controller = controllerflag && controller;
             HttpClient client(viewer_ip, 1234, controller);
             if (controllerflag && controller) {
                 startcontroller(&client);
             }
+
             run_eye_viewer(client);
             return 0;
         } else if (vid) {
+            // code run if just showing video locally
             run_eye_config(vid, config);
             return 0;
         }
     }
+
+    // begin code run by server (robot)
+
 
 #ifdef ENABLE_CONTROLLER
     controller = controllerflag && controller;
@@ -126,7 +141,7 @@ int main(int argc, char** argv)
     if (!controller)
         cout << "Use of controller is disabled" << endl;
 
-    // start thread for displaying camera output on screen
+    // start thread for HTTP server
     pthread_t tserver;
     pthread_create(&tserver, NULL, BeeEyeServer::run_server, mtr);
 

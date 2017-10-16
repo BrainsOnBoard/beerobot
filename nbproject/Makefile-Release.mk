@@ -40,6 +40,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/beerobot.o \
 	${OBJECTDIR}/httpclient.o \
 	${OBJECTDIR}/httpserver.o \
+	${OBJECTDIR}/mainclient.o \
+	${OBJECTDIR}/mainserver.o \
 	${OBJECTDIR}/videotype.o
 
 
@@ -93,6 +95,16 @@ ${OBJECTDIR}/httpserver.o: httpserver.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/httpserver.o httpserver.cc
+
+${OBJECTDIR}/mainclient.o: mainclient.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mainclient.o mainclient.cc
+
+${OBJECTDIR}/mainserver.o: mainserver.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mainserver.o mainserver.cc
 
 ${OBJECTDIR}/videotype.o: videotype.cc
 	${MKDIR} -p ${OBJECTDIR}
