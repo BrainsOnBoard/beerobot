@@ -1,20 +1,7 @@
-/*
- * File:   beeeye.h
- * Author: ad374
- *
- * Created on 04 September 2017, 13:33
- */
-
-#ifndef BEEEYE_H
-#define BEEEYE_H
+#pragma once
 
 #include <opencv2/opencv.hpp>
 #include "camparams.h"
-
-// Kodak PixPro over wifi
-//#define VIDEO_PIXPRO_WIFI "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg"
-//#define VID_WIDTH 1024
-//#define VID_HEIGHT 1024
 
 class BeeEye {
 public:
@@ -31,5 +18,3 @@ private:
     Mat map_x, map_y;
     Mat imorig, imunwrap, imeye;
 };
-
-#endif    /* BEEEYE_H */

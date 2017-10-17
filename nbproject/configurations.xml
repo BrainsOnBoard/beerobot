@@ -14,6 +14,8 @@
       <itemPath>httpserver.h</itemPath>
       <itemPath>i2c_interface.h</itemPath>
       <itemPath>imagefile.h</itemPath>
+      <itemPath>imagereceiver.h</itemPath>
+      <itemPath>imagesender.h</itemPath>
       <itemPath>mainclient.h</itemPath>
       <itemPath>mainserver.h</itemPath>
       <itemPath>motor.h</itemPath>
@@ -40,6 +42,8 @@
       <itemPath>gigerommatidiamodel.py</itemPath>
       <itemPath>httpclient.cc</itemPath>
       <itemPath>httpserver.cc</itemPath>
+      <itemPath>imagereceiver.cc</itemPath>
+      <itemPath>imagesender.cc</itemPath>
       <itemPath>mainclient.cc</itemPath>
       <itemPath>mainserver.cc</itemPath>
       <itemPath>socketcommon.cc</itemPath>
@@ -64,7 +68,7 @@
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
-        <compilerSet>default</compilerSet>
+        <compilerSet>GNU|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
@@ -117,6 +121,14 @@
       <item path="i2c_interface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="imagefile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imagereceiver.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="imagereceiver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imagesender.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="imagesender.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>
@@ -209,6 +221,14 @@
       <item path="i2c_interface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="imagefile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imagereceiver.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="imagereceiver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imagesender.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="imagesender.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>

@@ -40,6 +40,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/beerobot.o \
 	${OBJECTDIR}/httpclient.o \
 	${OBJECTDIR}/httpserver.o \
+	${OBJECTDIR}/imagereceiver.o \
+	${OBJECTDIR}/imagesender.o \
 	${OBJECTDIR}/mainclient.o \
 	${OBJECTDIR}/mainserver.o \
 	${OBJECTDIR}/socketcommon.o \
@@ -96,6 +98,16 @@ ${OBJECTDIR}/httpserver.o: httpserver.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/httpserver.o httpserver.cc
+
+${OBJECTDIR}/imagereceiver.o: imagereceiver.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/imagereceiver.o imagereceiver.cc
+
+${OBJECTDIR}/imagesender.o: imagesender.cc
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `pkg-config --cflags opencv`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/imagesender.o imagesender.cc
 
 ${OBJECTDIR}/mainclient.o: mainclient.cc
 	${MKDIR} -p ${OBJECTDIR}

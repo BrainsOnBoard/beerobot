@@ -9,9 +9,8 @@ MainClient::MainClient(const string host, const int port)
 {
     // Create socket
     connfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (connfd < 0) {
+    if (connfd < 0)
         throw std::runtime_error("Cannot open socket");
-    }
 
     // Create socket address structure
     sockaddr_in destAddress = {

@@ -1,8 +1,12 @@
 #pragma once
 
-#include "httpclient.h"
+#include "imagereceiver.h"
+#include <opencv2/opencv.hpp>
 
-void run_eye_viewer(HttpClient &client) {
+using namespace cv;
+
+void run_eye_viewer(ImageReceiver &recv)
+{
     Mat view;
 
     // set opencv window to display full screen
@@ -11,18 +15,15 @@ void run_eye_viewer(HttpClient &client) {
 
     // display remote camera input on loop until user presses escape
     while (true) {
-        //eye.get_eye_view(view, imorig);
-        if (!client.get_image(view)) {
-            cerr << "Error: Could not read from HTTP client" << endl;
-            exit(1);
-        }
+        recv.read(view);
+        if (view.rows == 0 && view.cols == 0)
+            continue;
 
         // show image
         imshow("bee view", view);
 
-
         // read keypress in
-        if ((waitKey(1) & 0xff) == KB_ESC) {
+        if ((waitKey(1) & 0xff) == 27) {
             break;
         }
     }

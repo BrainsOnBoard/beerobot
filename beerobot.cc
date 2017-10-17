@@ -16,6 +16,7 @@
 //#define USE_SURVEYOR
 #define USE_ARDUINO
 
+// for motor control of robot
 #include "motor.h"
 #include "motor_surveyor.h"
 #include "motor_i2c.h"
@@ -23,10 +24,11 @@
 #include "mainserver.h"
 #include "mainclient.h"
 
-#include "imagefile.h"
-#include "beeeyeserver.h"
-#include "beeeyeconfig.h"
+#include "imagereceiver.h"
 #include "beeeyeviewer.h"
+
+#include "imagefile.h"
+#include "beeeyeconfig.h"
 #include "xboxrobot.h" // for using the Xbox controller to drive the robot
 
 #define ENABLE_CONTROLLER
@@ -41,8 +43,8 @@ void showusage()
 
 void startcontroller(Motor* mtr)
 {
-    pthread_t* cthread = new pthread_t;
-    pthread_create(cthread, NULL, &run_controller, mtr);
+    pthread_t cthread;
+    pthread_create(&cthread, NULL, &run_controller, mtr);
 }
 
 int main(int argc, char** argv)
@@ -100,16 +102,17 @@ int main(int argc, char** argv)
         if (viewer_ip) {
             // code run by client (connecting to robot)
             controller = controllerflag && controller;
-            MainClient mclient(viewer_ip, 2000);
+            MainClient client(viewer_ip, 2000);
             if (controllerflag && controller)
-                startcontroller(&mclient);
+                startcontroller(&client);
 
-            HttpClient client(viewer_ip, 1234, controller);
-            run_eye_viewer(client);
+            ImageReceiver recv(5555);
+            run_eye_viewer(recv);
             return 0;
         } else if (vid) {
             // code run if just showing video locally
             run_eye_config(vid, config);
+            delete vid;
             return 0;
         }
     }
@@ -130,17 +133,7 @@ int main(int argc, char** argv)
     else
         cout << "Use of controller is disabled" << endl;
 
-    // start thread for HTTP server
-    pthread_t tserver;
-    pthread_create(&tserver, NULL, BeeEyeServer::run_server, mtr);
-
-    // begin code run by server (robot)
-    pthread_t tmserver;
-    pthread_create(&tmserver, NULL, MainServer::run_server, mtr);
-
-    // wait for the server threads to finish
-    pthread_join(tserver, NULL);
-    pthread_join(tmserver, NULL);
+    MainServer::run_server(mtr);
 
     do_run_controller = false;
 

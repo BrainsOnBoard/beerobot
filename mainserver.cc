@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string.h>
 #include <cstring>
+#include <thread>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ MainServer::MainServer(int port, Motor *mtr) : mtr(mtr)
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(port);
 
-    if (bind(listenfd, (struct sockaddr*) &serv_addr, sizeof (serv_addr))) {
+    if (bind(listenfd, (sockaddr*) & serv_addr, sizeof (serv_addr))) {
         goto error;
     }
     if (listen(listenfd, 10)) {
@@ -47,9 +48,22 @@ MainServer::~MainServer()
 
 void MainServer::run()
 {
-    int connfd = accept(listenfd, NULL, NULL);
+    sockaddr_in addr;
+    socklen_t addrlen = sizeof (addr);
+    int connfd = accept(listenfd, (sockaddr*) & addr, &addrlen);
     if (!send(connfd, "HI\n", 3))
         throw new runtime_error("Could not write to socket");
+
+    char saddr[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, (const void*) &addr.sin_addr, saddr, addrlen);
+    cout << "Incoming connection from " << saddr << endl;
+
+    sockaddr_in *dest = new sockaddr_in;
+    dest->sin_family = AF_INET;
+    dest->sin_addr = addr.sin_addr;
+    dest->sin_port = htons(5555);
+    pthread_t tisend;
+    pthread_create(&tisend, NULL, ImageSender::start_sending, (void*) dest);
 
     char buff[buffsize];
     string sbuff;
@@ -74,8 +88,8 @@ void MainServer::run()
     close(connfd);
 }
 
-void* MainServer::run_server(void* mtr)
+void MainServer::run_server(Motor *mtr)
 {
-    MainServer srv(2000, (Motor*) mtr);
+    MainServer srv(2000, mtr);
     srv.run();
 }
