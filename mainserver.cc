@@ -97,8 +97,8 @@ void MainServer::run()
     }
 }
 
-void MainServer::run_server(void *mtr)
+void MainServer::run_server(Motor *mtr)
 {
-    MainServer srv((Motor*) mtr);
+    MainServer srv(mtr);
     srv.run();
 }
