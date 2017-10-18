@@ -1,6 +1,12 @@
 #pragma once
 #include <iostream>
 
+enum MotorType {
+    Dummy,
+    Surveyor,
+    Arduino
+};
+
 class Motor {
 public:
 

@@ -1,20 +1,5 @@
-/*
- * File:   beerobot.cc
- * Author: alex
- *
- * Created on 12 May 2017, 13:38
- */
-
 #include <cstdlib>
 #include <thread> // std::thread
-
-/* If enabled, the program uses the PixPro as a camera and sends drive commands
- * to the robot when controller buttons are pushed. Otherwise, the computer's
- * webcam is used as a camera and the program does not attempt to connect to the
- * robot but shows the commands it would have sent.
- */
-//#define USE_SURVEYOR
-#define USE_ARDUINO
 
 // for motor control of robot
 #include "motor.h"
@@ -35,7 +20,7 @@ using namespace std;
 
 void showusage()
 {
-    cout << "Usage: beerobot [--config|--controller|--no-controller] [usb|wifi|viewer [ip]]" << endl;
+    cout << "Usage: beerobot [--config|--controller|--no-controller] [--motor dummy|surveyor|arduino] [usb|wifi|viewer [ip]]" << endl;
     exit(1);
 }
 
@@ -48,6 +33,8 @@ void startcontroller(Motor* mtr)
 int main(int argc, char** argv)
 {
     bool controllerflag = false;
+    bool motorflag = false;
+    MotorType mtype = Arduino;
     bool controller = false;
     char* viewer_ip = NULL;
     if (argc > 1) {
@@ -55,53 +42,50 @@ int main(int argc, char** argv)
         bool config = false;
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "--config") == 0) {
-                if (config) {
+                if (config)
                     showusage();
-                    return 1;
-                }
-
                 config = true;
             } else if (vid) {
                 showusage();
-                return 1;
             } else if (strcmp(argv[i], "usb") == 0) {
                 vid = get_usb();
             } else if (strcmp(argv[i], "wifi") == 0) {
                 vid = get_pixpro_wifi();
             } else if (strcmp(argv[i], "viewer") == 0) {
-                if (argc < i + 2) {
+                if (argc < i + 2)
                     showusage();
-                    return 1;
-                } else {
-                    viewer_ip = argv[++i];
-                }
+                viewer_ip = argv[++i];
             } else if (strcmp(argv[i], "--controller") == 0) {
-                if (controllerflag) {
+                if (controllerflag)
                     showusage();
-                    return 1;
-                } else {
-                    controllerflag = true;
-                    controller = true;
-                }
+                controllerflag = true;
+                controller = true;
             } else if (strcmp(argv[i], "--no-controller") == 0) {
-                if (controllerflag) {
+                if (controllerflag)
                     showusage();
-                    return 1;
-                } else {
-                    controllerflag = true;
-                    controller = false;
-                }
-            } else if (config || !process_file(argv[i])) {
+                controllerflag = true;
+                controller = false;
+            } else if (strcmp(argv[i], "--motor") == 0) {
+                if (motorflag || i == argc - 1)
+                    showusage();
+                i++;
+                if (strcmp(argv[i], "dummy") == 0)
+                    mtype = Dummy;
+                else if (strcmp(argv[i], "surveyor") == 0)
+                    mtype = Surveyor;
+                else if (strcmp(argv[i], "arduino") == 0)
+                    mtype = Arduino;
+                else
+                    showusage();
+                motorflag = true;
+            } else if (config || !process_file(argv[i]))
                 showusage();
-                return 1;
-            }
         }
 
         if (viewer_ip) {
             // code run by client (connecting to robot)
-            controller = controllerflag && controller;
             MainClient client(viewer_ip);
-            if (controllerflag && controller)
+            if (controller)
                 startcontroller(&client);
 
             ImageReceiver recv;
@@ -113,13 +97,21 @@ int main(int argc, char** argv)
             return 0;
         }
     }
-#if defined(USE_SURVEYOR)
-    Motor* mtr = new MotorSurveyor("192.168.1.1", 2000);
-#elif defined(USE_ARDUINO)
-    Motor* mtr = new MotorI2C();
-#else
-    Motor* mtr = new Motor();
-#endif
+
+    Motor *mtr;
+    switch (mtype) {
+    case Surveyor:
+        cout << "Using Surveyor as motor" << endl;
+        mtr = new MotorSurveyor("192.168.1.1", 2000);
+        break;
+    case Arduino:
+        cout << "Using Arduino as motor" << endl;
+        mtr = new MotorI2C();
+        break;
+    default:
+        cout << "Motor disabled" << endl;
+        mtr = new Motor();
+    }
 
     if (controller)
         startcontroller(mtr);
