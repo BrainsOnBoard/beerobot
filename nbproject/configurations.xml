@@ -6,12 +6,9 @@
                    projectFiles="true">
       <itemPath>beeeye.h</itemPath>
       <itemPath>beeeyeconfig.h</itemPath>
-      <itemPath>beeeyeserver.h</itemPath>
       <itemPath>beeeyeviewer.h</itemPath>
       <itemPath>camparams.h</itemPath>
       <itemPath>gigerdatacam.h</itemPath>
-      <itemPath>httpclient.h</itemPath>
-      <itemPath>httpserver.h</itemPath>
       <itemPath>i2c_interface.h</itemPath>
       <itemPath>imagecommon.h</itemPath>
       <itemPath>imagefile.h</itemPath>
@@ -32,17 +29,13 @@
       <itemPath>beerobot_pixpro_usb.ini</itemPath>
       <itemPath>beerobot_pixpro_wifi.ini</itemPath>
       <itemPath>beerobot_webcam_usb.ini</itemPath>
-      <itemPath>index.html</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>beeeye.cc</itemPath>
-      <itemPath>beeeyeserver.cc</itemPath>
       <itemPath>beerobot.cc</itemPath>
       <itemPath>gigerommatidiamodel.py</itemPath>
-      <itemPath>httpclient.cc</itemPath>
-      <itemPath>httpserver.cc</itemPath>
       <itemPath>imagereceiver.cc</itemPath>
       <itemPath>imagesender.cc</itemPath>
       <itemPath>mainclient.cc</itemPath>
@@ -91,10 +84,6 @@
       </item>
       <item path="beeeyeconfig.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="beeeyeserver.cc" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="beeeyeserver.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="beeeyeviewer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot.cc" ex="false" tool="1" flavor2="0">
@@ -111,14 +100,6 @@
       </item>
       <item path="gigerommatidiamodel.py" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="httpclient.cc" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="httpclient.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="httpserver.cc" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="httpserver.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="i2c_interface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="imagecommon.h" ex="false" tool="3" flavor2="0">
@@ -132,8 +113,6 @@
       <item path="imagesender.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="imagesender.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>
       <item path="mainclient.cc" ex="false" tool="1" flavor2="0">
       </item>
@@ -193,10 +172,6 @@
       </item>
       <item path="beeeyeconfig.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="beeeyeserver.cc" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="beeeyeserver.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="beeeyeviewer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot.cc" ex="false" tool="1" flavor2="0">
@@ -213,14 +188,6 @@
       </item>
       <item path="gigerommatidiamodel.py" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="httpclient.cc" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="httpclient.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="httpserver.cc" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="httpserver.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="i2c_interface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="imagecommon.h" ex="false" tool="3" flavor2="0">
@@ -234,8 +201,6 @@
       <item path="imagesender.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="imagesender.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>
       <item path="mainclient.cc" ex="false" tool="1" flavor2="0">
       </item>
