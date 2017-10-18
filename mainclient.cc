@@ -33,8 +33,10 @@ MainClient::MainClient(const string host, const int port)
 
 MainClient::~MainClient()
 {
-    if (connfd >= 0)
+    if (connfd >= 0) {
+        send(connfd, "BYE\n", 4);
         close(connfd);
+    }
 }
 
 void MainClient::tank(float left, float right)

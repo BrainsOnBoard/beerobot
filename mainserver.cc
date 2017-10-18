@@ -71,16 +71,18 @@ void MainServer::run()
     float left, right;
     while ((len = readline(connfd, buff)) > 0) {
         sbuff = string(buff);
-        if (sbuff.compare(0, 4, "TNK ") != 0)
+        if (sbuff.compare(0, 4, "TNK ") == 0) {
+            size_t space = sbuff.rfind(' ');
+            if (space == string::npos)
+                throw new runtime_error("Error: Bad command");
+
+            left = stof(sbuff.substr(4, space - 4));
+            right = stof(sbuff.substr(space + 1));
+            mtr->tank(left, right);
+        } else if (sbuff.compare(0, 3, "BYE") == 0)
+            break;
+        else
             throw new runtime_error("Error: Unknown command received");
-
-        size_t space = sbuff.rfind(' ');
-        if (space == string::npos)
-            throw new runtime_error("Error: Bad command");
-
-        left = stof(sbuff.substr(4, space - 4));
-        right = stof(sbuff.substr(space + 1));
-        mtr->tank(left, right);
     }
     if (len == -1)
         throw new runtime_error(string("Error: ") + strerror(errno));
