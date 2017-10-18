@@ -31,8 +31,6 @@
 #include "beeeyeconfig.h"
 #include "xboxrobot.h" // for using the Xbox controller to drive the robot
 
-#define ENABLE_CONTROLLER
-
 using namespace std;
 
 void showusage()
@@ -115,10 +113,6 @@ int main(int argc, char** argv)
             return 0;
         }
     }
-#ifdef ENABLE_CONTROLLER
-    controller = controllerflag && controller;
-#endif
-
 #if defined(USE_SURVEYOR)
     Motor* mtr = new MotorSurveyor("192.168.1.1", 2000);
 #elif defined(USE_ARDUINO)
