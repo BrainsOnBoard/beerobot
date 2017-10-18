@@ -1,19 +1,12 @@
-
-/*
- * File:   imagefile.h
- * Author: alex
- *
- * Created on 06 September 2017, 13:52
- */
-
-#ifndef IMAGEFILE_H
-#define IMAGEFILE_H
+#pragma once
 
 #include "beeeye.h"
 #include <opencv2/core/core.hpp>
 #include <iostream>
 
-bool process_file(const char* filepath) {
+/* try to process file, return false on error (e.g. file doesn't exist) */
+bool process_file(const char* filepath)
+{
     Mat im = imread(filepath, CV_LOAD_IMAGE_COLOR);
     if (!im.data) {
         return false;
@@ -48,6 +41,3 @@ bool process_file(const char* filepath) {
 
     return true;
 }
-
-#endif /* IMAGEFILE_H */
-

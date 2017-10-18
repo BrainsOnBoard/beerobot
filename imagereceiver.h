@@ -13,11 +13,10 @@ class ImageReceiver {
 public:
     ImageReceiver();
     virtual ~ImageReceiver();
-    void read(cv::Mat &view);
+    void read(cv::Mat *view);
 private:
     int listenfd = -1;
-    sockaddr_in serv_addr;
     uchar buff[MAX_UDP_PACKET_SIZE];
     vector<uchar> lastbuff;
-    packinfo lastinfo;
+    int lastid;
 };

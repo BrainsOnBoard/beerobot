@@ -1,13 +1,4 @@
-
-/*
- * File:   videotype.h
- * Author: alex
- *
- * Created on 06 September 2017, 12:08
- */
-
-#ifndef VIDEOTYPE_H
-#define VIDEOTYPE_H
+#pragma once
 
 using namespace std;
 
@@ -23,6 +14,3 @@ int get_camera_by_name(const string name);
 // different video devices
 vid_t* get_usb();
 vid_t* get_pixpro_wifi();
-
-#endif /* VIDEOTYPE_H */
-

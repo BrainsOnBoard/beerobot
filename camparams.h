@@ -1,12 +1,4 @@
-/*
- * File:   ini.h
- * Author: alex
- *
- * Created on 22 May 2017, 21:11
- */
-
-#ifndef CAMPARAMS_H
-#define CAMPARAMS_H
+#pragma once
 
 #include "videotype.h"
 
@@ -20,12 +12,14 @@ class CamParams {
 private:
 
     /* read an int from the ini file */
-    static inline void get(const dictionary *ini, int &val, const char *str) {
+    static inline void get(const dictionary *ini, int &val, const char *str)
+    {
         val = iniparser_getint(ini, str, val);
     }
 
     /* read a double from the ini file */
-    static inline void get(const dictionary *ini, double &val, const char *str) {
+    static inline void get(const dictionary *ini, double &val, const char *str)
+    {
         val = iniparser_getdouble(ini, str, val);
     }
 
@@ -44,7 +38,8 @@ public:
     Mat map_y;
 
     /* read parameters from ini file */
-    CamParams(vid_t* vid) {
+    CamParams(vid_t* vid)
+    {
         ssrc = Size(vid->width, vid->height);
         sdst = Size(1280, 400);
         double dcent_x = 0.5;
@@ -84,7 +79,8 @@ public:
     }
 
     /* write the parameters to ini file */
-    void write() {
+    void write()
+    {
         cout << "Writing settings to " << fpath << endl;
 
         // open file for writing
@@ -122,7 +118,8 @@ public:
     }
 
     /* generate a new pixel map, based on the current calibration settings */
-    void generate_map() {
+    void generate_map()
+    {
         for (int i = 0; i < this->sdst.height; i++) {
             for (int j = 0; j < this->sdst.width; j++) {
                 float r = ((float) i / (float) this->sdst.height) * (this->r_outer - this->r_inner) + this->r_inner;
@@ -135,5 +132,3 @@ public:
         }
     }
 };
-
-#endif /* CAMPARAMS_H */

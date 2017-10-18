@@ -1,12 +1,4 @@
-/*
- * File:   xboxrobot.h
- * Author: alex
- *
- * Created on 12 May 2017, 16:27
- */
-
-#ifndef XBOXROBOT_H
-#define XBOXROBOT_H
+#pragma once
 
 #include <iostream>
 #include <sys/stat.h>
@@ -31,6 +23,7 @@ using namespace std;
 
 bool do_run_controller = true; // flag to exit controller loop
 
+/* the current driving state of the robot */
 enum DriveState {
     dstop = 0,
     dforward,
@@ -38,9 +31,12 @@ enum DriveState {
     dleft,
     dright
 };
+
+// current and previous driving state
 DriveState drivecur = dstop;
 DriveState drivelast = dstop;
 
+/* revert to previous driving state (on button released) */
 void pop_drivestate(DriveState olddrive)
 {
     if (drivecur == olddrive || (olddrive == dleft && drivecur == dright)) {
@@ -49,19 +45,19 @@ void pop_drivestate(DriveState olddrive)
     drivelast = dstop;
 }
 
+/* store current driving state and change to new one (on button pushed) */
 void push_drivestate(DriveState newdrive)
 {
     drivelast = drivecur;
     drivecur = newdrive;
 }
 
-/*
- * Listens to controller input and sends appropriate drive command to robot.
- */
+/* Listens to controller input and sends appropriate drive command to robot */
 void* run_controller(void *ptr)
 {
     cout << "Running controller service" << endl;
 
+    // motor device to send commands to
     Motor *mtr = (Motor*) ptr;
 
     // open joystick device
@@ -109,9 +105,9 @@ void* run_controller(void *ptr)
             break;
         case JS_EVENT_AXIS:
             if (e.number == JS_PAD_LR) {
-                if (e.value < 0) // pressed dleft
+                if (e.value < 0) // pressed left
                     push_drivestate(dleft);
-                else if (e.value > 0) // pressed dright
+                else if (e.value > 0) // pressed right
                     push_drivestate(dright);
                 else
                     // actually handles left and right scenarios
@@ -122,6 +118,7 @@ void* run_controller(void *ptr)
             continue;
         }
 
+        // send appropriate driving command
         switch (drivecur) {
         case dforward:
             mtr->tank(SPEED, SPEED);
@@ -143,5 +140,3 @@ void* run_controller(void *ptr)
     // close joystick file descriptor
     close(fd);
 }
-
-#endif /* XBOXROBOT_H */

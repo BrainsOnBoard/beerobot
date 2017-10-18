@@ -1,12 +1,16 @@
 #pragma once
-
 #include "imagereceiver.h"
 #include <opencv2/opencv.hpp>
 
 using namespace cv;
 
-void run_eye_viewer(ImageReceiver &recv)
+/* run the remote bee eye viewer */
+void run_eye_viewer()
 {
+    // to read frames over socket
+    ImageReceiver recv;
+
+    // to store frame
     Mat view;
 
     // set opencv window to display full screen
@@ -15,7 +19,10 @@ void run_eye_viewer(ImageReceiver &recv)
 
     // display remote camera input on loop until user presses escape
     while (true) {
-        recv.read(view);
+        // read frame over socket
+        recv.read(&view);
+
+        // bad JPEGs give a 0x0 frame
         if (view.rows == 0 && view.cols == 0) {
             cout << "Warning: Could not process JPEG" << endl;
             continue;
@@ -24,9 +31,8 @@ void run_eye_viewer(ImageReceiver &recv)
         // show image
         imshow("bee view", view);
 
-        // read keypress in
-        if ((waitKey(1) & 0xff) == 27) {
+        // quit when user presses esc
+        if ((waitKey(1) & 0xff) == 27)
             break;
-        }
     }
 }

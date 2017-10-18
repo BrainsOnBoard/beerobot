@@ -1,11 +1,3 @@
-
-/*
- * File:   videotype.cc
- * Author: alex
- *
- * Created on 06 September 2017, 12:25
- */
-
 #include <cstdlib>
 #include <string>
 #include <string.h>
@@ -61,6 +53,7 @@ int get_camera_by_name(const string name0, const string name1, int &selected)
     return defcam;
 }
 
+/* get a PixPro or webcam video device over USB */
 vid_t* get_usb()
 {
     vid_t* vid = new vid_t;
@@ -79,6 +72,7 @@ vid_t* get_usb()
     return vid;
 }
 
+/* get PixPro over wifi */
 vid_t* get_pixpro_wifi()
 {
     vid_t* vid = new vid_t;

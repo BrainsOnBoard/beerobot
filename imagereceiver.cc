@@ -10,22 +10,23 @@
 using namespace std;
 using namespace cv;
 
+/* Bind to port to receive UDP packets */
 ImageReceiver::ImageReceiver()
 {
+    // create socket
     if ((listenfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
         goto error;
 
-    memset(&serv_addr, 0, sizeof (serv_addr));
+    sockaddr_in addr;
+    memset(&addr, 0, sizeof (addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = htons(IMAGE_PORT);
 
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(IMAGE_PORT);
-
-    if (bind(listenfd, (struct sockaddr*) &serv_addr, sizeof (serv_addr)))
+    if (bind(listenfd, (struct sockaddr*) &addr, sizeof (addr)))
         goto error;
 
     cout << "Listening for images on port " << IMAGE_PORT << endl;
-
     return;
 
 error:
@@ -33,46 +34,63 @@ error:
     exit(1);
 }
 
+/* Close socket if needed */
 ImageReceiver::~ImageReceiver()
 {
     if (listenfd != -1)
         close(listenfd);
 }
 
-void ImageReceiver::read(Mat &view)
+/* Read a single frame in. This will usually take two UDP packets' worth of data. */
+void ImageReceiver::read(Mat *view)
 {
+    // loop until we have a whole frame to copy to view
     for (;;) {
+        // read UDP packet
         int len = recvfrom(listenfd, buff, MAX_UDP_PACKET_SIZE, 0, NULL, NULL);
         if (len == -1) {
             cerr << "Error: " << strerror(errno) << endl;
             continue;
         }
 
+        // there is a header at the start of the packet
         packinfo *info = (packinfo*) buff;
         /*cout << "id: " << info->id << endl
                 << "num: " << (int) info->num << endl
                 << "tot: " << (int) info->tot << endl;*/
 
-        if (info->tot == 1) {
+        if (info->tot == 1) { // whole frame in single packet
+            // the data beyond the header is a JPEG
             vector<uchar> v(&buff[sizeof (packinfo)], &buff[len]);
-            imdecode(v, IMREAD_UNCHANGED, &view);
+
+            // parse JPEG
+            imdecode(v, IMREAD_UNCHANGED, view);
             break;
-        } else if (lastbuff.size() > 0 && info->id == lastinfo.id) {
+        } else if (lastbuff.size() > 0 && info->id == lastid) { // split frame, second packet
             if (info->num != 1) {
                 cerr << "Warning: packet out of sequence" << endl;
                 continue;
             }
+
+            // append the second half of the JPEG to the first half
             lastbuff.insert(lastbuff.end(), &buff[sizeof (packinfo)], &buff[len]);
-            imdecode(lastbuff, IMREAD_UNCHANGED, &view);
+
+            // parse JPEG
+            imdecode(lastbuff, IMREAD_UNCHANGED, view);
+
+            // clear the buffer
             lastbuff.clear();
             break;
-        } else {
+        } else { // split frame, first packet
             if (info->num != 0) {
                 cerr << "Warning: packet out of sequence" << endl;
                 continue;
             }
-            memcpy(&lastinfo, info, sizeof (packinfo));
-            lastbuff.clear();
+
+            // save the ID of this packet so we can match it up with its partner
+            lastid = info->id;
+
+            // copy this packet's JPEG data to buffer
             lastbuff.insert(lastbuff.begin(), &buff[sizeof (packinfo)], &buff[len]);
         }
     }

@@ -5,6 +5,7 @@
 
 using namespace std;
 
+/* Create client, connect to host on MAIN_PORT over TCP */
 MainClient::MainClient(const string host)
 {
     // Create socket
@@ -31,6 +32,7 @@ MainClient::MainClient(const string host)
         throw new runtime_error(string("Error: ") + strerror(errno));
 }
 
+/* Destructor: send BYE message and close connection */
 MainClient::~MainClient()
 {
     if (connfd >= 0) {
@@ -39,16 +41,19 @@ MainClient::~MainClient()
     }
 }
 
+/* Motor command: send TNK command over TCP */
 void MainClient::tank(float left, float right)
 {
     // don't send a command if it's the same as the last one
     if (left == oldleft && right == oldright)
         return;
 
+    // send steering command
     int len = sprintf(buff, "TNK %g %g\n", left, right);
     if (!send(connfd, buff, len))
         throw new runtime_error(string("Could not send steering command: ") + strerror(errno));
 
+    // store current left/right values to compare next time
     oldleft = left;
     oldright = right;
 }

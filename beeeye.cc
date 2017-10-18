@@ -42,6 +42,7 @@ BeeEye::BeeEye(vid_t* vid) : params(vid)
 
 BeeEye::~BeeEye()
 {
+    // stop reading from camera and free memory for object
     if (cap) {
         cap->release();
         delete cap;

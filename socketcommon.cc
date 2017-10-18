@@ -5,6 +5,7 @@
 
 using namespace std;
 
+/* Read a single line in */
 int readline(int connfd, char* buff)
 {
     int len;
@@ -25,6 +26,7 @@ int readline(int connfd, char* buff)
     return len;
 }
 
+/* Send a message, return false on error */
 bool send(int connfd, const char* msg, int len)
 {
     bool ok = send(connfd, msg, len, MSG_NOSIGNAL) != -1;

@@ -30,7 +30,8 @@ using namespace std;
 class MotorSurveyor : public Motor {
 public:
 
-    MotorSurveyor(const std::string &address, unsigned int port) {
+    MotorSurveyor(const std::string &address, unsigned int port)
+    {
         // Create socket
         m_Socket = socket(AF_INET, SOCK_STREAM, 0);
         if (m_Socket < 0) {
@@ -53,7 +54,8 @@ public:
         cout << "Connected to " << address << ":" << port << endl;
     }
 
-    ~MotorSurveyor() {
+    ~MotorSurveyor()
+    {
         if (m_Socket > 0) {
             close(m_Socket);
         }
@@ -63,7 +65,8 @@ public:
     // Public API
     //----------------------------------------------------------------------------
 
-    virtual void tank(float left, float right) {
+    virtual void tank(float left, float right)
+    {
         // Clamp left and right within normalised range
         left = std::min(1.0f, std::max(-1.0f, left));
         right = std::min(1.0f, std::max(-1.0f, right));

@@ -16,14 +16,16 @@
 class MotorI2C : public Motor {
 public:
 
-    MotorI2C(const char *path = "/dev/i2c-1", int slaveAddress = 0x29) : m_I2C(path, slaveAddress) {
+    MotorI2C(const char *path = "/dev/i2c-1", int slaveAddress = 0x29) : m_I2C(path, slaveAddress)
+    {
     }
 
     //----------------------------------------------------------------------------
     // Public API
     //----------------------------------------------------------------------------
 
-    virtual void tank(float left, float right) {
+    virtual void tank(float left, float right)
+    {
         std::cout << "DRIVE " << left << ", " << right << std::endl;
 
         // Convert standard (-1,1) values to bytes in order to send to I2C slave
@@ -34,12 +36,14 @@ public:
     }
 
     template<typename T, size_t N>
-    void read(T(&data)[N]) {
+    void read(T(&data)[N])
+    {
         m_I2C.read(data);
     }
 
     template<typename T, size_t N>
-    void write(const T(&data)[N]) {
+    void write(const T(&data)[N])
+    {
         m_I2C.write(data);
     }
 
@@ -49,7 +53,8 @@ private:
     // Private methods
     //----------------------------------------------------------------------------
 
-    uint8_t floatToI2C(float speed) {
+    uint8_t floatToI2C(float speed)
+    {
         // Forward = 1
         if (speed > 0.0f) {
             return 1;
