@@ -112,7 +112,6 @@ int main(int argc, char** argv)
         } else if (vid) {
             // code run if just showing video locally
             run_eye_config(vid, config);
-            delete vid;
             return 0;
         }
     }

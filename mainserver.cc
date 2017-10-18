@@ -50,44 +50,51 @@ void MainServer::run()
 {
     sockaddr_in addr;
     socklen_t addrlen = sizeof (addr);
-    int connfd = accept(listenfd, (sockaddr*) & addr, &addrlen);
-    if (!send(connfd, "HI\n", 3))
-        throw new runtime_error("Could not write to socket");
+    sockaddr_in dest;
+    dest.sin_family = AF_INET;
+    dest.sin_port = htons(IMAGE_PORT);
 
-    char saddr[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, (const void*) &addr.sin_addr, saddr, addrlen);
-    cout << "Incoming connection from " << saddr << endl;
-
-    sockaddr_in *dest = new sockaddr_in;
-    dest->sin_family = AF_INET;
-    dest->sin_addr = addr.sin_addr;
-    dest->sin_port = htons(IMAGE_PORT);
     pthread_t tisend;
-    pthread_create(&tisend, NULL, ImageSender::start_sending, (void*) dest);
+    for (;;) {
+        cout << "Waiting for incoming connection..." << endl;
+        int connfd = accept(listenfd, (sockaddr*) & addr, &addrlen);
+        if (!send(connfd, "HEY\n", 4))
+            throw new runtime_error("Could not write to socket");
 
-    char buff[buffsize];
-    string sbuff;
-    int len;
-    float left, right;
-    while ((len = readline(connfd, buff)) > 0) {
-        sbuff = string(buff);
-        if (sbuff.compare(0, 4, "TNK ") == 0) {
-            size_t space = sbuff.rfind(' ');
-            if (space == string::npos)
-                throw new runtime_error("Error: Bad command");
+        char saddr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, (const void*) &addr.sin_addr, saddr, addrlen);
+        cout << "Incoming connection from " << saddr << endl;
 
-            left = stof(sbuff.substr(4, space - 4));
-            right = stof(sbuff.substr(space + 1));
-            mtr->tank(left, right);
-        } else if (sbuff.compare(0, 3, "BYE") == 0)
-            break;
-        else
-            throw new runtime_error("Error: Unknown command received");
+        dest.sin_addr = addr.sin_addr;
+        pthread_create(&tisend, NULL, ImageSender::start_sending, (void*) &dest);
+
+        char buff[buffsize];
+        string sbuff;
+        int len;
+        float left, right;
+        while ((len = readline(connfd, buff)) > 0) {
+            sbuff = string(buff);
+            if (sbuff.compare(0, 4, "TNK ") == 0) {
+                size_t space = sbuff.rfind(' ');
+                if (space == string::npos)
+                    throw new runtime_error("Error: Bad command");
+
+                left = stof(sbuff.substr(4, space - 4));
+                right = stof(sbuff.substr(space + 1));
+                mtr->tank(left, right);
+            } else if (sbuff.compare(0, 3, "BYE") == 0)
+                break;
+            else
+                throw new runtime_error("Error: Unknown command received");
+        }
+        if (len == -1)
+            throw new runtime_error(string("Error: ") + strerror(errno));
+
+        close(connfd);
+
+        ImageSender::running = false;
+        pthread_join(tisend, NULL);
     }
-    if (len == -1)
-        throw new runtime_error(string("Error: ") + strerror(errno));
-
-    close(connfd);
 }
 
 void MainServer::run_server(Motor *mtr)

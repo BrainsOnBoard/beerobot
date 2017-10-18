@@ -21,8 +21,9 @@ ImageSender::~ImageSender()
 {
     if (connfd != -1)
         close(connfd);
-    delete dest;
 }
+
+bool ImageSender::running;
 
 void ImageSender::run()
 {
@@ -30,7 +31,8 @@ void ImageSender::run()
     vector<uchar> buff, buff2;
     packinfo info{
         .id = -1};
-    while (true) {
+    running = true;
+    while (running) {
         if (!eye.get_eye_view(view))
             throw new runtime_error("Error: Could not read from webcam");
 

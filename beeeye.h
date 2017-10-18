@@ -8,6 +8,7 @@ public:
     CamParams params;
 
     BeeEye(vid_t* vid);
+    ~BeeEye();
 
     bool get_image(Mat &imorig);
     void get_unwrapped_image(Mat &unwrap, Mat &imorig);

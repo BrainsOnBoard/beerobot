@@ -11,6 +11,7 @@
 
 class ImageSender {
 public:
+    static bool running;
     static void* start_sending(void *destAddress);
 
     ImageSender(const sockaddr_in *destAddress);

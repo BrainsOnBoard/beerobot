@@ -1,10 +1,3 @@
-/*
- * File:   beeeye.cc
- * Author: ad374
- *
- * Created on 04 September 2017, 13:33
- */
-
 #include "beeeye.h"
 #include "gigerdatacam.h"
 
@@ -45,6 +38,14 @@ BeeEye::BeeEye(vid_t* vid) : params(vid)
 
     imunwrap.create(params.sdst, CV_8UC3);
     imeye.create(sz_out, CV_8UC3);
+}
+
+BeeEye::~BeeEye()
+{
+    if (cap) {
+        cap->release();
+        delete cap;
+    }
 }
 
 bool BeeEye::get_image(Mat &imorig)
