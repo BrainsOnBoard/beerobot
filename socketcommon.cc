@@ -1,7 +1,7 @@
 #include "socketcommon.h"
 #include <cstring>
 
-#define SOCKET_TRACE
+//#define SOCKET_TRACE
 
 using namespace std;
 
