@@ -14,10 +14,6 @@ ImageReceiver::ImageReceiver(int port)
 {
     if ((listenfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
         goto error;
-    /*int on = 1;
-    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof (on)) < 0) {
-        goto error;
-    }*/
 
     memset(&serv_addr, 0, sizeof (serv_addr));
 
@@ -45,10 +41,39 @@ ImageReceiver::~ImageReceiver()
 
 void ImageReceiver::read(Mat &view)
 {
-    int len = recvfrom(listenfd, buff, buffsize, 0, NULL, NULL);
-    if (len == -1)
-        cerr << "Error" << endl;
+    for (;;) {
+        int len = recvfrom(listenfd, buff, imbuffsize, 0, NULL, NULL);
+        if (len == -1) {
+            cerr << "Error: " << strerror(errno) << endl;
+            continue;
+        }
 
-    vector<uchar> v(buff, &buff[len]);
-    imdecode(v, IMREAD_UNCHANGED, &view);
+        packinfo *info = (packinfo*) buff;
+        /*cout << "id: " << info->id << endl
+                << "num: " << (int) info->num << endl
+                << "tot: " << (int) info->tot << endl;*/
+
+        if (info->tot == 1) {
+            vector<uchar> v(&buff[sizeof (packinfo)], &buff[len]);
+            imdecode(v, IMREAD_UNCHANGED, &view);
+            break;
+        } else if (lastbuff.size() > 0 && info->id == lastinfo.id) {
+            if (info->num != 1) {
+                cerr << "Warning: packet out of sequence" << endl;
+                continue;
+            }
+            lastbuff.insert(lastbuff.end(), &buff[sizeof (packinfo)], &buff[len]);
+            imdecode(lastbuff, IMREAD_UNCHANGED, &view);
+            lastbuff.clear();
+            break;
+        } else {
+            if (info->num != 0) {
+                cerr << "Warning: packet out of sequence" << endl;
+                continue;
+            }
+            memcpy(&lastinfo, info, sizeof (packinfo));
+            lastbuff.clear();
+            lastbuff.insert(lastbuff.begin(), &buff[sizeof (packinfo)], &buff[len]);
+        }
+    }
 }

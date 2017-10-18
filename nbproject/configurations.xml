@@ -13,6 +13,7 @@
       <itemPath>httpclient.h</itemPath>
       <itemPath>httpserver.h</itemPath>
       <itemPath>i2c_interface.h</itemPath>
+      <itemPath>imagecommon.h</itemPath>
       <itemPath>imagefile.h</itemPath>
       <itemPath>imagereceiver.h</itemPath>
       <itemPath>imagesender.h</itemPath>
@@ -120,6 +121,8 @@
       </item>
       <item path="i2c_interface.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="imagecommon.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="imagefile.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="imagereceiver.cc" ex="false" tool="1" flavor2="0">
@@ -219,6 +222,8 @@
       <item path="httpserver.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="i2c_interface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imagecommon.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="imagefile.h" ex="false" tool="3" flavor2="0">
       </item>

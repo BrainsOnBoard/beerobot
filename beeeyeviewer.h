@@ -16,8 +16,10 @@ void run_eye_viewer(ImageReceiver &recv)
     // display remote camera input on loop until user presses escape
     while (true) {
         recv.read(view);
-        if (view.rows == 0 && view.cols == 0)
+        if (view.rows == 0 && view.cols == 0) {
+            cout << "Warning: Could not process JPEG" << endl;
             continue;
+        }
 
         // show image
         imshow("bee view", view);
