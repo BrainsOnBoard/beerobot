@@ -10,7 +10,7 @@
 using namespace std;
 using namespace cv;
 
-ImageReceiver::ImageReceiver(int port)
+ImageReceiver::ImageReceiver()
 {
     if ((listenfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
         goto error;
@@ -19,17 +19,17 @@ ImageReceiver::ImageReceiver(int port)
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(port);
+    serv_addr.sin_port = htons(IMAGE_PORT);
 
-    if (bind(listenfd, (struct sockaddr*) &serv_addr, sizeof (serv_addr))) {
+    if (bind(listenfd, (struct sockaddr*) &serv_addr, sizeof (serv_addr)))
         goto error;
-    }
-    cout << "Listening on port " << port << endl;
+
+    cout << "Listening for images on port " << IMAGE_PORT << endl;
 
     return;
 
 error:
-    cerr << "Error (" << errno << "): Could not bind to port " << port << endl;
+    cerr << "Error (" << errno << "): Could not bind to port " << IMAGE_PORT << endl;
     exit(1);
 }
 
@@ -42,7 +42,7 @@ ImageReceiver::~ImageReceiver()
 void ImageReceiver::read(Mat &view)
 {
     for (;;) {
-        int len = recvfrom(listenfd, buff, imbuffsize, 0, NULL, NULL);
+        int len = recvfrom(listenfd, buff, MAX_UDP_PACKET_SIZE, 0, NULL, NULL);
         if (len == -1) {
             cerr << "Error: " << strerror(errno) << endl;
             continue;

@@ -1,5 +1,4 @@
 #include "imagesender.h"
-#include "imagecommon.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -27,7 +26,6 @@ ImageSender::~ImageSender()
 
 void ImageSender::run()
 {
-    // input and final output image matrices
     Mat view;
     vector<uchar> buff, buff2;
     packinfo info{
@@ -41,21 +39,21 @@ void ImageSender::run()
 
         info.id++;
         info.num = 0;
-        if (buff.size() < maximsize) {
+        if (buff.size() < MAX_IM_BYTES) {
             info.tot = 1;
             buff.insert(buff.begin(), (uchar*) & info, (uchar*) (& info + 1));
             if (sendto(connfd, buff.data(), buff.size(), MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
                 cerr << "Error: " << strerror(errno) << endl;
-        } else if (buff.size() < 2 * maximsize) {
+        } else if (buff.size() < 2 * MAX_IM_BYTES) {
             info.tot = 2;
             buff.insert(buff.begin(), (uchar*) & info, (uchar*) ((&info) + 1));
-            if (sendto(connfd, buff.data(), imbuffsize, MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
+            if (sendto(connfd, buff.data(), MAX_UDP_PACKET_SIZE, MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
                 cerr << "Error: " << strerror(errno) << endl;
 
             info.num = 1;
             buff2.clear();
             buff2.insert(buff2.begin(), (uchar*) & info, (uchar*) ((&info) + 1));
-            buff2.insert(buff2.end(), buff.begin() + imbuffsize, buff.end());
+            buff2.insert(buff2.end(), buff.begin() + MAX_UDP_PACKET_SIZE, buff.end());
             if (sendto(connfd, buff2.data(), buff2.size(), MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
                 cerr << "Error: " << strerror(errno) << endl;
         } else

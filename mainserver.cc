@@ -61,7 +61,7 @@ void MainServer::run()
     sockaddr_in *dest = new sockaddr_in;
     dest->sin_family = AF_INET;
     dest->sin_addr = addr.sin_addr;
-    dest->sin_port = htons(5555);
+    dest->sin_port = htons(IMAGE_PORT);
     pthread_t tisend;
     pthread_create(&tisend, NULL, ImageSender::start_sending, (void*) dest);
 

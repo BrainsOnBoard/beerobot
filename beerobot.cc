@@ -106,7 +106,7 @@ int main(int argc, char** argv)
             if (controllerflag && controller)
                 startcontroller(&client);
 
-            ImageReceiver recv(5555);
+            ImageReceiver recv;
             run_eye_viewer(recv);
             return 0;
         } else if (vid) {

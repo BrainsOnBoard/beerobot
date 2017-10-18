@@ -12,5 +12,6 @@ struct __attribute__ ((packed)) packinfo
     uint8_t tot;
 };
 
-static const size_t imbuffsize = 65507;
-static const size_t maximsize = imbuffsize - sizeof (packinfo);
+static const size_t MAX_UDP_PACKET_SIZE = 65507;
+static const size_t MAX_IM_BYTES = MAX_UDP_PACKET_SIZE - sizeof (packinfo);
+static const int IMAGE_PORT = 5555;
