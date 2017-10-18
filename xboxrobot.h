@@ -30,6 +30,7 @@
 using namespace std;
 
 bool do_run_controller = true; // flag to exit controller loop
+
 enum DriveState {
     dstop = 0,
     dforward,
@@ -40,14 +41,16 @@ enum DriveState {
 DriveState drivecur = dstop;
 DriveState drivelast = dstop;
 
-void pop_drivestate(DriveState olddrive) {
+void pop_drivestate(DriveState olddrive)
+{
     if (drivecur == olddrive || (olddrive == dleft && drivecur == dright)) {
         drivecur = drivelast;
     }
     drivelast = dstop;
 }
 
-void push_drivestate(DriveState newdrive) {
+void push_drivestate(DriveState newdrive)
+{
     drivelast = drivecur;
     drivecur = newdrive;
 }
@@ -55,7 +58,8 @@ void push_drivestate(DriveState newdrive) {
 /*
  * Listens to controller input and sends appropriate drive command to robot.
  */
-void* run_controller(void *ptr) {
+void* run_controller(void *ptr)
+{
     cout << "Running controller service" << endl;
 
     Motor *mtr = (Motor*) ptr;
@@ -87,53 +91,52 @@ void* run_controller(void *ptr) {
 
         // we only care about A, B and left/right button pushes
         switch (e.type) {
-            case JS_EVENT_BUTTON:
-                switch (e.number) {
-                    case JS_BTN_A: // pressed A
-                        if (e.value)
-                            push_drivestate(dforward);
-                        else
-                            pop_drivestate(dforward);
-                        break;
-                    case JS_BTN_B: // pressed B
-                        if (e.value)
-                            push_drivestate(dbackward);
-                        else
-                            pop_drivestate(dbackward);
-                        break;
-                }
+        case JS_EVENT_BUTTON:
+            switch (e.number) {
+            case JS_BTN_A: // pressed A
+                if (e.value)
+                    push_drivestate(dforward);
+                else
+                    pop_drivestate(dforward);
                 break;
-            case JS_EVENT_AXIS:
-                if (e.number == JS_PAD_LR) {
-                    if (e.value < 0) // pressed dleft
-                        //mtr->tank(-TURNSPEED, TURNSPEED);
-                        push_drivestate(dleft);
-                    else if (e.value > 0) // pressed dright
-                        push_drivestate(dright);
-                    else
-                        // actually handles left and right scenarios
-                        pop_drivestate(dleft);
-                }
+            case JS_BTN_B: // pressed B
+                if (e.value)
+                    push_drivestate(dbackward);
+                else
+                    pop_drivestate(dbackward);
                 break;
-            default:
-                continue;
+            }
+            break;
+        case JS_EVENT_AXIS:
+            if (e.number == JS_PAD_LR) {
+                if (e.value < 0) // pressed dleft
+                    push_drivestate(dleft);
+                else if (e.value > 0) // pressed dright
+                    push_drivestate(dright);
+                else
+                    // actually handles left and right scenarios
+                    pop_drivestate(dleft);
+            }
+            break;
+        default:
+            continue;
         }
 
         switch (drivecur) {
-            case dforward:
-                mtr->tank(SPEED, SPEED);
-                break;
-            case dbackward:
-                mtr->tank(-SPEED, -SPEED);
-                break;
-            case dleft:
-                mtr->tank(-TURNSPEED, TURNSPEED);
-                break;
-            case dright:
-                mtr->tank(TURNSPEED, -TURNSPEED);
-                break;
-            default:
-                mtr->tank(0, 0);
+        case dforward:
+            mtr->tank(SPEED, SPEED);
+            break;
+        case dbackward:
+            mtr->tank(-SPEED, -SPEED);
+            break;
+        case dleft:
+            mtr->tank(-TURNSPEED, TURNSPEED);
+            break;
+        case dright:
+            mtr->tank(TURNSPEED, -TURNSPEED);
+            break;
+        default:
+            mtr->tank(0, 0);
         }
     }
 
