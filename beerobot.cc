@@ -102,7 +102,7 @@ int main(int argc, char** argv)
         if (viewer_ip) {
             // code run by client (connecting to robot)
             controller = controllerflag && controller;
-            MainClient client(viewer_ip, 2000);
+            MainClient client(viewer_ip);
             if (controllerflag && controller)
                 startcontroller(&client);
 

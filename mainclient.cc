@@ -5,24 +5,24 @@
 
 using namespace std;
 
-MainClient::MainClient(const string host, const int port)
+MainClient::MainClient(const string host)
 {
     // Create socket
     connfd = socket(AF_INET, SOCK_STREAM, 0);
     if (connfd < 0)
-        throw std::runtime_error("Cannot open socket");
+        throw runtime_error("Cannot open socket");
 
     // Create socket address structure
     sockaddr_in destAddress = {
         .sin_family = AF_INET,
-        .sin_port = htons(port),
+        .sin_port = htons(MAIN_PORT),
         .sin_addr =
         {.s_addr = inet_addr(host.c_str())}
     };
 
     // Connect socket
     if (connect(connfd, reinterpret_cast<sockaddr*> (&destAddress), sizeof (destAddress)) < 0)
-        throw runtime_error("Cannot connect socket to " + host + ":" + std::to_string(port));
+        throw runtime_error("Cannot connect socket to " + host + ":" + to_string(MAIN_PORT));
 
     printf("Opened socket\n");
 

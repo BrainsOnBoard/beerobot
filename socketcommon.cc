@@ -8,7 +8,7 @@ using namespace std;
 int readline(int connfd, char* buff)
 {
     int len;
-    while ((len = read(connfd, buff, buffsize)) == 0) {
+    while ((len = read(connfd, buff, MAIN_BUFFSIZE)) == 0) {
         usleep(250000);
     }
     if (len == -1)

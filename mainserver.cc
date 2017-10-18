@@ -8,7 +8,7 @@
 
 using namespace std;
 
-MainServer::MainServer(int port, Motor *mtr) : mtr(mtr)
+MainServer::MainServer(Motor *mtr) : mtr(mtr)
 {
     struct sockaddr_in serv_addr;
     int on = 1;
@@ -24,7 +24,7 @@ MainServer::MainServer(int port, Motor *mtr) : mtr(mtr)
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(port);
+    serv_addr.sin_port = htons(MAIN_PORT);
 
     if (bind(listenfd, (sockaddr*) & serv_addr, sizeof (serv_addr))) {
         goto error;
@@ -32,12 +32,12 @@ MainServer::MainServer(int port, Motor *mtr) : mtr(mtr)
     if (listen(listenfd, 10)) {
         goto error;
     }
-    cout << "Listening on port " << port << endl;
+    cout << "Listening on port " << MAIN_PORT << endl;
 
     return;
 
 error:
-    cerr << "Error (" << errno << "): Could not bind to port " << port << endl;
+    cerr << "Error (" << errno << "): Could not bind to port " << MAIN_PORT << endl;
     exit(1);
 }
 
@@ -68,7 +68,7 @@ void MainServer::run()
         dest.sin_addr = addr.sin_addr;
         pthread_create(&tisend, NULL, ImageSender::start_sending, (void*) &dest);
 
-        char buff[buffsize];
+        char buff[MAIN_BUFFSIZE];
         string sbuff;
         int len;
         float left, right;
@@ -97,8 +97,8 @@ void MainServer::run()
     }
 }
 
-void MainServer::run_server(Motor *mtr)
+void MainServer::run_server(void *mtr)
 {
-    MainServer srv(2000, mtr);
+    MainServer srv((Motor*) mtr);
     srv.run();
 }

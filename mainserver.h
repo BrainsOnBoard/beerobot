@@ -5,9 +5,10 @@
 
 class MainServer {
 public:
-    MainServer(int port, Motor* mtr);
-    virtual ~MainServer();
     static void run_server(Motor *mtr);
+
+    MainServer(Motor* mtr);
+    virtual ~MainServer();
 private:
     int listenfd;
     Motor *mtr;
