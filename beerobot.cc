@@ -136,6 +136,7 @@ int main(int argc, char** argv)
     MainServer::run_server(mtr);
 
     do_run_controller = false;
+    delete mtr;
 
     return 0;
 }
