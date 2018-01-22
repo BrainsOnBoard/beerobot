@@ -73,9 +73,6 @@ public:
             
             get(ini, flipped, "unwrap:flipped");
 
-            if(flipped) {
-                cout << "FLIPPIN' HECK" << std::endl;
-            }
             // free memory
             iniparser_freedict(ini);
         }
