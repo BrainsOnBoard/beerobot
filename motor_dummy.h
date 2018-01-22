@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+// GeNN robotics includes
+#include "motor.h"
+
 /* different types of motor output */
 enum MotorType {
     Dummy,
@@ -10,7 +13,7 @@ enum MotorType {
 };
 
 /* this is the superclass for other Motor devices */
-class Motor {
+class MotorDummy : public Motor {
 public:
 
     virtual void tank(float left, float right)

@@ -2,7 +2,7 @@
 #include <thread> // std::thread
 
 // for motor control of robot
-#include "motor.h"
+#include "motor_dummy.h"
 #include "motor_surveyor.h"
 #include "motor_i2c.h"
 
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
         break;
     default:
         cout << "Motor disabled" << endl;
-        mtr = new Motor();
+        mtr = new MotorDummy();
     }
 
     // if using Xbox controller, start it
