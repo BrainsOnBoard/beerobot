@@ -67,15 +67,18 @@ vid_t* get_usb()
         vid->width = 640;
         vid->height = 360;
         vid->ini_file = "beerobot_see3cam_usb.ini";
+        vid->is_see3cam = true;
     }
     else if (sel == 1) {
         vid->width = 1440;
         vid->height = 1440;
         vid->ini_file = "beerobot_pixpro_usb.ini";
+        vid->is_see3cam = false;
     } else {
         vid->width = 1280;
         vid->height = 720;
         vid->ini_file = "beerobot_webcam_usb.ini";
+        vid->is_see3cam = false;
     }
     return vid;
 }
@@ -84,6 +87,7 @@ vid_t* get_usb()
 vid_t* get_pixpro_wifi()
 {
     vid_t* vid = new vid_t;
+    vid->dev_int = -1;
     vid->dev_char = "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg";
     vid->width = 1024;
     vid->height = 1024;
