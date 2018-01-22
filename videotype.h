@@ -8,9 +8,6 @@ struct vid_t {
     const char* ini_file;
 };
 
-/* get the number for a camera with a given name (-1 if not found) */
-int get_camera_by_name(const string name);
-
 // different video devices
 vid_t* get_usb();
 vid_t* get_pixpro_wifi();
