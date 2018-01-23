@@ -28,14 +28,10 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
 {
     BeeEye eye(vid);
 
-    bool do_calib = false; // whether calibration screen is visible or not
+    bool do_calib = true; // whether calibration screen is visible or not
     int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration (either 1 or 5)
 
     Mat imorig, unwrap, view;
-
-    // set opencv window to display full screen
-    cvNamedWindow("bee view", CV_WINDOW_NORMAL);
-    setWindowProperty("bee view", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
 
     // display remapped camera output on loop until user presses escape
     for (bool do_run = true; do_run;) {
@@ -47,10 +43,10 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
         eye.get_unwrapped_image(unwrap, imorig);
         eye.get_eye_view(view, unwrap);
 
-        // show image
-        imshow("bee view", view);
-
         if (do_calib) { // then show calibration screen
+            // show unwrapped image
+            imshow("unwrapped", unwrap);
+
             // draw calibration cross at what we've chose as the center
             calib_line(imorig, Point(eye.params.cent.x - CROSS_SIZE, eye.params.cent.y), Point(eye.params.cent.x + CROSS_SIZE, eye.params.cent.y));
             calib_line(imorig, Point(eye.params.cent.x, eye.params.cent.y - CROSS_SIZE), Point(eye.params.cent.x, eye.params.cent.y + CROSS_SIZE));
@@ -61,6 +57,9 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
 
             // show the image
             imshow("calibration", imorig);
+        } else {
+            // show bee's eye view
+            imshow("bee view", view);
         }
 
         // read keypress in
@@ -70,8 +69,16 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
         switch (key) {
         case 'c': // toggle display of calibration screen
             if (calib_enabled) {
-                if (do_calib) // we have to close window explicitly
+                if (do_calib) { // we have to close window explicitly
                     destroyWindow("calibration");
+                    destroyWindow("unwrapped");
+
+                    // set opencv window to display full screen
+                    cvNamedWindow("bee view", CV_WINDOW_NORMAL);
+                    setWindowProperty("bee view", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
+                } else {
+                    destroyWindow("bee view");
+                }
 
                 do_calib = !do_calib;
             }
