@@ -103,7 +103,10 @@ int main(int argc, char** argv)
 
             run_eye_viewer();
             return 0;
-        } else if (vid) {
+        } else if (config || vid) {
+            if (!vid) // default to usb for config
+                vid = get_usb();
+
             // code run if just showing video locally
             run_eye_config(vid, config);
             return 0;

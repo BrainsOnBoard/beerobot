@@ -1,12 +1,13 @@
 *.JPG
 *.jpg
 
+/beerobot
 *.o
 *.a
 
 *~
 
-/nbproject/private
+/nbproject/
 .dep.inc
-/dist/
 /build/
+
