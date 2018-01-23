@@ -71,7 +71,7 @@ public:
             get(ini, dr_inner, "unwrap:r-inner");
             get(ini, dr_outer, "unwrap:r-outer");
             
-            get(ini, flipped, "unwrap:flipped");
+            get(ini, this->flipped, "unwrap:flipped");
 
             // free memory
             iniparser_freedict(ini);
@@ -114,14 +114,15 @@ public:
                 "cent-x  = %g\n"
                 "cent-y  = %g\n"
                 "r-inner = %g\n"
-                "r-outer = %g\n",
+                "r-outer = %g\n"
+                "flipped = %u\n",
                 this->sdst.width,
                 this->sdst.height,
                 dcent_x,
                 dcent_y,
                 dr_inner,
-                dr_outer
-                );
+                dr_outer,
+                this->flipped ? 1 : 0);
 
         // close file
         fclose(ini);
