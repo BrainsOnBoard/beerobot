@@ -1,6 +1,7 @@
 *.JPG
 *.jpg
 
+/beerobot
 *.o
 *.a
 
