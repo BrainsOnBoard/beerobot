@@ -16,9 +16,6 @@
       <itemPath>imagesender.h</itemPath>
       <itemPath>mainclient.h</itemPath>
       <itemPath>mainserver.h</itemPath>
-      <itemPath>motor.h</itemPath>
-      <itemPath>motor_i2c.h</itemPath>
-      <itemPath>motor_surveyor.h</itemPath>
       <itemPath>socketcommon.h</itemPath>
       <itemPath>videotype.h</itemPath>
       <itemPath>xboxrobot.h</itemPath>
@@ -122,12 +119,6 @@
       </item>
       <item path="mainserver.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="motor.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor_i2c.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor_surveyor.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="socketcommon.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="socketcommon.h" ex="false" tool="3" flavor2="0">
@@ -209,12 +200,6 @@
       <item path="mainserver.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mainserver.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor_i2c.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor_surveyor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="socketcommon.cc" ex="false" tool="1" flavor2="0">
       </item>
