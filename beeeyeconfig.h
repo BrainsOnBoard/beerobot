@@ -31,7 +31,7 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
     bool do_calib = false; // whether calibration screen is visible or not
     int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration (either 1 or 5)
 
-    Mat imorig, view;
+    Mat imorig, unwrap, view;
 
     // set opencv window to display full screen
     cvNamedWindow("bee view", CV_WINDOW_NORMAL);
@@ -44,7 +44,8 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
             exit(1);
         }
 
-        eye.get_eye_view(view, imorig);
+        eye.get_unwrapped_image(unwrap, imorig);
+        eye.get_eye_view(view, unwrap);
 
         // show image
         imshow("bee view", view);
