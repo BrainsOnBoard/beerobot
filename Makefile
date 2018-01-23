@@ -12,6 +12,8 @@ OBJECTS := \
 	${OBJ_DIR}/mainserver.o \
 	${OBJ_DIR}/socketcommon.o \
 	${OBJ_DIR}/videotype.o
+NPROC:=$(shell nproc)
+MAKEFLAGS+=-j $(NPROC)"
 
 all: build $(TARGET)
 
@@ -31,5 +33,5 @@ build:
 
 clean:
 	-@rm -rf $(OBJ_DIR)
-	-@rm $(TARGET)
+	-@rm -f $(TARGET)
 
