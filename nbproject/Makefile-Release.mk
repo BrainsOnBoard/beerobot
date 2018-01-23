@@ -49,8 +49,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-pthread -std=c++11
-CXXFLAGS=-pthread -std=c++11
+CCFLAGS=-pthread -std=c++11 -I $(GENN_ROBOTICS_PATH)/common
+CXXFLAGS=-pthread -std=c++11 -I $(GENN_ROBOTICS_PATH)/common
 
 # Fortran Compiler Flags
 FFLAGS=

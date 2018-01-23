@@ -1,22 +1,32 @@
 #include "beeeye.h"
 #include "gigerdatacam.h"
 
-BeeEye::BeeEye(vid_t* vid) : params(vid)
-{
-    if (vid->dev_int != -1) {
-        if (vid->dev_char) {
-            cap = new VideoCapture(vid->dev_char);
-        } else {
-            cap = new VideoCapture(vid->dev_int);
-        }
-        if (!cap->isOpened()) {
-            cerr << "Error: Could not open webcam" << endl;
-            exit(1);
-        }
+// GeNN robotics includes
+#include "see3cam_cu40.h"
 
-        // set resolution
-        cap->set(CAP_PROP_FRAME_WIDTH, params.ssrc.width);
-        cap->set(CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
+BeeEye::BeeEye(vid_t* vid) : cap(nullptr), see3cam(nullptr), params(vid)
+{
+    
+    if (vid->dev_int != -1 || vid->dev_char != nullptr) {
+        if(vid->is_see3cam) {
+            cout << "Opening " << "/dev/video" + to_string(vid->dev_int) << std::endl;
+            see3cam = new See3CAM_CU40("/dev/video" + to_string(vid->dev_int),  See3CAM_CU40::Resolution::_1280x720);
+        }
+        else {
+            if (vid->dev_char) {
+                cap = new VideoCapture(vid->dev_char);
+            } else {
+                cap = new VideoCapture(vid->dev_int);
+            }
+            if (!cap->isOpened()) {
+                cerr << "Error: Could not open webcam" << endl;
+                exit(1);
+            }
+
+            // set resolution
+            cap->set(CAP_PROP_FRAME_WIDTH, params.ssrc.width);
+            cap->set(CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
+        }
     }
 
     // create x and y pixel maps
@@ -47,13 +57,27 @@ BeeEye::~BeeEye()
         cap->release();
         delete cap;
     }
+    else if(see3cam) {
+        delete see3cam;
+        
+    }
 }
 
 bool BeeEye::get_image(Mat &imorig)
 {
     // read frame from camera
-    (*cap) >> imorig;
-    return imorig.size().width != 0;
+    if(cap) {
+        (*cap) >> imorig;
+        
+        return imorig.size().width != 0;
+    }
+    else if(see3cam) {
+        if(imorig.size().width == 0) {
+            imorig.create(params.ssrc, CV_8UC3);
+        }
+        return see3cam->captureSuperPixel(imorig);
+    }
+    
 }
 
 void BeeEye::get_unwrapped_image(Mat &imunwrap, Mat &imorig)
