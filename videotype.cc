@@ -60,7 +60,7 @@ int get_camera_by_name(const char * const (&names)[N], int &selected)
 vid_t* get_usb()
 {
     vid_t* vid = new vid_t;
-    int sel;
+    int sel = 2;
     vid->dev_int = get_camera_by_name({"See3CAM_CU40", "PIXPRO SP360 4K", "USB 2.0 Camera"}, sel);
     vid->dev_char = NULL;
     if (sel == 0) {
