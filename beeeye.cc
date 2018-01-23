@@ -6,13 +6,12 @@
 
 BeeEye::BeeEye(vid_t* vid) : cap(nullptr), see3cam(nullptr), params(vid)
 {
-    
+
     if (vid->dev_int != -1 || vid->dev_char != nullptr) {
-        if(vid->is_see3cam) {
+        if (vid->is_see3cam) {
             cout << "Opening " << "/dev/video" + to_string(vid->dev_int) << std::endl;
-            see3cam = new See3CAM_CU40("/dev/video" + to_string(vid->dev_int),  See3CAM_CU40::Resolution::_1280x720);
-        }
-        else {
+            see3cam = new See3CAM_CU40("/dev/video" + to_string(vid->dev_int), See3CAM_CU40::Resolution::_1280x720);
+        } else {
             if (vid->dev_char) {
                 cap = new VideoCapture(vid->dev_char);
             } else {
@@ -56,28 +55,26 @@ BeeEye::~BeeEye()
     if (cap) {
         cap->release();
         delete cap;
-    }
-    else if(see3cam) {
+    } else if (see3cam) {
         delete see3cam;
-        
+
     }
 }
 
 bool BeeEye::get_image(Mat &imorig)
 {
     // read frame from camera
-    if(cap) {
+    if (cap) {
         (*cap) >> imorig;
-        
+
         return imorig.size().width != 0;
-    }
-    else if(see3cam) {
-        if(imorig.size().width == 0) {
+    } else if (see3cam) {
+        if (imorig.size().width == 0) {
             imorig.create(params.ssrc, CV_8UC3);
         }
         return see3cam->captureSuperPixel(imorig);
     }
-    
+
 }
 
 void BeeEye::get_unwrapped_image(Mat &imunwrap, Mat &imorig)

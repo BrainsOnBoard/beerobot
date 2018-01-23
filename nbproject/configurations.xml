@@ -16,9 +16,6 @@
       <itemPath>imagesender.h</itemPath>
       <itemPath>mainclient.h</itemPath>
       <itemPath>mainserver.h</itemPath>
-      <itemPath>motor.h</itemPath>
-      <itemPath>motor_i2c.h</itemPath>
-      <itemPath>motor_surveyor.h</itemPath>
       <itemPath>socketcommon.h</itemPath>
       <itemPath>videotype.h</itemPath>
       <itemPath>xboxrobot.h</itemPath>
@@ -28,6 +25,7 @@
                    projectFiles="true">
       <itemPath>beerobot_pixpro_usb.ini</itemPath>
       <itemPath>beerobot_pixpro_wifi.ini</itemPath>
+      <itemPath>beerobot_see3cam_usb.ini</itemPath>
       <itemPath>beerobot_webcam_usb.ini</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -92,6 +90,8 @@
       </item>
       <item path="beerobot_pixpro_wifi.ini" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="beerobot_see3cam_usb.ini" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beerobot_webcam_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
       <item path="camparams.h" ex="false" tool="3" flavor2="0">
@@ -121,12 +121,6 @@
       <item path="mainserver.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mainserver.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor_i2c.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor_surveyor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="socketcommon.cc" ex="false" tool="1" flavor2="0">
       </item>
@@ -180,6 +174,8 @@
       </item>
       <item path="beerobot_pixpro_wifi.ini" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="beerobot_see3cam_usb.ini" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="beerobot_webcam_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
       <item path="camparams.h" ex="false" tool="3" flavor2="0">
@@ -209,12 +205,6 @@
       <item path="mainserver.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mainserver.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor_i2c.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="motor_surveyor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="socketcommon.cc" ex="false" tool="1" flavor2="0">
       </item>

@@ -22,19 +22,19 @@ private:
     {
         val = (iniparser_getboolean(ini, str, val ? 1 : 0) != 0);
     }
-    
+
     /* read a double from the ini file */
     static inline void get(const dictionary *ini, double &val, const char *str)
     {
         val = iniparser_getdouble(ini, str, val);
     }
-    
-    
+
     const char* fpath;
 
     // should image be flipped in camera map
     bool flipped;
-    
+    int degoffset;
+
 public:
     // source and dest image sizes
     Size ssrc, sdst;
@@ -70,8 +70,9 @@ public:
             get(ini, dcent_y, "unwrap:cent-y");
             get(ini, dr_inner, "unwrap:r-inner");
             get(ini, dr_outer, "unwrap:r-outer");
-            
             get(ini, this->flipped, "unwrap:flipped");
+            get(ini, this->degoffset, "unwrap:degoffset");
+            cout << "deg offset: " << this->degoffset << endl;
 
             // free memory
             iniparser_freedict(ini);
@@ -115,14 +116,16 @@ public:
                 "cent-y  = %g\n"
                 "r-inner = %g\n"
                 "r-outer = %g\n"
-                "flipped = %u\n",
+                "flipped = %u\n"
+                "degoffset = %d\n",
                 this->sdst.width,
                 this->sdst.height,
                 dcent_x,
                 dcent_y,
                 dr_inner,
                 dr_outer,
-                this->flipped ? 1 : 0);
+                this->flipped ? 1 : 0,
+                this->degoffset);
 
         // close file
         fclose(ini);
@@ -133,15 +136,15 @@ public:
     {
         for (int i = 0; i < this->sdst.height; i++) {
             for (int j = 0; j < this->sdst.width; j++) {
-                 // Get i as a fraction of unwrapped height, flipping if desires
+                // Get i as a fraction of unwrapped height, flipping if desired
                 float frac = this->flipped ?
-                    1.0 - ((float)i / (float)this->sdst.height)
-                    : ((float)i / (float)this->sdst.height);
+                        1.0 - ((float) i / (float) this->sdst.height)
+                        : ((float) i / (float) this->sdst.height);
 
                 // Convert i and j to polar
                 float r = frac * (this->r_outer - this->r_inner) + this->r_inner;
-            
-                float th = ((float) j / (float) this->sdst.width) * 2 * M_PI;
+
+                float th = 2 * M_PI * (((float) j / (float) this->sdst.width) - ((float) degoffset / 360.0));
                 float x = this->cent.x - r * sin(th);
                 float y = this->cent.y + r * cos(th);
                 this->map_x.at<float>(i, j) = x;
