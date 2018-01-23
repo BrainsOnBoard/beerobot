@@ -28,6 +28,10 @@ void* run_controller(void *ptr)
     
     // flag is set to false when user tries to quit program
     while (do_run_controller) {
+         // Read joystick
+        joystick.read();
+        
+        // Drive motor using joystick
         joystick.drive(*mtr, DEADZONE);
     }
 }
