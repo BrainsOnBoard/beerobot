@@ -25,6 +25,7 @@
                    projectFiles="true">
       <itemPath>beerobot_pixpro_usb.ini</itemPath>
       <itemPath>beerobot_pixpro_wifi.ini</itemPath>
+      <itemPath>beerobot_see3cam_usb.ini</itemPath>
       <itemPath>beerobot_webcam_usb.ini</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -88,6 +89,8 @@
       <item path="beerobot_pixpro_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot_pixpro_wifi.ini" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="beerobot_see3cam_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot_webcam_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
@@ -170,6 +173,8 @@
       <item path="beerobot_pixpro_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot_pixpro_wifi.ini" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="beerobot_see3cam_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
       <item path="beerobot_webcam_usb.ini" ex="false" tool="3" flavor2="0">
       </item>
