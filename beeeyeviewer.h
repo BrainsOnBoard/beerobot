@@ -14,17 +14,17 @@ void run_eye_viewer(Readable &recv, bool showoverlay)
     cout << "Screen resolution: " << oversz << endl;
 
     int xoff;
-    Mat overlay, overlayinner, imfull, iminner;
+    Mat overlay, overlayinner, iminner, mask;
     if (showoverlay) {
         int w = round((float) oversz.height * 970.0 / 1048.0);
         xoff = (oversz.width - w) / 2;
 
         Mat overlayfull = imread("honeycomb_overlay.png", 3);
         resize(overlayfull, overlay, oversz, 0, 0, INTER_CUBIC);
-        imfull = overlay.clone();
-        iminner = imfull(Range::all(), Range(xoff, xoff + w));
 
         overlayinner = overlay(Range::all(), Range(xoff, xoff + w));
+        mask = (overlayinner == 0);
+        iminner.create(overlayinner.size(), overlayinner.type());
     } else {
         cout << "Image overlay disabled" << endl;
     }
@@ -48,18 +48,12 @@ void run_eye_viewer(Readable &recv, bool showoverlay)
         }
 
         if (showoverlay) {
-            resize(view, iminner, overlayinner.size());
+            resize(view, iminner, iminner.size());
 
-            for (int i = 0; i < overlayinner.rows; i++) {
-                for (int j = 0; j < overlayinner.cols; j++) {
-                    Vec3b px = overlayinner.at<Vec3b>(i, j);
-                    if (px[0] && px[1] && px[2])
-                        iminner.at<Vec3b>(i, j) = overlayinner.at<Vec3b>(i, j);
-                }
-            }
+            iminner.copyTo(overlayinner, mask);
 
             // show image
-            imshow("bee view", imfull);
+            imshow("bee view", overlay);
         } else {
             imshow("bee view", view);
         }
