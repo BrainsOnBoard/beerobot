@@ -120,11 +120,21 @@ int main(int argc, char** argv)
     switch (mtype) {
     case Surveyor:
         cout << "Using Surveyor as motor" << endl;
-        mtr = new MotorSurveyor("192.168.1.1", 2000);
+        try {
+            mtr = new MotorSurveyor("192.168.1.1", 2000);
+        } catch (exception& e) {
+            cout << "An error occurred: Disabling motor output" << endl;
+            mtr = new MotorDummy();
+        }
         break;
     case Arduino:
         cout << "Using Arduino as motor" << endl;
-        mtr = new MotorI2C();
+        try {
+            mtr = new MotorI2C();
+        } catch (exception& e) {
+            cout << "An error occurred: Disabling motor output" << endl;
+            mtr = new MotorDummy();
+        }
         break;
     default:
         cout << "Motor disabled" << endl;
