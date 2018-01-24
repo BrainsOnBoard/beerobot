@@ -72,7 +72,6 @@ public:
             get(ini, dr_outer, "unwrap:r-outer");
             get(ini, this->flipped, "unwrap:flipped");
             get(ini, this->degoffset, "unwrap:degoffset");
-            cout << "deg offset: " << this->degoffset << endl;
 
             // free memory
             iniparser_freedict(ini);
