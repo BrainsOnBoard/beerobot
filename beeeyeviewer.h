@@ -1,15 +1,12 @@
 #pragma once
-#include "imagereceiver.h"
+#include "readable.h"
 #include <opencv2/opencv.hpp>
 
 using namespace cv;
 
 /* run the remote bee eye viewer */
-void run_eye_viewer()
+void run_eye_viewer(Readable &recv)
 {
-    // to read frames over socket
-    ImageReceiver recv;
-
     // to store frame
     Mat view;
 

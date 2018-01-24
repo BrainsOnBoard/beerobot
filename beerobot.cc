@@ -13,6 +13,8 @@
 // for displaying robot's bee eye view remotely
 #include "beeeyeviewer.h"
 
+#include "imagereceiver.h"
+
 // for processing single image files
 #include "imagefile.h"
 
@@ -27,7 +29,7 @@ using namespace std;
 /* show help information */
 void showusage()
 {
-    cout << "Usage: beerobot [--config|--controller|--no-controller] [--motor dummy|surveyor|arduino] [usb|wifi|viewer [ip]]" << endl;
+    cout << "Usage: beerobot [--config|--controller|--no-controller|--local] [--motor dummy|surveyor|arduino] [usb|wifi|viewer [ip]]" << endl;
     exit(1);
 }
 
@@ -47,11 +49,12 @@ int main(int argc, char** argv)
     bool controllerflag = false; // controller CL arg present
     bool controller = false; // controller enabled
     bool motorflag = false; // motor CL arg present
+    bool localflag = false;
     MotorType mtype = Arduino; // type of Motor to use (server only)
     char* server_ip = NULL; // IP of robot
+    vid_t* vid = NULL; // video device to read from
 
     if (argc > 1) { // if we have command line args
-        vid_t* vid = NULL; // video device to read from
         bool config = false; // whether or not to enter config mode (edit .ini files)
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "--config") == 0) { // enable config mode
@@ -91,29 +94,32 @@ int main(int argc, char** argv)
                 else
                     showusage();
                 motorflag = true;
+            } else if (strcmp(argv[i], "--local") == 0) { // run locally
+                localflag = true;
             } else if (config || !process_file(argv[i]))
                 showusage();
         }
 
-        if (server_ip) { // then start the viewer
-            // code run by client (connecting to robot)
-            MainClient client(server_ip);
-            if (controller)
-                startcontroller(&client);
+        if (!localflag) {
+            if (server_ip) { // then start the viewer
+                // code run by client (connecting to robot)
+                MainClient client(server_ip);
+                if (controller)
+                    startcontroller(&client);
 
-            run_eye_viewer();
-            return 0;
-        } else if (config || vid) {
-            if (!vid) // default to usb for config
-                vid = get_usb();
+                ImageReceiver recv;
+                run_eye_viewer(recv);
+                return 0;
+            } else if (config || vid) {
+                if (!vid) // default to usb for config
+                    vid = get_usb();
 
-            // code run if just showing video locally
-            run_eye_config(vid, config);
-            return 0;
+                // code run if just showing video locally
+                run_eye_config(vid, config);
+                return 0;
+            }
         }
     }
-
-    // begin code run by robot
 
     // start appropriate motor device
     Motor *mtr;
@@ -147,8 +153,16 @@ int main(int argc, char** argv)
     else
         cout << "Use of controller is disabled" << endl;
 
-    // run main server
-    MainServer::run_server(mtr);
+    if (localflag) {
+        if (!vid)
+            vid = get_usb();
+
+        BeeEye eye(vid);
+        run_eye_viewer(eye);
+    } else {
+        // run main server
+        MainServer::run_server(mtr);
+    }
 
     do_run_controller = false;
     delete mtr;

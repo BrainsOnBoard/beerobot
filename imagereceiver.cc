@@ -42,7 +42,7 @@ ImageReceiver::~ImageReceiver()
 }
 
 /* Read a single frame in. This will usually take two UDP packets' worth of data. */
-void ImageReceiver::read(Mat *view)
+bool ImageReceiver::read(Mat *view)
 {
     // loop until we have a whole frame to copy to view
     for (;;) {
@@ -94,4 +94,5 @@ void ImageReceiver::read(Mat *view)
             lastbuff.insert(lastbuff.begin(), &buff[sizeof (packinfo)], &buff[len]);
         }
     }
+    return true;
 }

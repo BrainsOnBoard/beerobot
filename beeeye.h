@@ -2,11 +2,12 @@
 
 #include <opencv2/opencv.hpp>
 #include "camparams.h"
+#include "readable.h"
 
 // Forward declarations
 class See3CAM_CU40;
 
-class BeeEye {
+class BeeEye : public Readable {
 public:
     CamParams params;
 
@@ -17,6 +18,7 @@ public:
     void get_unwrapped_image(Mat &unwrap, Mat &imorig);
     void get_eye_view(Mat &view, Mat &imunwrap);
     bool get_eye_view(Mat &view);
+    virtual bool read(Mat *view) override;
 private:
     VideoCapture* cap;
     See3CAM_CU40* see3cam;

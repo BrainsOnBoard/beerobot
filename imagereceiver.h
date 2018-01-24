@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imagecommon.h"
+#include "readable.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -9,11 +10,11 @@
 #include <errno.h>
 #include <opencv2/opencv.hpp>
 
-class ImageReceiver {
+class ImageReceiver : public Readable {
 public:
     ImageReceiver();
     virtual ~ImageReceiver();
-    void read(cv::Mat *view);
+    virtual bool read(cv::Mat *view) override;
 private:
     int listenfd = -1;
     uchar buff[MAX_UDP_PACKET_SIZE];

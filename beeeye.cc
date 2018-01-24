@@ -6,7 +6,6 @@
 
 BeeEye::BeeEye(vid_t* vid) : cap(nullptr), see3cam(nullptr), params(vid)
 {
-
     if (vid->dev_int != -1 || vid->dev_char != nullptr) {
         if (vid->is_see3cam) {
             cout << "Opening " << "/dev/video" + to_string(vid->dev_int) << std::endl;
@@ -75,7 +74,6 @@ bool BeeEye::get_image(Mat &imorig)
         }
         return see3cam->captureSuperPixelWBU30(imorig);
     }
-
 }
 
 void BeeEye::get_unwrapped_image(Mat &imunwrap, Mat &imorig)
@@ -107,4 +105,9 @@ bool BeeEye::get_eye_view(Mat& view)
     get_unwrapped_image(imunwrap, imorig);
     get_eye_view(view, imunwrap);
     return true;
+}
+
+bool BeeEye::read(Mat *view)
+{
+    return this->get_eye_view(*view);
 }
