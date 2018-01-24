@@ -29,7 +29,7 @@ using namespace std;
 /* show help information */
 void showusage()
 {
-    cout << "Usage: beerobot [--config|--controller|--no-controller|--local] [--motor dummy|surveyor|arduino] [usb|wifi|viewer [ip]]" << endl;
+    cout << "Usage: beerobot [--config|--controller|--no-controller|--local|--no-overlay] [--motor dummy|surveyor|arduino] [usb|wifi|viewer [ip]]" << endl;
     exit(1);
 }
 
@@ -50,6 +50,7 @@ int main(int argc, char** argv)
     bool controller = false; // controller enabled
     bool motorflag = false; // motor CL arg present
     bool localflag = false;
+    bool overlayflag = true;
     MotorType mtype = Arduino; // type of Motor to use (server only)
     char* server_ip = NULL; // IP of robot
     vid_t* vid = NULL; // video device to read from
@@ -71,6 +72,8 @@ int main(int argc, char** argv)
                 if (argc < i + 2)
                     showusage();
                 server_ip = argv[++i];
+        } else if (strcmp(argv[i], "--no-overlay") == 0) { // no honeycomb overlay
+        overlayflag = false;
             } else if (strcmp(argv[i], "--controller") == 0) { // enable controller
                 if (controllerflag)
                     showusage();
@@ -108,7 +111,7 @@ int main(int argc, char** argv)
                     startcontroller(&client);
 
                 ImageReceiver recv;
-                run_eye_viewer(recv);
+                run_eye_viewer(recv, overlayflag);
                 return 0;
             } else if (config || vid) {
                 if (!vid) // default to usb for config
@@ -158,7 +161,7 @@ int main(int argc, char** argv)
             vid = get_usb();
 
         BeeEye eye(vid);
-        run_eye_viewer(eye);
+        run_eye_viewer(eye, overlayflag);
     } else {
         // run main server
         MainServer::run_server(mtr);
