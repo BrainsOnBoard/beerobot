@@ -1,6 +1,7 @@
 #pragma once
 #include "readable.h"
 #include <opencv2/opencv.hpp>
+#include <X11/Xlib.h>
 
 using namespace cv;
 
@@ -9,7 +10,10 @@ Mat overlay, overlayinner;
 /* run the remote bee eye viewer */
 void run_eye_viewer(Readable &recv)
 {
-    Size oversz(1920, 1200);
+    Display* disp = XOpenDisplay(NULL);
+    Screen* scrn = DefaultScreenOfDisplay(disp);
+    Size oversz(scrn->width, scrn->height);
+    cout << "Screen resolution: " << oversz << endl;
 
     Mat overlayfull = imread("honeycomb_overlay.png", 3);
     resize(overlayfull, overlay, oversz, 0, 0, INTER_CUBIC);
