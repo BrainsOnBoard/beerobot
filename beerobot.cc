@@ -72,8 +72,8 @@ int main(int argc, char** argv)
                 if (argc < i + 2)
                     showusage();
                 server_ip = argv[++i];
-        } else if (strcmp(argv[i], "--no-overlay") == 0) { // no honeycomb overlay
-        overlayflag = false;
+            } else if (strcmp(argv[i], "--no-overlay") == 0) { // no honeycomb overlay
+                overlayflag = false;
             } else if (strcmp(argv[i], "--controller") == 0) { // enable controller
                 if (controllerflag)
                     showusage();
@@ -106,12 +106,18 @@ int main(int argc, char** argv)
         if (!localflag) {
             if (server_ip) { // then start the viewer
                 // code run by client (connecting to robot)
-                MainClient client(server_ip);
+                MainClient* client = new MainClient(server_ip);
                 if (controller)
-                    startcontroller(&client);
+                    startcontroller(client);
 
                 ImageReceiver recv;
                 run_eye_viewer(recv, overlayflag);
+
+                do_run_controller = false;
+                if (!controller) {
+                    delete client;
+                }
+
                 return 0;
             } else if (config || vid) {
                 if (!vid) // default to usb for config
@@ -168,7 +174,8 @@ int main(int argc, char** argv)
     }
 
     do_run_controller = false;
-    delete mtr;
-
+    if (!controller) {
+        delete mtr;
+    }
     return 0;
 }

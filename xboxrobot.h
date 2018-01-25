@@ -34,4 +34,7 @@ void* run_controller(void *ptr)
         // Drive motor using joystick
         joystick.drive(*mtr, DEADZONE);
     }
+
+    // close Motor device
+    delete mtr;
 }
