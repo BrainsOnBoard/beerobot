@@ -55,15 +55,16 @@ bool ImageReceiver::read(Mat *view)
 
         // there is a header at the start of the packet
         packinfo *info = (packinfo*) buff;
-        /*cout << "id: " << info->id << endl
-                << "num: " << (int) info->num << endl
-                << "tot: " << (int) info->tot << endl;*/
+        debug_imagepack(*info, len);
 
         if (info->tot == 1) { // whole frame in single packet
             // the data beyond the header is a JPEG
             vector<uchar> v(&buff[sizeof (packinfo)], &buff[len]);
 
             // parse JPEG
+#ifdef DEBUG_IMAGEPACK
+            cout << "image len: " << v.size() << endl;
+#endif
             imdecode(v, IMREAD_UNCHANGED, view);
             break;
         } else if (lastbuff.size() > 0 && info->id == lastid) { // split frame, second packet
@@ -76,10 +77,10 @@ bool ImageReceiver::read(Mat *view)
             lastbuff.insert(lastbuff.end(), &buff[sizeof (packinfo)], &buff[len]);
 
             // parse JPEG
+#ifdef DEBUG_IMAGEPACK
+            cout << "image len: " << lastbuff.size() << endl;
+#endif
             imdecode(lastbuff, IMREAD_UNCHANGED, view);
-
-            // clear the buffer
-            lastbuff.clear();
             break;
         } else { // split frame, first packet
             if (info->num != 0) {
@@ -89,6 +90,9 @@ bool ImageReceiver::read(Mat *view)
 
             // save the ID of this packet so we can match it up with its partner
             lastid = info->id;
+
+            // clear the buffer
+            lastbuff.clear();
 
             // copy this packet's JPEG data to buffer
             lastbuff.insert(lastbuff.begin(), &buff[sizeof (packinfo)], &buff[len]);
