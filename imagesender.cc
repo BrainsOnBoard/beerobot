@@ -2,9 +2,14 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <chrono>
 #include <opencv2/opencv.hpp>
 
 using namespace std;
+using namespace std::chrono;
+
+static const double max_fps = 40;
+static const long max_period = (long) (1000000000.0 / max_fps);
 
 /* Create socket, start BeeEye (camera etc.) */
 ImageSender::ImageSender(const sockaddr_in *dest)
@@ -45,6 +50,8 @@ void ImageSender::run()
     // set running flag to true
     running = true;
     while (running) {
+        auto t0 = high_resolution_clock::now();
+
         // read bee eye frame
         if (!eye.get_eye_view(view))
             throw new runtime_error("Error: Could not read from webcam");
@@ -101,6 +108,17 @@ void ImageSender::run()
 #ifdef DEBUG_IMAGEPACK
         cout << "image len: " << buff.size() << endl;
 #endif
+
+        // throttle framerate at max_fps
+        auto t1 = high_resolution_clock::now();
+        long tdiff = duration_cast<nanoseconds>(t1 - t0).count();
+        if (tdiff < max_period) {
+            timespec ts{
+                .tv_sec = 0,
+                .tv_nsec = max_period - tdiff};
+
+            nanosleep(&ts, nullptr);
+        }
     }
 }
 
