@@ -1,4 +1,5 @@
 #!/bin/sh
-# script to start http client locally
+# script to start client locally
 
-./beerobot --controller viewer 192.168.1.3
+./beerobot --controller viewer 192.168.1.5
+
