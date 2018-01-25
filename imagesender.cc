@@ -122,16 +122,9 @@ void ImageSender::run()
     }
 }
 
-// the currently running instance of ImageSender
-ImageSender * ImageSender::Instance = NULL;
-
 void* ImageSender::start_sending(void *destAddress)
 {
-    // if there is an ImageSender already running, stop it
-    if (Instance)
-        delete Instance;
-
     // create new image sender and run in loop
-    Instance = new ImageSender((const sockaddr_in*) destAddress);
-    Instance->run();
+    ImageSender sender((const sockaddr_in*) destAddress);
+    sender.run();
 }
