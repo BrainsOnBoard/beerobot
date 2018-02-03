@@ -13,7 +13,7 @@ OBJECTS := \
 	${OBJ_DIR}/socketcommon.o \
 	${OBJ_DIR}/videotype.o
 NPROC:=$(shell nproc)
-MAKEFLAGS+=-j $(NPROC)"
+MAKEFLAGS+=-j $(NPROC)
 
 all: build $(TARGET)
 
