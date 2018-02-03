@@ -1,6 +1,6 @@
 CXXFLAGS := -pthread -std=c++11 -I$(GENN_ROBOTICS_PATH)/common `pkg-config --cflags opencv x11`
 INIPARSER := iniparser/libiniparser.a
-LDFLAGS := -O2 `pkg-config --libs opencv x11` $(INIPARSER)
+LDFLAGS := -O2 -lstdc++ -lm `pkg-config --libs opencv x11` $(INIPARSER)
 OBJ_DIR := ./build
 TARGET := beerobot
 OBJECTS := \
