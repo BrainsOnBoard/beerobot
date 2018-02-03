@@ -127,4 +127,6 @@ void* ImageSender::start_sending(void *destAddress)
     // create new image sender and run in loop
     ImageSender sender((const sockaddr_in*) destAddress);
     sender.run();
+
+    return nullptr;
 }

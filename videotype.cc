@@ -40,7 +40,7 @@ int get_camera_by_name(const char * const (&names)[N], int &selected)
                 return i;
             }
         }
-        
+
         // At least this is a camera - use it by default
         defcam = i;
     }
@@ -92,4 +92,5 @@ vid_t* get_pixpro_wifi()
     vid->width = 1024;
     vid->height = 1024;
     vid->ini_file = "beerobot_pixpro_wifi.ini";
+    return vid;
 }

@@ -74,6 +74,8 @@ bool BeeEye::get_image(Mat &imorig)
         }
         return see3cam->captureSuperPixelWBU30(imorig);
     }
+
+    return false;
 }
 
 void BeeEye::get_unwrapped_image(Mat &imunwrap, Mat &imorig)
