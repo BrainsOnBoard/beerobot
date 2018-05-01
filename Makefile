@@ -1,4 +1,4 @@
-CXXFLAGS := -pthread -std=c++11 -I$(GENN_ROBOTICS_PATH)/common `pkg-config --cflags opencv x11`
+CXXFLAGS := -pthread -std=c++11 -Isrc -Iiniparser/src -I$(GENN_ROBOTICS_PATH)/common `pkg-config --cflags opencv x11`
 INIPARSER := iniparser/libiniparser.a
 LDFLAGS := -O2 -lstdc++ -lm `pkg-config --libs opencv x11` $(INIPARSER)
 OBJ_DIR := ./build
@@ -20,7 +20,7 @@ all: build $(TARGET)
 $(TARGET): $(OBJECTS) $(INIPARSER)
 	$(CXX) -o $(TARGET) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS)
 	
-$(OBJ_DIR)/%.o: %.cc
+$(OBJ_DIR)/%.o: src/%.cc
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
 $(INIPARSER):

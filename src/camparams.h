@@ -3,14 +3,14 @@
 #include "videotype.h"
 
 // this code relies on the iniparser library, included as a git submodule
-#include "iniparser/src/iniparser.h"
+#include "iniparser.h"
 
 using namespace cv;
 using namespace std;
 
-class CamParams {
+class CamParams
+{
 private:
-
     /* read an int from the ini file */
     static inline void get(const dictionary *ini, int &val, const char *str)
     {
@@ -29,7 +29,7 @@ private:
         val = iniparser_getdouble(ini, str, val);
     }
 
-    const char* fpath;
+    const char *fpath;
 
     // should image be flipped in camera map
     bool flipped;
@@ -48,7 +48,10 @@ public:
     Mat map_y;
 
     /* read parameters from ini file */
-    CamParams(vid_t* vid) : ssrc(vid->width, vid->height), sdst(1280, 400), flipped(false)
+    CamParams(vid_t *vid)
+      : ssrc(vid->width, vid->height)
+      , sdst(1280, 400)
+      , flipped(false)
     {
         double dcent_x = 0.5;
         double dcent_y = 0.5;
@@ -136,14 +139,18 @@ public:
         for (int i = 0; i < this->sdst.height; i++) {
             for (int j = 0; j < this->sdst.width; j++) {
                 // Get i as a fraction of unwrapped height, flipping if desired
-                float frac = this->flipped ?
-                        1.0 - ((float) i / (float) this->sdst.height)
-                        : ((float) i / (float) this->sdst.height);
+                float frac =
+                        this->flipped
+                                ? 1.0 - ((float) i / (float) this->sdst.height)
+                                : ((float) i / (float) this->sdst.height);
 
                 // Convert i and j to polar
-                float r = frac * (this->r_outer - this->r_inner) + this->r_inner;
+                float r =
+                        frac * (this->r_outer - this->r_inner) + this->r_inner;
 
-                float th = 2 * M_PI * (((float) j / (float) this->sdst.width) - ((float) degoffset / 360.0));
+                float th = 2 * M_PI *
+                           (((float) j / (float) this->sdst.width) -
+                            ((float) degoffset / 360.0));
                 float x = this->cent.x - r * sin(th);
                 float y = this->cent.y + r * cos(th);
                 this->map_x.at<float>(i, j) = x;
