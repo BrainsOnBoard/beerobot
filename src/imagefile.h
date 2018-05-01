@@ -7,12 +7,12 @@
 /* try to process file, return false on error (e.g. file doesn't exist) */
 bool process_file(const char* filepath)
 {
-    Mat im = imread(filepath, CV_LOAD_IMAGE_COLOR);
+    cv::Mat im = cv::imread(filepath, CV_LOAD_IMAGE_COLOR);
     if (!im.data) {
         return false;
     }
 
-    cout << "Processing " << filepath << endl;
+    std::cout << "Processing " << filepath << std::endl;
 
     vid_t dummy;
     dummy.dev_char = NULL;
@@ -22,22 +22,22 @@ bool process_file(const char* filepath)
     dummy.ini_file = "beerobot_usb.ini";
     BeeEye eye(&dummy);
 
-    Mat unwrap;
+    cv::Mat unwrap;
     eye.get_unwrapped_image(unwrap, im);
 
-    vector<int> imparams;
+    std::vector<int> imparams;
     imparams.push_back(CV_IMWRITE_JPEG_QUALITY);
     imparams.push_back(100);
 
-    string uwpath = string(filepath) + ".unwrap.jpg";
-    cout << "Saving unwrapped image to " << uwpath << endl;
-    imwrite(uwpath, unwrap, imparams);
+    std::string uwpath = std::string(filepath) + ".unwrap.jpg";
+    std::cout << "Saving unwrapped image to " << uwpath << std::endl;
+    cv::imwrite(uwpath, unwrap, imparams);
 
-    Mat view;
+    cv::Mat view;
     eye.get_eye_view(view, unwrap);
-    string eyepath = string(filepath) + ".beeeye.jpg";
-    cout << "Saving bee eye view to " << eyepath << endl;
-    imwrite(eyepath, view, imparams);
+    std::string eyepath = std::string(filepath) + ".beeeye.jpg";
+    std::cout << "Saving bee eye view to " << eyepath << std::endl;
+    cv::imwrite(eyepath, view, imparams);
 
     return true;
 }

@@ -8,28 +8,28 @@ BeeEye::BeeEye(vid_t* vid) : cap(nullptr), see3cam(nullptr), params(vid)
 {
     if (vid->dev_int != -1 || vid->dev_char != nullptr) {
         if (vid->is_see3cam) {
-            cout << "Opening " << "/dev/video" + to_string(vid->dev_int) << std::endl;
-            see3cam = new See3CAM_CU40("/dev/video" + to_string(vid->dev_int), See3CAM_CU40::Resolution::_1280x720);
+            std::cout << "Opening /dev/video" + std::to_string(vid->dev_int) << std::endl;
+            see3cam = new See3CAM_CU40("/dev/video" + std::to_string(vid->dev_int), See3CAM_CU40::Resolution::_1280x720);
             see3cam->setBrightness(20);
         } else {
             if (vid->dev_char) {
-                cap = new VideoCapture(vid->dev_char);
+                cap = new cv::VideoCapture(vid->dev_char);
             } else {
-                cap = new VideoCapture(vid->dev_int);
+                cap = new cv::VideoCapture(vid->dev_int);
             }
             if (!cap->isOpened()) {
-                cerr << "Error: Could not open webcam" << endl;
+                std::cerr << "Error: Could not open webcam" << std::endl;
                 exit(1);
             }
 
             // set resolution
-            cap->set(CAP_PROP_FRAME_WIDTH, params.ssrc.width);
-            cap->set(CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
+            cap->set(cv::CAP_PROP_FRAME_WIDTH, params.ssrc.width);
+            cap->set(cv::CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
         }
     }
 
     // create x and y pixel maps
-    Size sz_out(eye_size[0], eye_size[1]);
+    cv::Size sz_out(eye_size[0], eye_size[1]);
     map_x.create(sz_out, CV_32FC1);
     map_y.create(sz_out, CV_32FC1);
     for (int i = 0; i < gdataLength; i++) {
@@ -61,7 +61,7 @@ BeeEye::~BeeEye()
     }
 }
 
-bool BeeEye::get_image(Mat &imorig)
+bool BeeEye::get_image(cv::Mat &imorig)
 {
     // read frame from camera
     if (cap) {
@@ -78,12 +78,12 @@ bool BeeEye::get_image(Mat &imorig)
     return false;
 }
 
-void BeeEye::get_unwrapped_image(Mat &imunwrap, Mat &imorig)
+void BeeEye::get_unwrapped_image(cv::Mat &imunwrap, cv::Mat &imorig)
 {
-    remap(imorig, imunwrap, params.map_x, params.map_y, INTER_NEAREST);
+    remap(imorig, imunwrap, params.map_x, params.map_y, cv::INTER_NEAREST);
 }
 
-void BeeEye::get_eye_view(Mat &view, Mat &imunwrap)
+void BeeEye::get_eye_view(cv::Mat &view, cv::Mat &imunwrap)
 {
     /* perform two transformations:
      * - unwrap panoramic image
@@ -91,14 +91,14 @@ void BeeEye::get_eye_view(Mat &view, Mat &imunwrap)
      *
      * (this could be done in a single step with the correct pixel map, but
      * this way is easier for now and works...) */
-    remap(imunwrap, imeye, map_x, map_y, INTER_NEAREST);
+    remap(imunwrap, imeye, map_x, map_y, cv::INTER_NEAREST);
 
     // resize the image we get out so it's large enough to see properly
-    Size sz(970, 1046);
-    resize(imeye, view, sz, 0, 0, INTER_LINEAR);
+    cv::Size sz(970, 1046);
+    resize(imeye, view, sz, 0, 0, cv::INTER_LINEAR);
 }
 
-bool BeeEye::get_eye_view(Mat& view)
+bool BeeEye::get_eye_view(cv::Mat& view)
 {
     if (!get_image(imorig)) {
         return false;
@@ -109,7 +109,7 @@ bool BeeEye::get_eye_view(Mat& view)
     return true;
 }
 
-bool BeeEye::read(Mat *view)
+bool BeeEye::read(cv::Mat *view)
 {
     return this->get_eye_view(*view);
 }

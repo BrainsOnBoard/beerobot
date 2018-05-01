@@ -18,6 +18,6 @@ public:
 private:
     int listenfd = -1;
     uchar buff[MAX_UDP_PACKET_SIZE];
-    vector<uchar> lastbuff;
+    std::vector<uchar> lastbuff;
     int lastid;
 };

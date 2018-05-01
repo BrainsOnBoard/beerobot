@@ -7,6 +7,7 @@
 
 using namespace std;
 using namespace std::chrono;
+using namespace cv;
 
 static const double max_fps = 40;
 static const long max_period = (long) (1000000000.0 / max_fps);

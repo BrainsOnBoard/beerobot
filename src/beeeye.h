@@ -14,14 +14,16 @@ public:
     BeeEye(vid_t* vid);
     ~BeeEye();
 
-    bool get_image(Mat &imorig);
-    void get_unwrapped_image(Mat &unwrap, Mat &imorig);
-    void get_eye_view(Mat &view, Mat &imunwrap);
-    bool get_eye_view(Mat &view);
-    virtual bool read(Mat *view) override;
+    bool get_image(cv::Mat &imorig);
+    void get_unwrapped_image(cv::Mat &unwrap, cv::Mat &imorig);
+    void get_eye_view(cv::Mat &view, cv::Mat &imunwrap);
+    bool get_eye_view(cv::Mat &view);
+    virtual bool read(cv::Mat *view) override;
 private:
-    VideoCapture* cap;
-    See3CAM_CU40* see3cam;
-    Mat map_x, map_y;
-    Mat imorig, imunwrap, imeye;
+    cv::VideoCapture* cap = nullptr;
+#ifndef _WIN32
+    See3CAM_CU40* see3cam = nullptr;
+#endif
+    cv::Mat map_x, map_y;
+    cv::Mat imorig, imunwrap, imeye;
 };

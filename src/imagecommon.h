@@ -4,8 +4,6 @@
 #include <cstddef>
 #include <iostream>
 
-using namespace std;
-
 struct __attribute__ ((packed)) packinfo
 {
     int id;

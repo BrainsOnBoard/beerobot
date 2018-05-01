@@ -11,15 +11,12 @@
 
 #define DEADZONE 0.25
 
-using namespace std;
-
 bool do_run_controller = true; // flag to exit controller loop
-
 
 /* Listens to controller input and sends appropriate drive command to robot */
 void* run_controller(void *ptr)
 {
-    cout << "Running controller service" << endl;
+    std::cout << "Running controller service" << std::endl;
 
     // motor device to send commands to
     Motor *mtr = (Motor*) ptr;

@@ -2,9 +2,6 @@
 
 #include "beeeye.h"
 
-using namespace std;
-using namespace cv;
-
 const int CROSS_SIZE = 20; // size of calibration cross
 
 // keyboard key codes
@@ -18,9 +15,9 @@ const int KB_ESC = 27;
 const int BIG_PX_JUMP = 5;
 
 /* draws a line for the calibration cross */
-inline void calib_line(Mat &imorig, Point p1, Point p2)
+inline void calib_line(cv::Mat &imorig, cv::Point p1, cv::Point p2)
 {
-    line(imorig, p1, p2, Scalar(0x00, 0xff, 0x00), 2);
+    cv::line(imorig, p1, p2, cv::Scalar(0x00, 0xff, 0x00), 2);
 }
 
 /* run the bee eye config display */
@@ -31,12 +28,12 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
     bool do_calib = true; // whether calibration screen is visible or not
     int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration (either 1 or 5)
 
-    Mat imorig, unwrap, view;
+    cv::Mat imorig, unwrap, view;
 
     // display remapped camera output on loop until user presses escape
     for (bool do_run = true; do_run;) {
         if (!eye.get_image(imorig)) {
-            cerr << "Error: Could not read from webcam" << endl;
+            std::cerr << "Error: Could not read from webcam" << std::endl;
             exit(1);
         }
 
@@ -48,12 +45,12 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
             imshow("unwrapped", unwrap);
 
             // draw calibration cross at what we've chose as the center
-            calib_line(imorig, Point(eye.params.cent.x - CROSS_SIZE, eye.params.cent.y), Point(eye.params.cent.x + CROSS_SIZE, eye.params.cent.y));
-            calib_line(imorig, Point(eye.params.cent.x, eye.params.cent.y - CROSS_SIZE), Point(eye.params.cent.x, eye.params.cent.y + CROSS_SIZE));
+            calib_line(imorig, cv::Point(eye.params.cent.x - CROSS_SIZE, eye.params.cent.y), cv::Point(eye.params.cent.x + CROSS_SIZE, eye.params.cent.y));
+            calib_line(imorig, cv::Point(eye.params.cent.x, eye.params.cent.y - CROSS_SIZE), cv::Point(eye.params.cent.x, eye.params.cent.y + CROSS_SIZE));
 
             // draw inner and outer circles, showing the area which we will unwrap
-            circle(imorig, eye.params.cent, eye.params.r_inner, Scalar(0x00, 0x00, 0xff), 2);
-            circle(imorig, eye.params.cent, eye.params.r_outer, Scalar(0xff, 0x00, 0x00), 2);
+            circle(imorig, eye.params.cent, eye.params.r_inner, cv::Scalar(0x00, 0x00, 0xff), 2);
+            circle(imorig, eye.params.cent, eye.params.r_outer, cv::Scalar(0xff, 0x00, 0x00), 2);
 
             // show the image
             imshow("calibration", imorig);
@@ -63,21 +60,21 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
         }
 
         // read keypress in
-        int key = waitKey(1) & 0xff;
+        int key = cv::waitKey(1) & 0xff;
         /*if (key != 0xff)
             cout << "key: " << key << endl;*/
         switch (key) {
         case 'c': // toggle display of calibration screen
             if (calib_enabled) {
                 if (do_calib) { // we have to close window explicitly
-                    destroyWindow("calibration");
-                    destroyWindow("unwrapped");
+                    cv::destroyWindow("calibration");
+                    cv::destroyWindow("unwrapped");
 
                     // set opencv window to display full screen
                     cvNamedWindow("bee view", CV_WINDOW_NORMAL);
-                    setWindowProperty("bee view", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
+                    setWindowProperty("bee view", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
                 } else {
-                    destroyWindow("bee view");
+                    cv::destroyWindow("bee view");
                 }
 
                 do_calib = !do_calib;
@@ -102,7 +99,7 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
                 case 's': // make inner circle smaller
                     if (eye.params.r_inner > 0) {
                         eye.params.r_inner -= px_jump;
-                        eye.params.r_inner = max(0, eye.params.r_inner);
+                        eye.params.r_inner = std::max(0, eye.params.r_inner);
                         eye.params.generate_map();
                     }
                     break;
@@ -113,7 +110,7 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
                 case 'a': // make outer circle smaller
                     if (eye.params.r_outer > 0) {
                         eye.params.r_outer -= px_jump;
-                        eye.params.r_outer = max(0, eye.params.r_outer);
+                        eye.params.r_outer = std::max(0, eye.params.r_outer);
                         eye.params.generate_map();
                     }
                     break;

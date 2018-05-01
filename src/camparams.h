@@ -5,9 +5,6 @@
 // this code relies on the iniparser library, included as a git submodule
 #include "iniparser.h"
 
-using namespace cv;
-using namespace std;
-
 class CamParams
 {
 private:
@@ -37,15 +34,14 @@ private:
 
 public:
     // source and dest image sizes
-    Size ssrc, sdst;
+    cv::Size ssrc, sdst;
 
     // calibration values
-    Point cent;
+    cv::Point cent;
     int r_inner, r_outer;
 
     // x and y pixel maps
-    Mat map_x;
-    Mat map_y;
+    cv::Mat map_x, map_y;
 
     /* read parameters from ini file */
     CamParams(vid_t *vid)
@@ -62,9 +58,9 @@ public:
 
         dictionary *ini = iniparser_load(vid->ini_file);
         if (!ini)
-            cout << "Could not find " << fpath;
+            std::cout << "Could not find " << fpath;
         else {
-            cout << "Reading settings from " << fpath << endl;
+            std::cout << "Reading settings from " << fpath << std::endl;
 
             get(ini, this->sdst.width, "unwrap:width");
             get(ini, this->sdst.height, "unwrap:height");
@@ -87,19 +83,19 @@ public:
         this->r_outer = round((double) this->ssrc.height * dr_outer);
 
         // define our x and y pixel maps
-        this->map_x = Mat(this->sdst, CV_32FC1);
-        this->map_y = Mat(this->sdst, CV_32FC1);
+        this->map_x = cv::Mat(this->sdst, CV_32FC1);
+        this->map_y = cv::Mat(this->sdst, CV_32FC1);
     }
 
     /* write the parameters to ini file */
     void write()
     {
-        cout << "Writing settings to " << fpath << endl;
+        std::cout << "Writing settings to " << fpath << std::endl;
 
         // open file for writing
         FILE *ini = fopen(fpath, "w");
         if (!ini) {
-            cerr << "Error: Could not create file " << fpath << endl;
+            std::cerr << "Error: Could not create file " << fpath << std::endl;
             return;
         }
 
