@@ -6,6 +6,12 @@
 #include <cstring>
 #include <thread>
 
+#ifdef _WIN32
+#undef _WIN32_WINNT
+#define _WIN32_WINNT _WIN32_WINNT_WIN7
+#include <ws2tcpip.h>
+#endif
+
 using namespace std;
 
 /* Create a server listening on MAIN_PORT (TCP), sending motor commands to *mtr */
@@ -17,9 +23,11 @@ MainServer::MainServer(Motor *mtr) : mtr(mtr)
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         goto error;
     }
+#ifndef _WIN32
     if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof (on)) < 0) {
         goto error;
     }
+#endif
 
     memset(&addr, '0', sizeof (addr));
     addr.sin_family = AF_INET;
@@ -75,7 +83,7 @@ void MainServer::run()
 
         // convert IP to string
         char saddr[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, (const void*) &addr.sin_addr, saddr, addrlen);
+        inet_ntop(AF_INET, (void*) &addr.sin_addr, saddr, addrlen);
         cout << "Incoming connection from " << saddr << endl;
 
         // our destination IP is the same IP as the current connection

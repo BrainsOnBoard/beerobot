@@ -2,9 +2,15 @@
 
 #include <iostream>
 
+#ifdef _WIN32
+#include <winsock2.h>
+#define MSG_NOSIGNAL 0
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
+
 #include <unistd.h>
 #include <errno.h>
 

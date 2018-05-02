@@ -3,8 +3,10 @@
 
 // for motor control of robot
 #include "motor_dummy.h"
+#ifndef _WIN32
 #include "motor_surveyor.h"
 #include "motor_i2c.h"
+#endif
 
 // to exchange messages between robot and viewer
 #include "mainserver.h"
@@ -21,8 +23,10 @@
 // for config mode (i.e. editing .ini files)
 #include "beeeyeconfig.h"
 
+#ifndef _WIN32
 // for using the Xbox controller to drive the robot
 #include "xboxrobot.h"
+#endif
 
 using namespace std;
 
@@ -33,6 +37,7 @@ void showusage()
     exit(1);
 }
 
+#ifndef _WIN32
 /*
  * Start listening for joystick input on a separate thread and issuing
  * appropriate Motor.tank(,) command. Note that MainClient is a kind of Motor.
@@ -42,6 +47,7 @@ void startcontroller(Motor* mtr)
     pthread_t cthread;
     pthread_create(&cthread, NULL, &run_controller, mtr);
 }
+#endif
 
 /* main entry point */
 int main(int argc, char** argv)
@@ -107,16 +113,20 @@ int main(int argc, char** argv)
             if (server_ip) { // then start the viewer
                 // code run by client (connecting to robot)
                 MainClient* client = new MainClient(server_ip);
+#ifndef _WIN32
                 if (controller)
                     startcontroller(client);
+#endif
 
                 ImageReceiver recv;
                 run_eye_viewer(recv, overlayflag);
 
+#ifndef _WIN32
                 do_run_controller = false;
                 if (!controller) {
                     delete client;
                 }
+#endif
 
                 return 0;
             } else if (config || vid) {
@@ -133,6 +143,7 @@ int main(int argc, char** argv)
     // start appropriate motor device
     Motor *mtr;
     switch (mtype) {
+#ifndef _WIN32
     case Surveyor:
         cout << "Using Surveyor as motor" << endl;
         try {
@@ -151,16 +162,22 @@ int main(int argc, char** argv)
             mtr = new MotorDummy();
         }
         break;
+#endif
     default:
         cout << "Motor disabled" << endl;
         mtr = new MotorDummy();
     }
 
     // if using Xbox controller, start it
-    if (controller)
+    if (controller) {
+#ifdef _WIN32
+        cout << "Controller is disabled in Windows" << endl;
+#else
         startcontroller(mtr);
-    else
+#endif
+    } else {
         cout << "Use of controller is disabled" << endl;
+    }
 
     if (localflag) {
         if (!vid)
@@ -173,9 +190,13 @@ int main(int argc, char** argv)
         MainServer::run_server(mtr);
     }
 
+#ifndef _WIN32
     do_run_controller = false;
     if (!controller) {
         delete mtr;
     }
+#else
+    delete mtr;
+#endif
     return 0;
 }

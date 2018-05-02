@@ -1,11 +1,16 @@
 #include "imagereceiver.h"
 
 #include <iostream>
+#include <unistd.h>
+#include <errno.h>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <errno.h>
+#endif
 
 using namespace std;
 using namespace cv;

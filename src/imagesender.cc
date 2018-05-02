@@ -75,7 +75,7 @@ void ImageSender::run()
 
             // send packet
             debug_imagepack(info, buff.size());
-            if (sendto(connfd, buff.data(), buff.size(), MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
+            if (sendto(connfd, (buff_t *) buff.data(), buff.size(), MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
                 cerr << "Error: " << strerror(errno) << endl;
         } else if (buff.size() < 2 * MAX_IM_BYTES) { // frame fits in two packets
             // there are two packets in series
@@ -86,7 +86,7 @@ void ImageSender::run()
 
             // send header plus as many of the image's bytes as we can fit in packet
             debug_imagepack(info, MAX_UDP_PACKET_SIZE);
-            if (sendto(connfd, buff.data(), MAX_UDP_PACKET_SIZE, MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
+            if (sendto(connfd, (buff_t *) buff.data(), MAX_UDP_PACKET_SIZE, MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
                 cerr << "Error: " << strerror(errno) << endl;
 
             // start second packet
@@ -101,7 +101,7 @@ void ImageSender::run()
 
             // send second packet
             debug_imagepack(info, buff2.size());
-            if (sendto(connfd, buff2.data(), buff2.size(), MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
+            if (sendto(connfd, (buff_t *) buff2.data(), buff2.size(), MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
                 cerr << "Error: " << strerror(errno) << endl;
         } else // can't handle more than two packets in a series
             cerr << "Too big!" << endl;

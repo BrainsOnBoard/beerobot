@@ -1,17 +1,24 @@
 #include "beeeye.h"
 #include "gigerdatacam.h"
 
+#ifndef _WIN32
 // GeNN robotics includes
 #include "see3cam_cu40.h"
+#endif
 
-BeeEye::BeeEye(vid_t* vid) : cap(nullptr), see3cam(nullptr), params(vid)
+using namespace cv;
+using namespace std;
+
+BeeEye::BeeEye(vid_t* vid) : params(vid)
 {
     if (vid->dev_int != -1 || vid->dev_char != nullptr) {
+#ifndef _WIN32
         if (vid->is_see3cam) {
             std::cout << "Opening /dev/video" + std::to_string(vid->dev_int) << std::endl;
             see3cam = new See3CAM_CU40("/dev/video" + std::to_string(vid->dev_int), See3CAM_CU40::Resolution::_1280x720);
             see3cam->setBrightness(20);
         } else {
+#endif
             if (vid->dev_char) {
                 cap = new cv::VideoCapture(vid->dev_char);
             } else {
@@ -25,7 +32,9 @@ BeeEye::BeeEye(vid_t* vid) : cap(nullptr), see3cam(nullptr), params(vid)
             // set resolution
             cap->set(cv::CAP_PROP_FRAME_WIDTH, params.ssrc.width);
             cap->set(cv::CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
+#ifndef _WIN32
         }
+#endif
     }
 
     // create x and y pixel maps
@@ -55,9 +64,10 @@ BeeEye::~BeeEye()
     if (cap) {
         cap->release();
         delete cap;
+#ifndef _WIN32
     } else if (see3cam) {
         delete see3cam;
-
+#endif
     }
 }
 
@@ -68,11 +78,13 @@ bool BeeEye::get_image(cv::Mat &imorig)
         (*cap) >> imorig;
 
         return imorig.size().width != 0;
+#ifndef _WIN32
     } else if (see3cam) {
         if (imorig.size().width == 0) {
             imorig.create(params.ssrc, CV_8UC3);
         }
         return see3cam->captureSuperPixelWBU30(imorig);
+#endif
     }
 
     return false;

@@ -1,14 +1,22 @@
 #pragma once
 #include "readable.h"
 #include <opencv2/opencv.hpp>
+
+#ifndef _WIN32
 #include <X11/Xlib.h>
+#endif
 
 /* run the remote bee eye viewer */
 void run_eye_viewer(Readable &recv, bool showoverlay)
 {
-    Display* disp = XOpenDisplay(NULL);
+#ifdef _WIN32
+    cv::Size oversz(1024, 768);
+#else
+    Display* disp = XOpenDisplay(nullptr);
     Screen* scrn = DefaultScreenOfDisplay(disp);
     cv::Size oversz(scrn->width, scrn->height);
+#endif
+
     std::cout << "Screen resolution: " << oversz << std::endl;
 
     int xoff;

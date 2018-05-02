@@ -2,12 +2,11 @@
 *.jpg
 
 /beerobot
+/beerobot.exe
+
 *.o
 *.a
 
 *~
 
-/nbproject/
-.dep.inc
 /build/
-

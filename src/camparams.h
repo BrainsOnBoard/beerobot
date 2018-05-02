@@ -3,7 +3,9 @@
 #include "videotype.h"
 
 // this code relies on the iniparser library, included as a git submodule
+extern "C" {
 #include "iniparser.h"
+}
 
 class CamParams
 {
