@@ -1,12 +1,9 @@
 *.JPG
 *.jpg
 
-/beerobot
-/beerobot.exe
-
 *.o
 *.a
 
 *~
 
-/build/
+.vs
