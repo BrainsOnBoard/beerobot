@@ -55,7 +55,7 @@ OBJECTS := \
 
 all: build $(TARGET)
 
-$(TARGET): $(OBJECTS)
+$(TARGET): git_submodules $(OBJECTS)
 	$(_PREFIX)$(CXX) -o $(TARGET) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS)
 	
 $(OBJ_DIR)/%.o: src/%.cc
@@ -67,7 +67,10 @@ ${OBJ_DIR}/iniparser.o:
 ${OBJ_DIR}/dictionary.o:
 	$(_PREFIX)$(CC) -O2 -c -o ${OBJ_DIR}/dictionary.o iniparser/src/dictionary.c
 
-.PHONY: all build clean
+git_submodules:
+	git submodule update --init
+
+.PHONY: all build clean git_submodules
 
 build:
 	@mkdir -p $(OBJ_DIR)
