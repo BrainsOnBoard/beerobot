@@ -1,23 +1,23 @@
-#include <string>
-#include <iostream>
-#include <fstream>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 #include "videotype.h"
 
 using namespace std;
 
-namespace
-{
+namespace {
 /* get the number for a camera with a given name (-1 if not found) */
 template<size_t N>
-int get_camera_by_name(const char * const (&names)[N], int &selected)
+int
+get_camera_by_name(const char *const (&names)[N], int &selected)
 {
     char cname[4096];
 
-    // iterate through devices /dev/video0, /dev/video1 etc. reading the device name from sysfs
-    // until the correct device is found
+    // iterate through devices /dev/video0, /dev/video1 etc. reading the device
+    // name from sysfs until the correct device is found
     int defcam = -1;
     int cam1 = -1;
     for (int i = 0; i < 10; i++) {
@@ -27,15 +27,16 @@ int get_camera_by_name(const char * const (&names)[N], int &selected)
             continue;
         }
 
-        file.read(cname, sizeof (cname));
-        cname[file.gcount() - 1] = '\0'; // delete the last char, which is always newline
+        file.read(cname, sizeof(cname));
+        cname[file.gcount() - 1] =
+                '\0'; // delete the last char, which is always newline
         file.close();
 
         // Loop through camera names we're looking for
         // **NOTE* these are in priority order
-        for(int c = 0; c < N; c++) {
+        for (int c = 0; c < N; c++) {
             // If name matches select it and return it's device ID
-            if(strcmp(names[c], cname) == 0) {
+            if (strcmp(names[c], cname) == 0) {
                 selected = c;
                 return i;
             }
@@ -45,31 +46,40 @@ int get_camera_by_name(const char * const (&names)[N], int &selected)
         defcam = i;
     }
 
-
     if (defcam == -1) {
-        cerr << "Error: Could not find listed video devices and there are no other cameras attached" << endl;
+        cerr << "Error: Could not find listed video devices and there are no "
+                "other cameras attached"
+             << endl;
         exit(1);
     }
 
-    cerr << "Warning: Could not find listed video devices. Using default instead." << endl;
+    cerr << "Warning: Could not find listed video devices. Using default "
+            "instead."
+         << endl;
     return defcam;
 }
 }
 
 /* get a PixPro or webcam video device over USB */
-vid_t* get_usb()
+vid_t *
+get_usb()
 {
-    vid_t* vid = new vid_t;
+    vid_t *vid = new vid_t;
     int sel = 2;
-    vid->dev_int = get_camera_by_name({"See3CAM_CU40", "PIXPRO SP360 4K", "USB 2.0 Camera"}, sel);
+
+#ifdef _WIN32
+    vid->dev_int = 0;
+#else
+    vid->dev_int = get_camera_by_name(
+            { "See3CAM_CU40", "PIXPRO SP360 4K", "USB 2.0 Camera" }, sel);
+#endif
     vid->dev_char = NULL;
     if (sel == 0) {
         vid->width = 640;
         vid->height = 360;
         vid->ini_file = "beerobot_see3cam_usb.ini";
         vid->is_see3cam = true;
-    }
-    else if (sel == 1) {
+    } else if (sel == 1) {
         vid->width = 1440;
         vid->height = 1440;
         vid->ini_file = "beerobot_pixpro_usb.ini";
@@ -84,9 +94,10 @@ vid_t* get_usb()
 }
 
 /* get PixPro over wifi */
-vid_t* get_pixpro_wifi()
+vid_t *
+get_pixpro_wifi()
 {
-    vid_t* vid = new vid_t;
+    vid_t *vid = new vid_t;
     vid->dev_int = -1;
     vid->dev_char = "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg";
     vid->width = 1024;
