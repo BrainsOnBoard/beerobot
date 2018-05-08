@@ -67,8 +67,8 @@ public:
      */
     bool open()
     {
-        fd = ::open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
-        return fd >= 0;
+        m_Fd = ::open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
+        return m_Fd >= 0;
     }
 
     /*
@@ -76,19 +76,18 @@ public:
      */
     void close()
     {
-        if (closing) {
+        if (m_Closing) {
             return;
         }
+        m_Closing = true;
 
-        closing = true;
-
-        if (rthread) {
-            rthread->join();
-            delete rthread;
-            delete js;
+        if (m_Thread) {
+            m_Thread->join();
+            delete m_Thread;
+            delete m_JsEvent;
         }
 
-        ::close(fd);
+        ::close(m_Fd);
     }
 
     /*
@@ -97,9 +96,9 @@ public:
      */
     void startThread(ControllerCallback callback, void *data)
     {
-        if (!rthread) {
-            js = new js_event;
-            rthread = new std::thread(runThread, this, callback, data);
+        if (!m_Thread) {
+            m_JsEvent = new js_event;
+            m_Thread = new std::thread(runThread, this, callback, data);
         }
     }
 
@@ -109,8 +108,8 @@ public:
      */
     bool read(js_event &js)
     {
-        while (!closing) {
-            const ssize_t bytes = ::read(fd, &js, sizeof(js));
+        while (!m_Closing) {
+            const ssize_t bytes = ::read(m_Fd, &js, sizeof(js));
             if (bytes > 0) {
                 break;
             }
@@ -120,7 +119,7 @@ public:
 
             usleep(sleepmillis * 1000);
         }
-        if (closing) {
+        if (m_Closing) {
             return false;
         }
 
@@ -205,10 +204,10 @@ public:
     }
 
 private:
-    int fd = 0;                          // file descriptor for joystick device
-    std::thread *rthread = nullptr;           // read thread object
-    bool closing = false;                // is controller closing?
-    js_event *js = nullptr;              // struct to contain joystick event
+    int m_Fd = 0;                          // file descriptor for joystick device
+    std::thread *m_Thread = nullptr;           // read thread object
+    bool m_Closing = false;                // is controller closing?
+    js_event *m_JsEvent = nullptr;              // struct to contain joystick event
     static const __s16 deadzone = 10000; // size of deadzone for axes (i.e.
                                          // region within which not activated)
     static const long sleepmillis = 25;  // number of milliseconds between polls
@@ -223,10 +222,10 @@ private:
                           ControllerCallback callback,
                           void *data)
     {
-        while (c->read(*c->js)) {
-            callback(c->js, data);
+        while (c->read(*c->m_JsEvent)) {
+            callback(c->m_JsEvent, data);
         }
-        if (!c->closing) {
+        if (!c->m_Closing) {
             callback(nullptr, data);
         }
     }
