@@ -28,9 +28,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/iniparser/src",
-                "${workspaceFolder}/GeNN_Robotics",
+                "${workspaceFolder}/robot/src",
+                "${workspaceFolder}/robot/iniparser/src",
+                "${workspaceFolder}/robot/GeNN_Robotics",
                 "/usr/include/c++/7.3.1",
                 "/usr/include/c++/7.3.1/x86_64-pc-linux-gnu",
                 "/usr/include/c++/7.3.1/backward",
@@ -42,9 +42,9 @@
             "intelliSenseMode": "clang-x64",
             "browse": {
                 "path": [
-                    "${workspaceFolder}/src",
-                    "${workspaceFolder}/iniparser/src",
-                    "${workspaceFolder}/GeNN_Robotics",
+                    "${workspaceFolder}/robot/src",
+                    "${workspaceFolder}/robot/iniparser/src",
+                    "${workspaceFolder}/robot/GeNN_Robotics",
                     "/usr/include/c++/7.3.1",
                     "/usr/include/c++/7.3.1/x86_64-pc-linux-gnu",
                     "/usr/include/c++/7.3.1/backward",
