@@ -3,7 +3,7 @@
 #include <iostream>
 
 // GeNN robotics includes
-#include "motor.h"
+#include "common/motor.h"
 
 /* different types of motor output */
 enum MotorType {

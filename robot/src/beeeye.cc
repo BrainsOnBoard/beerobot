@@ -3,7 +3,7 @@
 
 #ifndef _WIN32
 // GeNN robotics includes
-#include "see3cam_cu40.h"
+#include "common/see3cam_cu40.h"
 #endif
 
 using namespace cv;

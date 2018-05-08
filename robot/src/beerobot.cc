@@ -4,8 +4,8 @@
 // for motor control of robot
 #include "motor_dummy.h"
 #ifndef _WIN32
-#include "motor_surveyor.h"
-#include "motor_i2c.h"
+#include "common/motor_surveyor.h"
+#include "common/motor_i2c.h"
 #endif
 
 // to exchange messages between robot and viewer

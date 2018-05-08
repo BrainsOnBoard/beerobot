@@ -5,7 +5,7 @@ ifndef USE_LOCAL_GENN_ROBOTICS
 	GENN_ROBOTICS_PATH := GeNN_Robotics
 endif
 CXXFLAGS := -pthread -std=c++11 -Isrc -Iiniparser/src \
-	-I$(GENN_ROBOTICS_PATH)/common
+	-I$(GENN_ROBOTICS_PATH)
 LDFLAGS := -O2 -lstdc++ -lm
 
 ifdef MINGW

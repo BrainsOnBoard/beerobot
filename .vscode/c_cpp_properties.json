@@ -30,7 +30,7 @@
             "includePath": [
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/iniparser/src",
-                "/home/alex/git/GeNN_Robotics/common",
+                "${workspaceFolder}/GeNN_Robotics",
                 "/usr/include/c++/7.3.1",
                 "/usr/include/c++/7.3.1/x86_64-pc-linux-gnu",
                 "/usr/include/c++/7.3.1/backward",
@@ -44,7 +44,7 @@
                 "path": [
                     "${workspaceFolder}/src",
                     "${workspaceFolder}/iniparser/src",
-                    "/home/alex/git/GeNN_Robotics/common",
+                    "${workspaceFolder}/GeNN_Robotics",
                     "/usr/include/c++/7.3.1",
                     "/usr/include/c++/7.3.1/x86_64-pc-linux-gnu",
                     "/usr/include/c++/7.3.1/backward",

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "joystick.h"
+#include "common/joystick.h"
 
 #define DRIVE_TRACE // additionally output drive commands to console
 

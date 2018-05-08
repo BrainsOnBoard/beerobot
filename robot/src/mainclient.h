@@ -1,6 +1,6 @@
 #pragma once
 
-#include "motor.h"
+#include "common/motor.h"
 #include "socketcommon.h"
 
 #include <string>
