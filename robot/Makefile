@@ -56,6 +56,8 @@ OBJECTS := \
 	${OBJ_DIR}/iniparser.o \
 	${OBJ_DIR}/dictionary.o
 
+.PHONY: all build clean git_submodules mingw
+
 all: build $(TARGET)
 
 $(TARGET): git_submodules $(OBJECTS)
@@ -73,7 +75,8 @@ ${OBJ_DIR}/dictionary.o:
 git_submodules:
 	git submodule update --init
 
-.PHONY: all build clean git_submodules
+mingw:
+	MINGW=1 $(MAKE)
 
 build:
 	@mkdir -p $(OBJ_DIR)
