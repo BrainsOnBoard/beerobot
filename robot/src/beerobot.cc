@@ -3,7 +3,9 @@
 // for motor control of robot
 #include "motor_dummy.h"
 #ifndef _WIN32
+#ifndef NO_I2C_ROBOT
 #include "common/motor_i2c.h"
+#endif
 #include "common/motor_surveyor.h"
 #endif
 
@@ -154,6 +156,7 @@ main(int argc, char **argv)
             mtr = new MotorDummy();
         }
         break;
+#ifndef NO_I2C_ROBOT
     case Arduino:
         cout << "Using Arduino as motor" << endl;
         try {
@@ -163,6 +166,7 @@ main(int argc, char **argv)
             mtr = new MotorDummy();
         }
         break;
+#endif
 #endif
     default:
         cout << "Motor disabled" << endl;

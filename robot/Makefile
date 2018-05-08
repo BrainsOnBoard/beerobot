@@ -8,6 +8,10 @@ CXXFLAGS := -pthread -std=c++11 -Isrc -I../xbox -Iiniparser/src \
 	-I$(GENN_ROBOTICS_PATH)
 LDFLAGS := -O2 -lstdc++ -lm
 
+ifdef NO_I2C_ROBOT
+	CXXFLAGS += -DNO_I2C_ROBOT
+endif
+
 ifdef MINGW
 	TARGET := $(NAME).exe
 	OBJ_DIR := $(BUILD)_mingw
