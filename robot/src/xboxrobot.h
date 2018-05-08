@@ -1,39 +1,66 @@
 #pragma once
 
+#include "bebop/xbox_generic.h"
+#include "common/motor.h"
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <iostream>
 
-#include "common/joystick.h"
+namespace Controller {
+Xbox::Controller xbox;
+float x = 0;
+float y = 0;
 
-#define DRIVE_TRACE // additionally output drive commands to console
-
-#define JS_DEV "/dev/input/js0" // which joystick device to use
-//#define JS_TRACE // displays trace of joystick input in console
-
-#define DEADZONE 0.25
-
-bool do_run_controller = true; // flag to exit controller loop
-
-/* Listens to controller input and sends appropriate drive command to robot */
-void* run_controller(void *ptr)
+void
+run(js_event *js, void *userData)
 {
-    std::cout << "Running controller service" << std::endl;
-
-    // motor device to send commands to
-    Motor *mtr = (Motor*) ptr;
-
-    Joystick joystick(JS_DEV);
-
-    // flag is set to false when user tries to quit program
-    while (do_run_controller) {
-         // Read joystick
-        joystick.read();
-
-        // Drive motor using joystick
-        joystick.drive(*mtr, DEADZONE);
+    // only interested in the joystick
+    if (js->type != JS_EVENT_AXIS) {
+        return;
     }
 
-    // close Motor device
-    delete mtr;
+    // only interested in left joystick
+    switch (js->number) {
+    case Xbox::LeftStickVertical:
+        y = js->value / (float) std::numeric_limits<int16_t>::max();
+        break;
+    case Xbox::LeftStickHorizontal:
+        x = js->value / (float) std::numeric_limits<int16_t>::max();
+        break;
+    default:
+        return;
+    }
 
-    return nullptr;
+    // Code below is adapted from Jamie's joystick.h - AD
+    // If length of joystick vector places it in deadzone, stop motors
+    const float r = sqrt((x * x) + (y * y));
+    const float theta = atan2(x, -y);
+    const float twoTheta = 2.0f * theta;
+
+    // Drive motor
+    Motor *motor = reinterpret_cast<Motor *>(userData);
+    if (theta >= 0.0f && theta < M_PI_2) {
+        motor->tank(r, r * cos(twoTheta));
+    } else if (theta >= M_PI_2 && theta < M_PI) {
+        motor->tank(-r * cos(twoTheta), -r);
+    } else if (theta < 0.0f && theta >= -M_PI_2) {
+        motor->tank(r * cos(twoTheta), r);
+    } else if (theta < -M_PI_2 && theta >= -M_PI) {
+        motor->tank(-r, -r * cos(twoTheta));
+    }
+}
+
+void
+start(Motor *motor)
+{
+    xbox.open();
+    xbox.startThread(run, motor);
+    std::cout << "Running controller service" << std::endl;
+}
+
+void
+stop()
+{
+    xbox.close();
+}
 }

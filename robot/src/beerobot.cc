@@ -1,16 +1,15 @@
 #include <cstdlib>
-#include <thread> // std::thread
 
 // for motor control of robot
 #include "motor_dummy.h"
 #ifndef _WIN32
-#include "common/motor_surveyor.h"
 #include "common/motor_i2c.h"
+#include "common/motor_surveyor.h"
 #endif
 
 // to exchange messages between robot and viewer
-#include "mainserver.h"
 #include "mainclient.h"
+#include "mainserver.h"
 
 // for displaying robot's bee eye view remotely
 #include "beeeyeviewer.h"
@@ -31,38 +30,32 @@
 using namespace std;
 
 /* show help information */
-void showusage()
+void
+showusage()
 {
-    cout << "Usage: beerobot [--config|--controller|--no-controller|--local|--no-overlay] [--motor dummy|surveyor|arduino] [usb|wifi|viewer [ip]]" << endl;
+    cout << "Usage: beerobot "
+            "[--config|--controller|--no-controller|--local|--no-overlay] "
+            "[--motor dummy|surveyor|arduino] [usb|wifi|viewer [ip]]"
+         << endl;
     exit(1);
 }
 
-#ifndef _WIN32
-/*
- * Start listening for joystick input on a separate thread and issuing
- * appropriate Motor.tank(,) command. Note that MainClient is a kind of Motor.
- */
-void startcontroller(Motor* mtr)
-{
-    pthread_t cthread;
-    pthread_create(&cthread, NULL, &run_controller, mtr);
-}
-#endif
-
 /* main entry point */
-int main(int argc, char** argv)
+int
+main(int argc, char **argv)
 {
     bool controllerflag = false; // controller CL arg present
-    bool controller = false; // controller enabled
-    bool motorflag = false; // motor CL arg present
+    bool controller = false;     // controller enabled
+    bool motorflag = false;      // motor CL arg present
     bool localflag = false;
     bool overlayflag = true;
     MotorType mtype = Arduino; // type of Motor to use (server only)
-    char* server_ip = NULL; // IP of robot
-    vid_t* vid = NULL; // video device to read from
+    char *server_ip = NULL;    // IP of robot
+    vid_t *vid = NULL;         // video device to read from
 
     if (argc > 1) { // if we have command line args
-        bool config = false; // whether or not to enter config mode (edit .ini files)
+        bool config =
+                false; // whether or not to enter config mode (edit .ini files)
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "--config") == 0) { // enable config mode
                 if (config)
@@ -74,18 +67,22 @@ int main(int argc, char** argv)
                 vid = get_usb();
             } else if (strcmp(argv[i], "wifi") == 0) { // use PixPro over wifi
                 vid = get_pixpro_wifi();
-            } else if (strcmp(argv[i], "viewer") == 0) { // start the viewer client
+            } else if (strcmp(argv[i], "viewer") ==
+                       0) { // start the viewer client
                 if (argc < i + 2)
                     showusage();
                 server_ip = argv[++i];
-            } else if (strcmp(argv[i], "--no-overlay") == 0) { // no honeycomb overlay
+            } else if (strcmp(argv[i], "--no-overlay") ==
+                       0) { // no honeycomb overlay
                 overlayflag = false;
-            } else if (strcmp(argv[i], "--controller") == 0) { // enable controller
+            } else if (strcmp(argv[i], "--controller") ==
+                       0) { // enable controller
                 if (controllerflag)
                     showusage();
                 controllerflag = true;
                 controller = true;
-            } else if (strcmp(argv[i], "--no-controller") == 0) { // disable controller
+            } else if (strcmp(argv[i], "--no-controller") ==
+                       0) { // disable controller
                 if (controllerflag)
                     showusage();
                 controllerflag = true;
@@ -112,18 +109,22 @@ int main(int argc, char** argv)
         if (!localflag) {
             if (server_ip) { // then start the viewer
                 // code run by client (connecting to robot)
-                MainClient* client = new MainClient(server_ip);
+                MainClient *client = new MainClient(server_ip);
 #ifndef _WIN32
-                if (controller)
-                    startcontroller(client);
+                if (controller) {
+                    Controller::start(client);
+                }
 #endif
 
                 ImageReceiver recv;
                 run_eye_viewer(recv, overlayflag);
 
 #ifndef _WIN32
-                do_run_controller = false;
-                if (!controller) {
+
+                // TODO: this is a case where smart pointers would be better
+                if (controller) {
+                    Controller::stop();
+                } else {
                     delete client;
                 }
 #endif
@@ -148,7 +149,7 @@ int main(int argc, char** argv)
         cout << "Using Surveyor as motor" << endl;
         try {
             mtr = new MotorSurveyor("192.168.1.1", 2000);
-        } catch (exception& e) {
+        } catch (exception &e) {
             cout << "An error occurred: Disabling motor output" << endl;
             mtr = new MotorDummy();
         }
@@ -157,7 +158,7 @@ int main(int argc, char** argv)
         cout << "Using Arduino as motor" << endl;
         try {
             mtr = new MotorI2C();
-        } catch (exception& e) {
+        } catch (exception &e) {
             cout << "An error occurred: Disabling motor output" << endl;
             mtr = new MotorDummy();
         }
@@ -173,7 +174,7 @@ int main(int argc, char** argv)
 #ifdef _WIN32
         cout << "Controller is disabled in Windows" << endl;
 #else
-        startcontroller(mtr);
+        Controller::start(mtr);
 #endif
     } else {
         cout << "Use of controller is disabled" << endl;
@@ -191,8 +192,10 @@ int main(int argc, char** argv)
     }
 
 #ifndef _WIN32
-    do_run_controller = false;
-    if (!controller) {
+    // TODO: this is a case where smart pointers would be better
+    if (controller) {
+        Controller::stop();
+    } else {
         delete mtr;
     }
 #else
