@@ -1,7 +1,7 @@
 #pragma once
 
-#include "xbox_linux.h"
 #include "common/motor.h"
+#include "xbox_linux.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <iostream>
@@ -12,20 +12,26 @@ float x = 0;
 float y = 0;
 
 void
-run(js_event *js, void *userData)
+run(bool isAxis, uint8_t number, int16_t value, void *userData, bool isError)
 {
+    if (isError) {
+        std::cerr << "An error occurred reading from Xbox controller"
+                  << std::endl;
+        return;
+    }
+
     // only interested in the joystick
-    if (js->type != JS_EVENT_AXIS) {
+    if (!isAxis) {
         return;
     }
 
     // only interested in left joystick
-    switch (js->number) {
+    switch (number) {
     case Xbox::LeftStickVertical:
-        y = js->value / (float) std::numeric_limits<int16_t>::max();
+        y = value / (float) std::numeric_limits<int16_t>::max();
         break;
     case Xbox::LeftStickHorizontal:
-        x = js->value / (float) std::numeric_limits<int16_t>::max();
+        x = value / (float) std::numeric_limits<int16_t>::max();
         break;
     default:
         return;

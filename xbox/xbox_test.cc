@@ -4,40 +4,37 @@ using namespace std;
 using namespace Xbox;
 
 void
-handleButton(js_event &js)
+handleButton(uint8_t number, int16_t value)
 {
-    const char *name = Controller::getButtonName(js.number);
-    if (js.value) {
-        cout << "Button pushed: " << name << " (" << (int) js.number << ")"
+    const char *name = Controller::getButtonName(number);
+    if (value) {
+        cout << "Button pushed: " << name << " (" << (int) number << ")"
              << endl;
     } else {
-        cout << "Button released: " << name << " (" << (int) js.number << ")"
+        cout << "Button released: " << name << " (" << (int) number << ")"
              << endl;
     }
 }
 
 void
-handleAxis(js_event &js)
+handleAxis(uint8_t number, int16_t value)
 {
-    const char *name = Controller::getAxisName(js.number);
-    cout << "Axis " << name << " (" << (int) js.number << "): " << js.value
-         << endl;
+    const char *name = Controller::getAxisName(number);
+    cout << "Axis " << name << " (" << (int) number << "): " << value << endl;
 }
 
 void
-callback(js_event *js, void *)
+callback(bool isAxis, uint8_t number, int16_t value, void *, bool isError)
 {
-    if (!js) {
+    if (isError) {
         cerr << "Error reading from joystick" << endl;
         exit(1);
     }
 
-    switch (js->type) {
-    case JS_EVENT_BUTTON:
-        handleButton(*js);
-        break;
-    case JS_EVENT_AXIS:
-        handleAxis(*js);
+    if (isAxis) {
+        handleAxis(number, value);
+    } else {
+        handleButton(number, value);
     }
 }
 

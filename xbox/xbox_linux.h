@@ -51,7 +51,11 @@ enum Axis
 };
 
 // For callbacks when a controller event occurs (button is pressed, axis moves)
-using ControllerCallback = void (*)(js_event *, void *);
+using ControllerCallback = void (*)(bool isAxis,
+                                    uint8_t number,
+                                    int16_t value,
+                                    void *userData,
+                                    bool isError);
 
 class Controller
 {
@@ -140,7 +144,7 @@ public:
     /*
      * Get the name of the button corresponding to number.
      */
-    static const char *getButtonName(__u8 number)
+    static const char *getButtonName(uint8_t number)
     {
         switch (number) {
         case A:
@@ -180,7 +184,7 @@ public:
     /*
      * Get the name of the axis corresponding to number.
      */
-    static const char *getAxisName(__u8 number)
+    static const char *getAxisName(uint8_t number)
     {
         switch (number) {
         case LeftStickHorizontal:
@@ -204,13 +208,13 @@ public:
     }
 
 private:
-    int m_Fd = 0;                          // file descriptor for joystick device
-    std::thread *m_Thread = nullptr;           // read thread object
-    bool m_Closing = false;                // is controller closing?
-    js_event *m_JsEvent = nullptr;              // struct to contain joystick event
-    static const __s16 deadzone = 10000; // size of deadzone for axes (i.e.
-                                         // region within which not activated)
-    static const long sleepmillis = 25;  // number of milliseconds between polls
+    int m_Fd = 0;                    // file descriptor for joystick device
+    std::thread *m_Thread = nullptr; // read thread object
+    bool m_Closing = false;          // is controller closing?
+    js_event *m_JsEvent = nullptr;   // struct to contain joystick event
+    static const int16_t deadzone = 10000; // size of deadzone for axes (i.e.
+                                           // region within which not activated)
+    static const long sleepmillis = 25; // number of milliseconds between polls
 
     /*
      * This function is invoked by the read thread. It repeatedly polls the
@@ -220,13 +224,18 @@ private:
      */
     static void runThread(Controller *c,
                           ControllerCallback callback,
-                          void *data)
+                          void *userData)
     {
         while (c->read(*c->m_JsEvent)) {
-            callback(c->m_JsEvent, data);
+            js_event &js = *c->m_JsEvent;
+            callback(js.type & JS_EVENT_AXIS,
+                     js.number,
+                     js.value,
+                     userData,
+                     false);
         }
         if (!c->m_Closing) {
-            callback(nullptr, data);
+            callback(false, 0, 0, userData, true);
         }
     }
 };
