@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bebop/xbox_generic.h"
+#include "xbox_linux.h"
 #include "common/motor.h"
 #define _USE_MATH_DEFINES
 #include <cmath>

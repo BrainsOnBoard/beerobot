@@ -28,6 +28,7 @@
         {
             "name": "Linux",
             "includePath": [
+                "${workspaceFolder}/xbox",
                 "${workspaceFolder}/robot/src",
                 "${workspaceFolder}/robot/iniparser/src",
                 "${workspaceFolder}/robot/GeNN_Robotics",
@@ -42,6 +43,7 @@
             "intelliSenseMode": "clang-x64",
             "browse": {
                 "path": [
+                    "${workspaceFolder}/xbox",
                     "${workspaceFolder}/robot/src",
                     "${workspaceFolder}/robot/iniparser/src",
                     "${workspaceFolder}/robot/GeNN_Robotics",
