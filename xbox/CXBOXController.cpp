@@ -36,9 +36,27 @@ bool Controller::open()
 	}
 }
 
+bool Controller::Change()
+{
+	// Zeroise the state
+	ZeroMemory(&_controllerState, sizeof(XINPUT_STATE));
+
+	//Check for any changes in the controller
+	int state1 = Read().dwPacketNumber;
+	while (true) {
+		int state2 = Read().dwPacketNumber;
+		if (state1 != state2) {
+			state1 = state2;
+			return(true);
+		}
+	}
+}
 
 void Controller::close()
 {
+	std::cout << "\n\tERROR! PLAYER 1 - XBOX 360 Controller Not Found!\n";
+	std::cout << "Press Any Key To Exit.";
+	std::cin.get();
 	return;
 }
 

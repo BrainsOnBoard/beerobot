@@ -23,6 +23,7 @@ public:
 	XINPUT_STATE Read();
 	bool open();
 	void close();
+	bool Change();
 };
 
 enum Button
