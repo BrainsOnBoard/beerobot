@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "camparams.h"
+#include "../camparams.h"
 #include "readable.h"
 #include <opencv2/opencv.hpp>
 

@@ -16,18 +16,21 @@ const int KB_ESC = 27;
 const int BIG_PX_JUMP = 5;
 
 /* draws a line for the calibration cross */
-inline void DrawCalibrationLine(cv::Mat &imorig, cv::Point p1, cv::Point p2)
+inline void
+DrawCalibrationLine(cv::Mat &imorig, cv::Point p1, cv::Point p2)
 {
     cv::line(imorig, p1, p2, cv::Scalar(0x00, 0xff, 0x00), 2);
 }
 
 /* run the bee eye config display */
-void runEyeConfig(vid_t* vid, bool calib_enabled)
+void
+runEyeConfig(vid_t *vid, bool calib_enabled)
 {
     BeeEye eye(vid);
 
-    bool do_calib = true; // whether calibration screen is visible or not
-    int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration (either 1 or 5)
+    bool do_calib = true;      // whether calibration screen is visible or not
+    int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration
+                               // (either 1 or 5)
 
     cv::Mat imorig, unwrap, view;
 
@@ -46,12 +49,29 @@ void runEyeConfig(vid_t* vid, bool calib_enabled)
             imshow("unwrapped", unwrap);
 
             // draw calibration cross at what we've chose as the center
-            DrawCalibrationLine(imorig, cv::Point(eye.params.cent.x - CROSS_SIZE, eye.params.cent.y), cv::Point(eye.params.cent.x + CROSS_SIZE, eye.params.cent.y));
-            DrawCalibrationLine(imorig, cv::Point(eye.params.cent.x, eye.params.cent.y - CROSS_SIZE), cv::Point(eye.params.cent.x, eye.params.cent.y + CROSS_SIZE));
+            DrawCalibrationLine(imorig,
+                                cv::Point(eye.params.cent.x - CROSS_SIZE,
+                                          eye.params.cent.y),
+                                cv::Point(eye.params.cent.x + CROSS_SIZE,
+                                          eye.params.cent.y));
+            DrawCalibrationLine(imorig,
+                                cv::Point(eye.params.cent.x,
+                                          eye.params.cent.y - CROSS_SIZE),
+                                cv::Point(eye.params.cent.x,
+                                          eye.params.cent.y + CROSS_SIZE));
 
-            // draw inner and outer circles, showing the area which we will unwrap
-            circle(imorig, eye.params.cent, eye.params.r_inner, cv::Scalar(0x00, 0x00, 0xff), 2);
-            circle(imorig, eye.params.cent, eye.params.r_outer, cv::Scalar(0xff, 0x00, 0x00), 2);
+            // draw inner and outer circles, showing the area which we will
+            // unwrap
+            circle(imorig,
+                   eye.params.cent,
+                   eye.params.r_inner,
+                   cv::Scalar(0x00, 0x00, 0xff),
+                   2);
+            circle(imorig,
+                   eye.params.cent,
+                   eye.params.r_outer,
+                   cv::Scalar(0xff, 0x00, 0x00),
+                   2);
 
             // show the image
             imshow("calibration", imorig);
@@ -73,7 +93,9 @@ void runEyeConfig(vid_t* vid, bool calib_enabled)
 
                     // set opencv window to display full screen
                     cvNamedWindow("bee view", CV_WINDOW_NORMAL);
-                    setWindowProperty("bee view", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
+                    setWindowProperty("bee view",
+                                      cv::WND_PROP_FULLSCREEN,
+                                      cv::WINDOW_FULLSCREEN);
                 } else {
                     cv::destroyWindow("bee view");
                 }
@@ -138,8 +160,8 @@ void runEyeConfig(vid_t* vid, bool calib_enabled)
 
     if (calib_enabled) {
         // write params to file
-        // in particular we want to remember our calibration settings so we don't
-        // have to recalibrate the next time we start the program
+        // in particular we want to remember our calibration settings so we
+        // don't have to recalibrate the next time we start the program
         eye.params.write();
     }
 }

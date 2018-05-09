@@ -1,6 +1,6 @@
 #pragma once
 
-#include "beeeye.h"
+#include "eye/beeeye.h"
 #include <opencv2/core/core.hpp>
 #include <iostream>
 

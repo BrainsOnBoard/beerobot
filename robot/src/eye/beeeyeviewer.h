@@ -8,13 +8,14 @@
 
 namespace Eye {
 /* run the remote bee eye viewer */
-void runEyeViewer(Readable &recv, bool showoverlay)
+void
+runEyeViewer(Readable &recv, bool showoverlay)
 {
 #ifdef _WIN32
     cv::Size oversz(1024, 768);
 #else
-    Display* disp = XOpenDisplay(nullptr);
-    Screen* scrn = DefaultScreenOfDisplay(disp);
+    Display *disp = XOpenDisplay(nullptr);
+    Screen *scrn = DefaultScreenOfDisplay(disp);
     cv::Size oversz(scrn->width, scrn->height);
 #endif
 
@@ -41,7 +42,8 @@ void runEyeViewer(Readable &recv, bool showoverlay)
 
     // set opencv window to display full screen
     cvNamedWindow("bee view", CV_WINDOW_NORMAL);
-    setWindowProperty("bee view", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
+    setWindowProperty(
+            "bee view", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
     // display remote camera input on loop until user presses escape
     while (true) {

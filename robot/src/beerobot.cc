@@ -14,15 +14,15 @@
 #include "mainserver.h"
 
 // for displaying robot's bee eye view remotely
-#include "beeeyeviewer.h"
+#include "eye/beeeyeviewer.h"
+
+// for config mode (i.e. editing .ini files)
+#include "eye/beeeyeconfig.h"
 
 #include "imagereceiver.h"
 
 // for processing single image files
 #include "imagefile.h"
-
-// for config mode (i.e. editing .ini files)
-#include "beeeyeconfig.h"
 
 #ifndef _WIN32
 // for using the Xbox controller to drive the robot

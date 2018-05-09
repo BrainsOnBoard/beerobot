@@ -70,6 +70,9 @@ $(TARGET): git_submodules $(OBJECTS)
 $(OBJ_DIR)/%.o: src/%.cc
 	$(_PREFIX)$(CXX) -o $@ -c $< $(CXXFLAGS)
 
+$(OBJ_DIR)/beeeye.o: src/eye/beeeye.cc src/eye/*.h
+	$(_PREFIX)$(CXX) -o $@ -c src/eye/beeeye.cc $(CXXFLAGS)
+
 ${OBJ_DIR}/iniparser.o:
 	$(_PREFIX)$(CC) -O2 -c -o ${OBJ_DIR}/iniparser.o iniparser/src/iniparser.c
 

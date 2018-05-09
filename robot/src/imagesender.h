@@ -1,6 +1,6 @@
 #pragma once
 
-#include "beeeye.h"
+#include "eye/beeeye.h"
 #include "imagecommon.h"
 
 #ifdef _WIN32
