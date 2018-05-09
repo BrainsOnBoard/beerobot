@@ -60,8 +60,9 @@ main(int argc, char **argv)
                 false; // whether or not to enter config mode (edit .ini files)
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "--config") == 0) { // enable config mode
-                if (config)
+                if (config) {
                     showusage();
+                }
                 config = true;
             } else if (vid) {
                 showusage();
@@ -69,38 +70,43 @@ main(int argc, char **argv)
                 vid = get_usb();
             } else if (strcmp(argv[i], "wifi") == 0) { // use PixPro over wifi
                 vid = get_pixpro_wifi();
-            } else if (strcmp(argv[i], "viewer") ==
-                       0) { // start the viewer client
-                if (argc < i + 2)
+            } else if (strcmp(argv[i], "viewer") == 0) {
+                // start the viewer client
+                if (argc < i + 2) {
                     showusage();
+                }
                 server_ip = argv[++i];
-            } else if (strcmp(argv[i], "--no-overlay") ==
-                       0) { // no honeycomb overlay
+            } else if (strcmp(argv[i], "--no-overlay") == 0) {
+                // no honeycomb overlay
                 overlayflag = false;
-            } else if (strcmp(argv[i], "--controller") ==
-                       0) { // enable controller
+            } else if (strcmp(argv[i], "--controller") == 0) {
+                // enable controller
                 if (controllerflag)
                     showusage();
                 controllerflag = true;
                 controller = true;
-            } else if (strcmp(argv[i], "--no-controller") ==
-                       0) { // disable controller
-                if (controllerflag)
+            } else if (strcmp(argv[i], "--no-controller") == 0) {
+                // disable controller
+                if (controllerflag) {
                     showusage();
+                }
                 controllerflag = true;
                 controller = false;
             } else if (strcmp(argv[i], "--motor") == 0) { // set type of Motor
-                if (motorflag || i == argc - 1)
+                if (motorflag || i == argc - 1) {
                     showusage();
+                }
+
                 i++;
-                if (strcmp(argv[i], "dummy") == 0)
+                if (strcmp(argv[i], "dummy") == 0) {
                     mtype = Dummy;
-                else if (strcmp(argv[i], "surveyor") == 0)
+                } else if (strcmp(argv[i], "surveyor") == 0) {
                     mtype = Surveyor;
-                else if (strcmp(argv[i], "arduino") == 0)
+                } else if (strcmp(argv[i], "arduino") == 0) {
                     mtype = Arduino;
-                else
+                } else {
                     showusage();
+                }
                 motorflag = true;
             } else if (strcmp(argv[i], "--local") == 0) { // run locally
                 localflag = true;
@@ -111,10 +117,10 @@ main(int argc, char **argv)
         if (!localflag) {
             if (server_ip) { // then start the viewer
                 // code run by client (connecting to robot)
-                MainClient *client = new MainClient(server_ip);
+                MainClient client(server_ip);
 #ifndef _WIN32
                 if (controller) {
-                    Controller::start(client);
+                    Controller::start(&client);
                 }
 #endif
 
@@ -126,15 +132,14 @@ main(int argc, char **argv)
                 // TODO: this is a case where smart pointers would be better
                 if (controller) {
                     Controller::stop();
-                } else {
-                    delete client;
                 }
 #endif
 
                 return 0;
             } else if (config || vid) {
-                if (!vid) // default to usb for config
+                if (!vid) { // default to usb for config
                     vid = get_usb();
+                }
 
                 // code run if just showing video locally
                 run_eye_config(vid, config);
@@ -185,8 +190,9 @@ main(int argc, char **argv)
     }
 
     if (localflag) {
-        if (!vid)
+        if (!vid) {
             vid = get_usb();
+        }
 
         BeeEye eye(vid);
         run_eye_viewer(eye, overlayflag);
