@@ -1,5 +1,6 @@
 #pragma once
 
+#include "opencv2/opencv.hpp"
 #include "videotype.h"
 
 // this code relies on the iniparser library, included as a git submodule
