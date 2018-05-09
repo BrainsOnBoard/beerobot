@@ -1,7 +1,7 @@
 #include <cstdlib>
 
 // for motor control of robot
-#include "motor_dummy.h"
+#include "common/motor_dummy.h"
 #ifndef _WIN32
 #ifndef NO_I2C_ROBOT
 #include "common/motor_i2c.h"
@@ -30,6 +30,14 @@
 #endif
 
 using namespace std;
+
+/* different types of motor output */
+enum MotorType
+{
+    Dummy,
+    Surveyor,
+    Arduino
+};
 
 /* show help information */
 void
