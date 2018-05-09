@@ -13,8 +13,8 @@ public:
     virtual ~MainServer();
 
 private:
-    int listenfd;
-    Motor *mtr;
+    int m_Fd;
+    Motor *m_Motor;
     void run();
 };
 }

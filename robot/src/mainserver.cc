@@ -13,19 +13,21 @@
 #endif
 
 namespace Net {
-/* Create a server listening on MAIN_PORT (TCP), sending motor commands to *mtr
+
+/*
+ * Create a server listening on MAIN_PORT (TCP), sending motor commands to *mtr
  */
 MainServer::MainServer(Motor *mtr)
-  : mtr(mtr)
+  : m_Motor(mtr)
 {
     struct sockaddr_in addr;
     int on = 1;
 
-    if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    if ((m_Fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         goto error;
     }
 #ifndef _WIN32
-    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) {
+    if (setsockopt(m_Fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) {
         goto error;
     }
 #endif
@@ -35,10 +37,10 @@ MainServer::MainServer(Motor *mtr)
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = htons(MAIN_PORT);
 
-    if (bind(listenfd, (sockaddr *) &addr, sizeof(addr))) {
+    if (bind(m_Fd, (sockaddr *) &addr, sizeof(addr))) {
         goto error;
     }
-    if (listen(listenfd, 10)) {
+    if (listen(m_Fd, 10)) {
         goto error;
     }
     std::cout << "Listening on port " << MAIN_PORT << std::endl;
@@ -54,7 +56,7 @@ error:
 /* Stop listening */
 MainServer::~MainServer()
 {
-    close(listenfd);
+    close(m_Fd);
 }
 
 /*
@@ -80,7 +82,7 @@ MainServer::run()
     for (;;) {
         // wait for incoming TCP connection
         std::cout << "Waiting for incoming connection..." << std::endl;
-        int connfd = accept(listenfd, (sockaddr *) &addr, &addrlen);
+        int connfd = accept(m_Fd, (sockaddr *) &addr, &addrlen);
         if (!send(connfd, "HEY\n", 4))
             throw std::runtime_error("Could not write to socket");
 
@@ -117,7 +119,7 @@ MainServer::run()
                 right = stof(sbuff.substr(space + 1));
 
                 // send motor command
-                mtr->tank(left, right);
+                m_Motor->tank(left, right);
             } else if (sbuff.compare(0, 3, "BYE") ==
                        0) // client closing connection
                 break;

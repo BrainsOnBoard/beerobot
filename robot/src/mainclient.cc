@@ -9,13 +9,15 @@
 #include "mainclient.h"
 
 namespace Net {
+
 /* Create client, connect to host on MAIN_PORT over TCP */
 MainClient::MainClient(const std::string host)
 {
     // Create socket
-    connfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (connfd < 0)
+    m_Fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (m_Fd < 0) {
         throw std::runtime_error("Cannot open socket");
+    }
 
         // Create socket address structure
 #ifdef _WIN32
@@ -31,25 +33,26 @@ MainClient::MainClient(const std::string host)
                                 .sin_addr = addr };
 
     // Connect socket
-    if (connect(connfd,
+    if (connect(m_Fd,
                 reinterpret_cast<sockaddr *>(&destAddress),
-                sizeof(destAddress)) < 0)
+                sizeof(destAddress)) < 0) {
         throw std::runtime_error("Cannot connect socket to " + host + ":" +
                                  std::to_string(MAIN_PORT));
+    }
 
     std::cout << "Opened socket" << std::endl;
 
     // NB: this will give info about "image server" in future
-    if (readline(connfd, buff) == -1)
+    if (readline(m_Fd, m_Buffer) == -1)
         throw std::runtime_error(std::string("Error: ") + strerror(errno));
 }
 
 /* Destructor: send BYE message and close connection */
 MainClient::~MainClient()
 {
-    if (connfd >= 0) {
-        send(connfd, "BYE\n", 4);
-        close(connfd);
+    if (m_Fd >= 0) {
+        send(m_Fd, "BYE\n", 4);
+        close(m_Fd);
     }
 }
 
@@ -58,19 +61,19 @@ void
 MainClient::tank(float left, float right)
 {
     // don't send a command if it's the same as the last one
-    if (left == oldleft && right == oldright)
+    if (left == m_OldLeft && right == m_OldRight)
         return;
 
     // send steering command
-    int len = sprintf(buff, "TNK %g %g\n", left, right);
-    if (!send(connfd, buff, len)) {
+    int len = sprintf(m_Buffer, "TNK %g %g\n", left, right);
+    if (!send(m_Fd, m_Buffer, len)) {
         throw std::runtime_error(
                 std::string("Could not send steering command: ") +
                 strerror(errno));
     }
 
     // store current left/right values to compare next time
-    oldleft = left;
-    oldright = right;
+    m_OldLeft = left;
+    m_OldRight = right;
 }
 }

@@ -15,9 +15,9 @@ public:
     virtual void tank(float left, float right);
 
 private:
-    int connfd = -1;
-    float oldleft = std::numeric_limits<float>::quiet_NaN();
-    float oldright = std::numeric_limits<float>::quiet_NaN();
-    char buff[MAIN_BUFFSIZE];
+    int m_Fd = -1;
+    float m_OldLeft = std::numeric_limits<float>::quiet_NaN();
+    float m_OldRight = std::numeric_limits<float>::quiet_NaN();
+    char m_Buffer[MAIN_BUFFSIZE];
 };
 }
