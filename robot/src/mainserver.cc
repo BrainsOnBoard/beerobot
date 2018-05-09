@@ -1,9 +1,9 @@
 #include "mainserver.h"
 #include "socketcommon.h"
 
+#include <cstring>
 #include <iostream>
 #include <string.h>
-#include <cstring>
 #include <thread>
 
 #ifdef _WIN32
@@ -12,10 +12,11 @@
 #include <ws2tcpip.h>
 #endif
 
-using namespace std;
-
-/* Create a server listening on MAIN_PORT (TCP), sending motor commands to *mtr */
-MainServer::MainServer(Motor *mtr) : mtr(mtr)
+namespace Net {
+/* Create a server listening on MAIN_PORT (TCP), sending motor commands to *mtr
+ */
+MainServer::MainServer(Motor *mtr)
+  : mtr(mtr)
 {
     struct sockaddr_in addr;
     int on = 1;
@@ -24,28 +25,29 @@ MainServer::MainServer(Motor *mtr) : mtr(mtr)
         goto error;
     }
 #ifndef _WIN32
-    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof (on)) < 0) {
+    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) {
         goto error;
     }
 #endif
 
-    memset(&addr, '0', sizeof (addr));
+    memset(&addr, '0', sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = htons(MAIN_PORT);
 
-    if (bind(listenfd, (sockaddr*) & addr, sizeof (addr))) {
+    if (bind(listenfd, (sockaddr *) &addr, sizeof(addr))) {
         goto error;
     }
     if (listen(listenfd, 10)) {
         goto error;
     }
-    cout << "Listening on port " << MAIN_PORT << endl;
+    std::cout << "Listening on port " << MAIN_PORT << std::endl;
 
     return;
 
 error:
-    cerr << "Error (" << errno << "): Could not bind to port " << MAIN_PORT << endl;
+    std::cerr << "Error (" << errno << "): Could not bind to port " << MAIN_PORT
+              << std::endl;
     exit(1);
 }
 
@@ -59,11 +61,12 @@ MainServer::~MainServer()
  * Keep accepting connections and parsing input for ever. Can only handle
  * one connection at a time.
  */
-void MainServer::run()
+void
+MainServer::run()
 {
     // for incoming connection
     sockaddr_in addr;
-    socklen_t addrlen = sizeof (addr);
+    socklen_t addrlen = sizeof(addr);
 
     // for outgoing (ImageSender) connection (UDP)
     sockaddr_in dest;
@@ -76,36 +79,38 @@ void MainServer::run()
     // loop for ever
     for (;;) {
         // wait for incoming TCP connection
-        cout << "Waiting for incoming connection..." << endl;
-        int connfd = accept(listenfd, (sockaddr*) & addr, &addrlen);
+        std::cout << "Waiting for incoming connection..." << std::endl;
+        int connfd = accept(listenfd, (sockaddr *) &addr, &addrlen);
         if (!send(connfd, "HEY\n", 4))
-            throw new runtime_error("Could not write to socket");
+            throw std::runtime_error("Could not write to socket");
 
         // convert IP to string
         char saddr[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, (void*) &addr.sin_addr, saddr, addrlen);
-        cout << "Incoming connection from " << saddr << endl;
+        inet_ntop(AF_INET, (void *) &addr.sin_addr, saddr, addrlen);
+        std::cout << "Incoming connection from " << saddr << std::endl;
 
         // our destination IP is the same IP as the current connection
         dest.sin_addr = addr.sin_addr;
 
         // start ImageSending thread
-        pthread_create(&tisend, NULL, ImageSender::start_sending, (void*) &dest);
+        pthread_create(
+                &tisend, NULL, ImageSender::start_sending, (void *) &dest);
 
         // for reading in data
         char buff[MAIN_BUFFSIZE];
-        string sbuff;
+        std::string sbuff;
         int len;
 
         // motor command
         float left, right;
         while ((len = readline(connfd, buff)) > 0) {
-            sbuff = string(buff);
-            if (sbuff.compare(0, 4, "TNK ") == 0) { // driving command (e.g. TNK 0.5 0.5)
+            sbuff = std::string(buff);
+            if (sbuff.compare(0, 4, "TNK ") ==
+                0) { // driving command (e.g. TNK 0.5 0.5)
                 // second space separates left and right parameters
                 size_t space = sbuff.rfind(' ');
-                if (space == string::npos)
-                    throw new runtime_error("Error: Bad command");
+                if (space == std::string::npos)
+                    throw std::runtime_error("Error: Bad command");
 
                 // parse strings to floats
                 left = stof(sbuff.substr(4, space - 4));
@@ -113,17 +118,18 @@ void MainServer::run()
 
                 // send motor command
                 mtr->tank(left, right);
-            } else if (sbuff.compare(0, 3, "BYE") == 0) // client closing connection
+            } else if (sbuff.compare(0, 3, "BYE") ==
+                       0) // client closing connection
                 break;
             else // no other commands supported
-                throw new runtime_error("Error: Unknown command received");
+                throw std::runtime_error("Error: Unknown command received");
         }
         if (len == -1) // loop ended because an error occurred
-            throw new runtime_error(string("Error: ") + strerror(errno));
+            throw std::runtime_error(std::string("Error: ") + strerror(errno));
 
         // close current connection
         close(connfd);
-        cout << "Connection closed" << endl;
+        std::cout << "Connection closed" << std::endl;
 
         // stop ImageSender thread
         ImageSender::running = false;
@@ -131,8 +137,10 @@ void MainServer::run()
     }
 }
 
-void MainServer::run_server(Motor *mtr)
+void
+MainServer::runServer(Motor *mtr)
 {
     MainServer srv(mtr);
     srv.run();
+}
 }

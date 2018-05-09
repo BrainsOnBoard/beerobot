@@ -3,14 +3,18 @@
 #include "common/motor.h"
 #include "imagesender.h"
 
-class MainServer {
+namespace Net {
+class MainServer
+{
 public:
-    static void run_server(Motor *mtr);
+    static void runServer(Motor *mtr);
 
-    MainServer(Motor* mtr);
+    MainServer(Motor *mtr);
     virtual ~MainServer();
+
 private:
     int listenfd;
     Motor *mtr;
     void run();
 };
+}

@@ -125,7 +125,7 @@ main(int argc, char **argv)
         if (!localflag) {
             if (server_ip) { // then start the viewer
                 // code run by client (connecting to robot)
-                MainClient client(server_ip);
+                Net::MainClient client(server_ip);
 #ifndef _WIN32
                 if (controller) {
                     Controller::start(&client);
@@ -206,7 +206,7 @@ main(int argc, char **argv)
         run_eye_viewer(eye, overlayflag);
     } else {
         // run main server
-        MainServer::run_server(mtr);
+        Net::MainServer::runServer(mtr);
     }
 
 #ifndef _WIN32
