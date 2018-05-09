@@ -1,11 +1,14 @@
 #pragma once
 
 #include "eye/beeeye.h"
-#include <opencv2/core/core.hpp>
 #include <iostream>
+#include <opencv2/core/core.hpp>
+
+namespace Image {
 
 /* try to process file, return false on error (e.g. file doesn't exist) */
-bool process_file(const char* filepath)
+bool
+processFile(const char *filepath)
 {
     cv::Mat im = cv::imread(filepath, CV_LOAD_IMAGE_COLOR);
     if (!im.data) {
@@ -40,4 +43,5 @@ bool process_file(const char* filepath)
     cv::imwrite(eyepath, view, imparams);
 
     return true;
+}
 }

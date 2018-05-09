@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "../camparams.h"
+#include "image/camparams.h"
 #include "readable.h"
 #include <opencv2/opencv.hpp>
 
@@ -14,7 +14,7 @@ namespace Eye {
 class BeeEye : public Readable
 {
 public:
-    CamParams params;
+    Image::CamParams m_Params;
 
     BeeEye(vid_t *vid);
     ~BeeEye();

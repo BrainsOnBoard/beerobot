@@ -8,7 +8,7 @@
 
 namespace Eye {
 BeeEye::BeeEye(vid_t *vid)
-  : params(vid)
+  : m_Params(vid)
 {
     if (vid->dev_int != -1 || vid->dev_char != nullptr) {
 #ifndef _WIN32
@@ -32,8 +32,8 @@ BeeEye::BeeEye(vid_t *vid)
             }
 
             // set resolution
-            m_Cap->set(cv::CAP_PROP_FRAME_WIDTH, params.ssrc.width);
-            m_Cap->set(cv::CAP_PROP_FRAME_HEIGHT, params.ssrc.height);
+            m_Cap->set(cv::CAP_PROP_FRAME_WIDTH, m_Params.m_SizeSource.width);
+            m_Cap->set(cv::CAP_PROP_FRAME_HEIGHT, m_Params.m_SizeSource.height);
 #ifndef _WIN32
         }
 #endif
@@ -56,9 +56,9 @@ BeeEye::BeeEye(vid_t *vid)
     }
 
     // create pixel maps for unwrapping panoramic images
-    params.generate_map();
+    m_Params.generateMap();
 
-    m_ImUnwrap.create(params.sdst, CV_8UC3);
+    m_ImUnwrap.create(m_Params.m_SizeDest, CV_8UC3);
     m_ImEye.create(sz_out, CV_8UC3);
 }
 
@@ -86,7 +86,7 @@ BeeEye::getImage(cv::Mat &imorig)
 #ifndef _WIN32
     } else if (m_See3Cam) {
         if (imorig.size().width == 0) {
-            imorig.create(params.ssrc, CV_8UC3);
+            imorig.create(m_Params.m_SizeSource, CV_8UC3);
         }
         return m_See3Cam->captureSuperPixelWBU30(imorig);
 #endif
@@ -98,7 +98,11 @@ BeeEye::getImage(cv::Mat &imorig)
 void
 BeeEye::getUnwrappedImage(cv::Mat &imunwrap, cv::Mat &imorig)
 {
-    remap(imorig, imunwrap, params.map_x, params.map_y, cv::INTER_NEAREST);
+    remap(imorig,
+          imunwrap,
+          m_Params.m_MapX,
+          m_Params.m_MapY,
+          cv::INTER_NEAREST);
 }
 
 void

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "eye/beeeye.h"
-#include "imagecommon.h"
+#include "image/common.h"
 
 #ifdef _WIN32
 #ifndef _WIN32_WINNT

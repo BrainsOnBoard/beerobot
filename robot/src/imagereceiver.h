@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imagecommon.h"
+#include "image/common.h"
 #include "readable.h"
 
 #ifdef _WIN32
@@ -27,7 +27,7 @@ public:
 
 private:
     int m_Fd = -1;
-    mybuff_t m_Buffer[MAX_UDP_PACKET_SIZE];
+    mybuff_t m_Buffer[Image::MAX_UDP_PACKET_SIZE];
     std::vector<mybuff_t> m_LastBuffer;
     int m_LastId;
 };

@@ -26,18 +26,19 @@ ImageReceiver::ImageReceiver()
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr.sin_port = htons(IMAGE_PORT);
+    addr.sin_port = htons(Image::IMAGE_PORT);
 
     if (bind(m_Fd, (struct sockaddr *) &addr, sizeof(addr))) {
         goto error;
     }
 
-    std::cout << "Listening for images on port " << IMAGE_PORT << std::endl;
+    std::cout << "Listening for images on port " << Image::IMAGE_PORT
+              << std::endl;
     return;
 
 error:
     std::cerr << "Error (" << errno << "): Could not bind to port "
-              << IMAGE_PORT << std::endl;
+              << Image::IMAGE_PORT << std::endl;
     exit(1);
 }
 
@@ -57,19 +58,21 @@ ImageReceiver::read(cv::Mat &view)
     // loop until we have a whole frame to copy to view
     for (;;) {
         // read UDP packet
-        int len = recvfrom(m_Fd, m_Buffer, MAX_UDP_PACKET_SIZE, 0, NULL, NULL);
+        int len = recvfrom(
+                m_Fd, m_Buffer, Image::MAX_UDP_PACKET_SIZE, 0, NULL, NULL);
         if (len == -1) {
             std::cerr << "Error: " << strerror(errno) << std::endl;
             continue;
         }
 
         // there is a header at the start of the packet
-        packinfo *info = (packinfo *) m_Buffer;
-        debug_imagepack(*info, len);
+        Image::PacketInfo *info = (Image::PacketInfo *) m_Buffer;
+        debugImagePacket(*info, len);
 
-        if (info->tot == 1) { // whole frame in single packet
+        if (info->Count == 1) { // whole frame in single packet
             // the data beyond the header is a JPEG
-            std::vector<uchar> v(&m_Buffer[sizeof(packinfo)], &m_Buffer[len]);
+            std::vector<uchar> v(&m_Buffer[sizeof(Image::PacketInfo)],
+                                 &m_Buffer[len]);
 
             // parse JPEG
 #ifdef DEBUG_IMAGEPACK
@@ -78,15 +81,15 @@ ImageReceiver::read(cv::Mat &view)
             imdecode(v, cv::IMREAD_UNCHANGED, &view);
             break;
         } else if (m_LastBuffer.size() > 0 &&
-                   info->id == m_LastId) { // split frame, second packet
-            if (info->num != 1) {
+                   info->Id == m_LastId) { // split frame, second packet
+            if (info->Number != 1) {
                 std::cerr << "Warning: packet out of sequence" << std::endl;
                 continue;
             }
 
             // append the second half of the JPEG to the first half
             m_LastBuffer.insert(m_LastBuffer.end(),
-                                &m_Buffer[sizeof(packinfo)],
+                                &m_Buffer[sizeof(Image::PacketInfo)],
                                 &m_LastBuffer[len]);
 
             // parse JPEG
@@ -96,20 +99,20 @@ ImageReceiver::read(cv::Mat &view)
             imdecode(m_LastBuffer, cv::IMREAD_UNCHANGED, &view);
             break;
         } else { // split frame, first packet
-            if (info->num != 0) {
+            if (info->Number != 0) {
                 std::cerr << "Warning: packet out of sequence" << std::endl;
                 continue;
             }
 
             // save the ID of this packet so we can match it up with its partner
-            m_LastId = info->id;
+            m_LastId = info->Id;
 
             // clear the buffer
             m_LastBuffer.clear();
 
             // copy this packet's JPEG data to buffer
             m_LastBuffer.insert(m_LastBuffer.begin(),
-                                &m_Buffer[sizeof(packinfo)],
+                                &m_Buffer[sizeof(Image::PacketInfo)],
                                 &m_Buffer[len]);
         }
     }

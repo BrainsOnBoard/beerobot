@@ -50,26 +50,26 @@ runEyeConfig(vid_t *vid, bool calib_enabled)
 
             // draw calibration cross at what we've chose as the center
             DrawCalibrationLine(imorig,
-                                cv::Point(eye.params.cent.x - CROSS_SIZE,
-                                          eye.params.cent.y),
-                                cv::Point(eye.params.cent.x + CROSS_SIZE,
-                                          eye.params.cent.y));
+                                cv::Point(eye.m_Params.m_Center.x - CROSS_SIZE,
+                                          eye.m_Params.m_Center.y),
+                                cv::Point(eye.m_Params.m_Center.x + CROSS_SIZE,
+                                          eye.m_Params.m_Center.y));
             DrawCalibrationLine(imorig,
-                                cv::Point(eye.params.cent.x,
-                                          eye.params.cent.y - CROSS_SIZE),
-                                cv::Point(eye.params.cent.x,
-                                          eye.params.cent.y + CROSS_SIZE));
+                                cv::Point(eye.m_Params.m_Center.x,
+                                          eye.m_Params.m_Center.y - CROSS_SIZE),
+                                cv::Point(eye.m_Params.m_Center.x,
+                                          eye.m_Params.m_Center.y + CROSS_SIZE));
 
             // draw inner and outer circles, showing the area which we will
             // unwrap
             circle(imorig,
-                   eye.params.cent,
-                   eye.params.r_inner,
+                   eye.m_Params.m_Center,
+                   eye.m_Params.m_RadiusInner,
                    cv::Scalar(0x00, 0x00, 0xff),
                    2);
             circle(imorig,
-                   eye.params.cent,
-                   eye.params.r_outer,
+                   eye.m_Params.m_Center,
+                   eye.m_Params.m_RadiusOuter,
                    cv::Scalar(0xff, 0x00, 0x00),
                    2);
 
@@ -116,42 +116,42 @@ runEyeConfig(vid_t *vid, bool calib_enabled)
                         px_jump = BIG_PX_JUMP;
                     break;
                 case 'w': // make inner circle bigger
-                    eye.params.r_inner += px_jump;
-                    eye.params.generate_map();
+                    eye.m_Params.m_RadiusInner += px_jump;
+                    eye.m_Params.generateMap();
                     break;
                 case 's': // make inner circle smaller
-                    if (eye.params.r_inner > 0) {
-                        eye.params.r_inner -= px_jump;
-                        eye.params.r_inner = std::max(0, eye.params.r_inner);
-                        eye.params.generate_map();
+                    if (eye.m_Params.m_RadiusInner > 0) {
+                        eye.m_Params.m_RadiusInner -= px_jump;
+                        eye.m_Params.m_RadiusInner = std::max(0, eye.m_Params.m_RadiusInner);
+                        eye.m_Params.generateMap();
                     }
                     break;
                 case 'q': // make outer circle bigger
-                    eye.params.r_outer += px_jump;
-                    eye.params.generate_map();
+                    eye.m_Params.m_RadiusOuter += px_jump;
+                    eye.m_Params.generateMap();
                     break;
                 case 'a': // make outer circle smaller
-                    if (eye.params.r_outer > 0) {
-                        eye.params.r_outer -= px_jump;
-                        eye.params.r_outer = std::max(0, eye.params.r_outer);
-                        eye.params.generate_map();
+                    if (eye.m_Params.m_RadiusOuter > 0) {
+                        eye.m_Params.m_RadiusOuter -= px_jump;
+                        eye.m_Params.m_RadiusOuter = std::max(0, eye.m_Params.m_RadiusOuter);
+                        eye.m_Params.generateMap();
                     }
                     break;
                 case KB_UP: // move centre up
-                    eye.params.cent.y -= px_jump;
-                    eye.params.generate_map();
+                    eye.m_Params.m_Center.y -= px_jump;
+                    eye.m_Params.generateMap();
                     break;
                 case KB_DOWN: // move centre down
-                    eye.params.cent.y += px_jump;
-                    eye.params.generate_map();
+                    eye.m_Params.m_Center.y += px_jump;
+                    eye.m_Params.generateMap();
                     break;
                 case KB_LEFT: // move centre left
-                    eye.params.cent.x -= px_jump;
-                    eye.params.generate_map();
+                    eye.m_Params.m_Center.x -= px_jump;
+                    eye.m_Params.generateMap();
                     break;
                 case KB_RIGHT: // move centre right
-                    eye.params.cent.x += px_jump;
-                    eye.params.generate_map();
+                    eye.m_Params.m_Center.x += px_jump;
+                    eye.m_Params.generateMap();
                     break;
                 }
             }
@@ -162,7 +162,7 @@ runEyeConfig(vid_t *vid, bool calib_enabled)
         // write params to file
         // in particular we want to remember our calibration settings so we
         // don't have to recalibrate the next time we start the program
-        eye.params.write();
+        eye.m_Params.write();
     }
 }
 }

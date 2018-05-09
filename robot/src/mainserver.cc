@@ -73,7 +73,7 @@ MainServer::run()
     // for outgoing (ImageSender) connection (UDP)
     sockaddr_in dest;
     dest.sin_family = AF_INET;
-    dest.sin_port = htons(IMAGE_PORT);
+    dest.sin_port = htons(Image::IMAGE_PORT);
 
     // loop for ever
     for (;;) {

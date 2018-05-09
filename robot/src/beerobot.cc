@@ -22,7 +22,7 @@
 #include "imagereceiver.h"
 
 // for processing single image files
-#include "imagefile.h"
+#include "image/file.h"
 
 #ifndef _WIN32
 // for using the Xbox controller to drive the robot
@@ -118,7 +118,7 @@ main(int argc, char **argv)
                 motorflag = true;
             } else if (strcmp(argv[i], "--local") == 0) { // run locally
                 localflag = true;
-            } else if (config || !process_file(argv[i]))
+            } else if (config || !Image::processFile(argv[i]))
                 showusage();
         }
 

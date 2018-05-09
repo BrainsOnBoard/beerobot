@@ -48,7 +48,7 @@ ImageSender::run()
 
     // header for packets, containing ID, number of packets in this series and
     // packet number
-    packinfo info{ .id = -1 };
+    Image::PacketInfo info{ .Id = -1 };
 
     // set running flag to true
     m_Running = true;
@@ -64,20 +64,20 @@ ImageSender::run()
         imencode(".jpg", view, buff);
 
         // increment ID number
-        info.id++;
+        info.Id++;
 
         // this is the first packet
-        info.num = 0;
+        info.Number = 0;
 
-        if (buff.size() < MAX_IM_BYTES) { // whole frame fits in one packet
+        if (buff.size() < Image::MAX_IM_BYTES) { // whole frame fits in one packet
             // there is one packet in series
-            info.tot = 1;
+            info.Count = 1;
 
             // insert header into buffer
             buff.insert(buff.begin(), (uchar *) &info, (uchar *) (&info + 1));
 
             // send packet
-            debug_imagepack(info, buff.size());
+            Image::debugImagePacket(info, buff.size());
             if (sendto(m_Fd,
                        (buff_t *) buff.data(),
                        buff.size(),
@@ -86,26 +86,26 @@ ImageSender::run()
                        sizeof(sockaddr_in)) == -1)
                 std::cerr << "Error: " << strerror(errno) << std::endl;
         } else if (buff.size() <
-                   2 * MAX_IM_BYTES) { // frame fits in two packets
+                   2 * Image::MAX_IM_BYTES) { // frame fits in two packets
             // there are two packets in series
-            info.tot = 2;
+            info.Count = 2;
 
             // insert header for first packet
             buff.insert(buff.begin(), (uchar *) &info, (uchar *) ((&info) + 1));
 
             // send header plus as many of the image's bytes as we can fit in
             // packet
-            debug_imagepack(info, MAX_UDP_PACKET_SIZE);
+            debugImagePacket(info, Image::MAX_UDP_PACKET_SIZE);
             if (sendto(m_Fd,
                        (buff_t *) buff.data(),
-                       MAX_UDP_PACKET_SIZE,
+                       Image::MAX_UDP_PACKET_SIZE,
                        MSG_NOSIGNAL,
                        (const sockaddr *) m_DestAddr,
                        sizeof(sockaddr_in)) == -1)
                 std::cerr << "Error: " << strerror(errno) << std::endl;
 
             // start second packet
-            info.num = 1;
+            info.Number = 1;
             buff2.clear();
 
             // insert header for second packet
@@ -114,11 +114,11 @@ ImageSender::run()
 
             // insert second half of image data
             buff2.insert(buff2.end(),
-                         buff.begin() + MAX_UDP_PACKET_SIZE,
+                         buff.begin() + Image::MAX_UDP_PACKET_SIZE,
                          buff.end());
 
             // send second packet
-            debug_imagepack(info, buff2.size());
+            debugImagePacket(info, buff2.size());
             if (sendto(m_Fd,
                        (buff_t *) buff2.data(),
                        buff2.size(),
