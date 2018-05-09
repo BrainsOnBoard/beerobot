@@ -66,7 +66,6 @@ public:
         if (m_Thread) {
             m_Thread->join();
             delete m_Thread;
-            delete m_JsEvent;
         }
 
         ::close(m_Fd);
@@ -79,7 +78,6 @@ public:
     void startThread(ControllerCallback callback, void *data)
     {
         if (!m_Thread) {
-            m_JsEvent = new js_event;
             m_Thread = new std::thread(runThread, this, callback, data);
         }
     }
@@ -88,10 +86,10 @@ public:
      * Read controller event into js struct. Returns true if read successfully,
      * false if an error occurs.
      */
-    bool read(js_event &js)
+    bool read(JoystickEvent &js)
     {
         while (!m_Closing) {
-            const ssize_t bytes = ::read(m_Fd, &js, sizeof(js));
+            const ssize_t bytes = ::read(m_Fd, &m_JsEventLinux, sizeof(m_JsEventLinux));
             if (bytes > 0) {
                 break;
             }
@@ -105,18 +103,24 @@ public:
             return false;
         }
 
-        // we treat initial events (indicating initial state of controller) like
-        // any other
-        js.type &= ~JS_EVENT_INIT;
+        js.isInitial = m_JsEventLinux.type & JS_EVENT_INIT;
+        js.isAxis = (m_JsEventLinux.type & ~JS_EVENT_INIT) == JS_EVENT_AXIS;
+        js.number = m_JsEventLinux.number;
 
         // if it's an axis event for the left or right stick, account for
         // deadzone
-        if (js.type == JS_EVENT_AXIS && js.number >= LeftStickHorizontal &&
-            js.number <= RightStickVertical && abs(js.value) < deadzone) {
+        if (js.isAxis && js.number >= LeftStickHorizontal &&
+            js.number <= RightStickVertical && abs(m_JsEventLinux.value) < deadzone) {
             js.value = 0;
+        } else {
+            js.value = m_JsEventLinux.value;
         }
 
         return true;
+    }
+
+    bool read() {
+        return read(m_JsEvent);
     }
 
     /*
@@ -189,7 +193,8 @@ private:
     int m_Fd = 0;                    // file descriptor for joystick device
     std::thread *m_Thread = nullptr; // read thread object
     bool m_Closing = false;          // is controller closing?
-    js_event *m_JsEvent = nullptr;   // struct to contain joystick event
+    js_event m_JsEventLinux;   // struct to contain joystick event
+    JoystickEvent m_JsEvent;
     static const int16_t deadzone = 10000; // size of deadzone for axes (i.e.
                                            // region within which not activated)
     static const long sleepmillis = 25; // number of milliseconds between polls
@@ -204,16 +209,11 @@ private:
                           ControllerCallback callback,
                           void *userData)
     {
-        while (c->read(*c->m_JsEvent)) {
-            js_event &js = *c->m_JsEvent;
-            callback(js.type & JS_EVENT_AXIS,
-                     js.number,
-                     js.value,
-                     userData,
-                     false);
+        while (c->read()) {
+            callback(&c->m_JsEvent, userData);
         }
         if (!c->m_Closing) {
-            callback(false, 0, 0, userData, true);
+            callback(nullptr, userData);
         }
     }
 };

@@ -12,26 +12,26 @@ float x = 0;
 float y = 0;
 
 void
-run(bool isAxis, uint8_t number, int16_t value, void *userData, bool isError)
+run(Xbox::JoystickEvent *js, void *userData)
 {
-    if (isError) {
+    if (!js) {
         std::cerr << "An error occurred reading from Xbox controller"
                   << std::endl;
         return;
     }
 
     // only interested in the joystick
-    if (!isAxis) {
+    if (!js->isAxis) {
         return;
     }
 
     // only interested in left joystick
-    switch (number) {
+    switch (js->number) {
     case Xbox::LeftStickVertical:
-        y = value / (float) std::numeric_limits<int16_t>::max();
+        y = js->value / (float) std::numeric_limits<int16_t>::max();
         break;
     case Xbox::LeftStickHorizontal:
-        x = value / (float) std::numeric_limits<int16_t>::max();
+        x = js->value / (float) std::numeric_limits<int16_t>::max();
         break;
     default:
         return;

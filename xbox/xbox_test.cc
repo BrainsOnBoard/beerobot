@@ -24,17 +24,17 @@ handleAxis(uint8_t number, int16_t value)
 }
 
 void
-callback(bool isAxis, uint8_t number, int16_t value, void *, bool isError)
+callback(JoystickEvent *js, void *)
 {
-    if (isError) {
+    if (!js) {
         cerr << "Error reading from joystick" << endl;
         exit(1);
     }
 
-    if (isAxis) {
-        handleAxis(number, value);
+    if (js->isAxis) {
+        handleAxis(js->number, js->value);
     } else {
-        handleButton(number, value);
+        handleButton(js->number, js->value);
     }
 }
 

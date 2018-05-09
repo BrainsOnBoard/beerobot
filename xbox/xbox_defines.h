@@ -20,10 +20,14 @@ enum Axis
     DpadVertical = 7
 };
 
+struct JoystickEvent
+{
+    int16_t value;
+    uint8_t number;
+    bool isAxis;
+    bool isInitial;
+};
+
 // For callbacks when a controller event occurs (button is pressed, axis moves)
-using ControllerCallback = void (*)(bool isAxis,
-                                    uint8_t number,
-                                    int16_t value,
-                                    void *userData,
-                                    bool isError);
+using ControllerCallback = void (*)(JoystickEvent *js, void *userData);
 }
