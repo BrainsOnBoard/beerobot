@@ -56,7 +56,7 @@ ImageSender::run()
         auto t0 = high_resolution_clock::now();
 
         // read bee eye frame
-        if (!m_Eye.get_eye_view(view)) {
+        if (!m_Eye.getEyeView(view)) {
             throw new std::runtime_error("Error: Could not read from webcam");
         }
 

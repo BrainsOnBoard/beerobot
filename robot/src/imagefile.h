@@ -20,10 +20,10 @@ bool process_file(const char* filepath)
     dummy.width = im.cols;
     dummy.height = im.rows;
     dummy.ini_file = "beerobot_usb.ini";
-    BeeEye eye(&dummy);
+    Eye::BeeEye eye(&dummy);
 
     cv::Mat unwrap;
-    eye.get_unwrapped_image(unwrap, im);
+    eye.getUnwrappedImage(unwrap, im);
 
     std::vector<int> imparams;
     imparams.push_back(CV_IMWRITE_JPEG_QUALITY);
@@ -34,7 +34,7 @@ bool process_file(const char* filepath)
     cv::imwrite(uwpath, unwrap, imparams);
 
     cv::Mat view;
-    eye.get_eye_view(view, unwrap);
+    eye.getEyeView(view, unwrap);
     std::string eyepath = std::string(filepath) + ".beeeye.jpg";
     std::cout << "Saving bee eye view to " << eyepath << std::endl;
     cv::imwrite(eyepath, view, imparams);

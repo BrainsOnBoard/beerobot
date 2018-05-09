@@ -6,8 +6,9 @@
 #include <X11/Xlib.h>
 #endif
 
+namespace Eye {
 /* run the remote bee eye viewer */
-void run_eye_viewer(Readable &recv, bool showoverlay)
+void runEyeViewer(Readable &recv, bool showoverlay)
 {
 #ifdef _WIN32
     cv::Size oversz(1024, 768);
@@ -68,4 +69,5 @@ void run_eye_viewer(Readable &recv, bool showoverlay)
         if ((cv::waitKey(1) & 0xff) == 27)
             break;
     }
+}
 }

@@ -2,6 +2,7 @@
 
 #include "beeeye.h"
 
+namespace Eye {
 const int CROSS_SIZE = 20; // size of calibration cross
 
 // keyboard key codes
@@ -15,13 +16,13 @@ const int KB_ESC = 27;
 const int BIG_PX_JUMP = 5;
 
 /* draws a line for the calibration cross */
-inline void calib_line(cv::Mat &imorig, cv::Point p1, cv::Point p2)
+inline void DrawCalibrationLine(cv::Mat &imorig, cv::Point p1, cv::Point p2)
 {
     cv::line(imorig, p1, p2, cv::Scalar(0x00, 0xff, 0x00), 2);
 }
 
 /* run the bee eye config display */
-void run_eye_config(vid_t* vid, bool calib_enabled)
+void runEyeConfig(vid_t* vid, bool calib_enabled)
 {
     BeeEye eye(vid);
 
@@ -32,21 +33,21 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
 
     // display remapped camera output on loop until user presses escape
     for (bool do_run = true; do_run;) {
-        if (!eye.get_image(imorig)) {
+        if (!eye.getImage(imorig)) {
             std::cerr << "Error: Could not read from webcam" << std::endl;
             exit(1);
         }
 
-        eye.get_unwrapped_image(unwrap, imorig);
-        eye.get_eye_view(view, unwrap);
+        eye.getUnwrappedImage(unwrap, imorig);
+        eye.getEyeView(view, unwrap);
 
         if (do_calib) { // then show calibration screen
             // show unwrapped image
             imshow("unwrapped", unwrap);
 
             // draw calibration cross at what we've chose as the center
-            calib_line(imorig, cv::Point(eye.params.cent.x - CROSS_SIZE, eye.params.cent.y), cv::Point(eye.params.cent.x + CROSS_SIZE, eye.params.cent.y));
-            calib_line(imorig, cv::Point(eye.params.cent.x, eye.params.cent.y - CROSS_SIZE), cv::Point(eye.params.cent.x, eye.params.cent.y + CROSS_SIZE));
+            DrawCalibrationLine(imorig, cv::Point(eye.params.cent.x - CROSS_SIZE, eye.params.cent.y), cv::Point(eye.params.cent.x + CROSS_SIZE, eye.params.cent.y));
+            DrawCalibrationLine(imorig, cv::Point(eye.params.cent.x, eye.params.cent.y - CROSS_SIZE), cv::Point(eye.params.cent.x, eye.params.cent.y + CROSS_SIZE));
 
             // draw inner and outer circles, showing the area which we will unwrap
             circle(imorig, eye.params.cent, eye.params.r_inner, cv::Scalar(0x00, 0x00, 0xff), 2);
@@ -141,4 +142,5 @@ void run_eye_config(vid_t* vid, bool calib_enabled)
         // have to recalibrate the next time we start the program
         eye.params.write();
     }
+}
 }

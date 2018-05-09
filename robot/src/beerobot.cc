@@ -133,7 +133,7 @@ main(int argc, char **argv)
 #endif
 
                 Net::ImageReceiver recv;
-                run_eye_viewer(recv, overlayflag);
+                Eye::runEyeViewer(recv, overlayflag);
 
 #ifndef _WIN32
 
@@ -150,7 +150,7 @@ main(int argc, char **argv)
                 }
 
                 // code run if just showing video locally
-                run_eye_config(vid, config);
+                Eye::runEyeConfig(vid, config);
                 return 0;
             }
         }
@@ -202,8 +202,8 @@ main(int argc, char **argv)
             vid = get_usb();
         }
 
-        BeeEye eye(vid);
-        run_eye_viewer(eye, overlayflag);
+        Eye::BeeEye eye(vid);
+        Eye::runEyeViewer(eye, overlayflag);
     } else {
         // run main server
         Net::MainServer::runServer(mtr);

@@ -40,6 +40,6 @@ private:
 
     int m_Fd = -1;
     const sockaddr_in *m_DestAddr;
-    BeeEye m_Eye;
+    Eye::BeeEye m_Eye;
 };
 }

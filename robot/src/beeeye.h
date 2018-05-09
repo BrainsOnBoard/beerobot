@@ -3,30 +3,34 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include <opencv2/opencv.hpp>
 #include "camparams.h"
 #include "readable.h"
+#include <opencv2/opencv.hpp>
 
 // Forward declarations
 class See3CAM_CU40;
 
-class BeeEye : public Readable {
+namespace Eye {
+class BeeEye : public Readable
+{
 public:
     CamParams params;
 
-    BeeEye(vid_t* vid);
+    BeeEye(vid_t *vid);
     ~BeeEye();
 
-    bool get_image(cv::Mat &imorig);
-    void get_unwrapped_image(cv::Mat &unwrap, cv::Mat &imorig);
-    void get_eye_view(cv::Mat &view, cv::Mat &imunwrap);
-    bool get_eye_view(cv::Mat &view);
+    bool getImage(cv::Mat &imorig);
+    void getUnwrappedImage(cv::Mat &unwrap, cv::Mat &imorig);
+    void getEyeView(cv::Mat &view, cv::Mat &imunwrap);
+    bool getEyeView(cv::Mat &view);
     virtual bool read(cv::Mat &view) override;
+
 private:
-    cv::VideoCapture* cap = nullptr;
+    cv::VideoCapture *m_Cap = nullptr;
 #ifndef _WIN32
-    See3CAM_CU40* see3cam = nullptr;
+    See3CAM_CU40 *m_See3Cam = nullptr;
 #endif
-    cv::Mat map_x, map_y;
-    cv::Mat imorig, imunwrap, imeye;
+    cv::Mat m_MapX, m_MapY;
+    cv::Mat m_ImOrig, m_ImUnwrap, m_ImEye;
 };
+}
