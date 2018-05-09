@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\beerobot.cc" />
+    <ClCompile Include="src\imagereceiver.cc" />
+    <ClCompile Include="src\imagesender.cc" />
+    <ClCompile Include="src\mainclient.cc" />
+    <ClCompile Include="src\mainserver.cc" />
+    <ClCompile Include="src\socketcommon.cc" />
+    <ClCompile Include="src\videotype.cc" />
+    <ClCompile Include="src\eye\beeeye.cc">
+      <Filter>eye</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\camparams.h" />
+    <ClInclude Include="src\imagecommon.h" />
+    <ClInclude Include="src\imagefile.h" />
+    <ClInclude Include="src\imagereceiver.h" />
+    <ClInclude Include="src\imagesender.h" />
+    <ClInclude Include="src\mainclient.h" />
+    <ClInclude Include="src\mainserver.h" />
+    <ClInclude Include="src\motor_dummy.h" />
+    <ClInclude Include="src\readable.h" />
+    <ClInclude Include="src\socketcommon.h" />
+    <ClInclude Include="src\targetver.h" />
+    <ClInclude Include="src\videotype.h" />
+    <ClInclude Include="src\xboxrobot.h" />
+    <ClInclude Include="src\eye\beeeye.h">
+      <Filter>eye</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eye\beeeyeconfig.h">
+      <Filter>eye</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eye\beeeyeviewer.h">
+      <Filter>eye</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eye\gigerdatacam.h">
+      <Filter>eye</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="eye">
+      <UniqueIdentifier>{c57e7cd5-e2bd-4988-9cd2-55ee8e09fa97}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\eye\gigerommatidiamodel.py">
+      <Filter>eye</Filter>
+    </None>
+  </ItemGroup>
+</Project>

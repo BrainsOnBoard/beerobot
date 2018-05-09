@@ -75,6 +75,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <ExecutablePath>C:\opencv\build\bin\Release;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>GeNN_Robotics;iniparser\src;C:\opencv\build\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -98,7 +100,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
@@ -147,19 +149,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\camparams.h" />
+    <ClInclude Include="src\eye\beeeye.h" />
+    <ClInclude Include="src\eye\beeeyeconfig.h" />
+    <ClInclude Include="src\eye\beeeyeviewer.h" />
+    <ClInclude Include="src\eye\gigerdatacam.h" />
+    <ClInclude Include="src\imagecommon.h" />
+    <ClInclude Include="src\imagefile.h" />
+    <ClInclude Include="src\imagereceiver.h" />
+    <ClInclude Include="src\imagesender.h" />
+    <ClInclude Include="src\mainclient.h" />
+    <ClInclude Include="src\mainserver.h" />
+    <ClInclude Include="src\motor_dummy.h" />
+    <ClInclude Include="src\readable.h" />
+    <ClInclude Include="src\socketcommon.h" />
     <ClInclude Include="src\targetver.h" />
+    <ClInclude Include="src\videotype.h" />
+    <ClInclude Include="src\xboxrobot.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Robot.cpp" />
-    <ClCompile Include="src\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="src\beerobot.cc" />
+    <ClCompile Include="src\eye\beeeye.cc" />
+    <ClCompile Include="src\imagereceiver.cc" />
+    <ClCompile Include="src\imagesender.cc" />
+    <ClCompile Include="src\mainclient.cc" />
+    <ClCompile Include="src\mainserver.cc" />
+    <ClCompile Include="src\socketcommon.cc" />
+    <ClCompile Include="src\videotype.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\eye\gigerommatidiamodel.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>
