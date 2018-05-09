@@ -21,10 +21,19 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="xbox_test.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CXBOXController.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xbox_defines.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xbox_linux.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
