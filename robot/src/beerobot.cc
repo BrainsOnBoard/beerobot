@@ -132,7 +132,7 @@ main(int argc, char **argv)
                 }
 #endif
 
-                ImageReceiver recv;
+                Net::ImageReceiver recv;
                 run_eye_viewer(recv, overlayflag);
 
 #ifndef _WIN32

@@ -45,7 +45,7 @@ void run_eye_viewer(Readable &recv, bool showoverlay)
     // display remote camera input on loop until user presses escape
     while (true) {
         // read frame over socket
-        recv.read(&view);
+        recv.read(view);
 
         // bad JPEGs give a 0x0 frame
         if (view.rows == 0 && view.cols == 0) {

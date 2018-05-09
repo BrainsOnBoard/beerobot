@@ -19,7 +19,7 @@ MainClient::MainClient(const std::string host)
         throw std::runtime_error("Cannot open socket");
     }
 
-        // Create socket address structure
+    // Create socket address structure
 #ifdef _WIN32
     in_addr addr;
     if (inet_pton(AF_INET, host.c_str(), &addr)) {

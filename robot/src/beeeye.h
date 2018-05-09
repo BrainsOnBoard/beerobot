@@ -21,7 +21,7 @@ public:
     void get_unwrapped_image(cv::Mat &unwrap, cv::Mat &imorig);
     void get_eye_view(cv::Mat &view, cv::Mat &imunwrap);
     bool get_eye_view(cv::Mat &view);
-    virtual bool read(cv::Mat *view) override;
+    virtual bool read(cv::Mat &view) override;
 private:
     cv::VideoCapture* cap = nullptr;
 #ifndef _WIN32

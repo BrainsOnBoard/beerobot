@@ -7,24 +7,28 @@
 #include <winsock2.h>
 typedef char mybuff_t;
 #else
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 typedef uchar mybuff_t;
 #endif
 
-#include <unistd.h>
 #include <errno.h>
 #include <opencv2/opencv.hpp>
+#include <unistd.h>
 
-class ImageReceiver : public Readable {
+namespace Net {
+class ImageReceiver : public Readable
+{
 public:
     ImageReceiver();
     virtual ~ImageReceiver();
-    virtual bool read(cv::Mat *view) override;
+    virtual bool read(cv::Mat &view) override;
+
 private:
-    int listenfd = -1;
-    mybuff_t buff[MAX_UDP_PACKET_SIZE];
-    std::vector<mybuff_t> lastbuff;
-    int lastid;
+    int m_Fd = -1;
+    mybuff_t m_Buffer[MAX_UDP_PACKET_SIZE];
+    std::vector<mybuff_t> m_LastBuffer;
+    int m_LastId;
 };
+}

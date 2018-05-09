@@ -75,16 +75,14 @@ MainServer::run()
     dest.sin_family = AF_INET;
     dest.sin_port = htons(IMAGE_PORT);
 
-    // thread to run ImageSender on
-    pthread_t tisend;
-
     // loop for ever
     for (;;) {
         // wait for incoming TCP connection
         std::cout << "Waiting for incoming connection..." << std::endl;
         int connfd = accept(m_Fd, (sockaddr *) &addr, &addrlen);
-        if (!send(connfd, "HEY\n", 4))
+        if (!send(connfd, "HEY\n", 4)) {
             throw std::runtime_error("Could not write to socket");
+        }
 
         // convert IP to string
         char saddr[INET_ADDRSTRLEN];
@@ -95,8 +93,7 @@ MainServer::run()
         dest.sin_addr = addr.sin_addr;
 
         // start ImageSending thread
-        pthread_create(
-                &tisend, NULL, ImageSender::start_sending, (void *) &dest);
+        std::thread tsend(ImageSender::startSending, &dest);
 
         // for reading in data
         char buff[MAIN_BUFFSIZE];
@@ -134,8 +131,8 @@ MainServer::run()
         std::cout << "Connection closed" << std::endl;
 
         // stop ImageSender thread
-        ImageSender::running = false;
-        pthread_join(tisend, NULL);
+        ImageSender::m_Running = false;
+        tsend.join();
     }
 }
 

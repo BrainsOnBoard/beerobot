@@ -14,28 +14,32 @@
 typedef const char buff_t;
 typedef int socklen_t;
 #else
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 typedef uchar buff_t;
 #endif
 
-#include <unistd.h>
 #include <errno.h>
+#include <unistd.h>
 
-class ImageSender {
+namespace Net {
+class ImageSender
+{
 public:
-    static bool running;
-    static void* start_sending(void *destAddress);
+    static bool m_Running;
+    static void startSending(const sockaddr_in *destAddress);
 
     ImageSender(const sockaddr_in *destAddress);
     virtual ~ImageSender();
+
 private:
     static ImageSender *Instance;
 
     void run();
 
-    int connfd = -1;
-    const sockaddr_in *dest;
-    BeeEye eye;
+    int m_Fd = -1;
+    const sockaddr_in *m_DestAddr;
+    BeeEye m_Eye;
 };
+}

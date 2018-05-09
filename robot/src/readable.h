@@ -4,5 +4,5 @@
 
 class Readable {
 public:
-    virtual bool read(cv::Mat *image) = 0;
+    virtual bool read(cv::Mat &image) = 0;
 };

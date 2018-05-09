@@ -1,61 +1,64 @@
 #include "imagesender.h"
 
-#include <iostream>
-#include <stdexcept>
 #include <chrono>
+#include <iostream>
 #include <opencv2/opencv.hpp>
+#include <stdexcept>
 
-using namespace std;
+namespace Net {
 using namespace std::chrono;
-using namespace cv;
 
 static const double max_fps = 40;
 static const long max_period = (long) (1000000000.0 / max_fps);
 
 /* Create socket, start BeeEye (camera etc.) */
 ImageSender::ImageSender(const sockaddr_in *dest)
-: dest(dest), eye(get_usb())
+  : m_DestAddr(dest)
+  , m_Eye(get_usb())
 {
-    cout << "Starting image sender" << endl;
+    std::cout << "Starting image sender" << std::endl;
 
     // Create socket
-    connfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (connfd < 0)
-        throw runtime_error("Cannot open socket");
+    m_Fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (m_Fd < 0) {
+        throw std::runtime_error("Cannot open socket");
+    }
 }
 
 /* Close socket if needed */
 ImageSender::~ImageSender()
 {
-    if (connfd != -1)
-        close(connfd);
+    if (m_Fd != -1) {
+        close(m_Fd);
+    }
 }
 
 // flag to stop send process
-bool ImageSender::running;
+bool ImageSender::m_Running;
 
 /* Constantly read bee eye frames and send over UDP, until running == false */
-void ImageSender::run()
+void
+ImageSender::run()
 {
     // matrix to store bee eye frame
-    Mat view;
+    cv::Mat view;
 
     // buffers for first and second UDP packet in sequence
-    vector<uchar> buff, buff2;
+    std::vector<uchar> buff, buff2;
 
     // header for packets, containing ID, number of packets in this series and
     // packet number
-    packinfo info{
-        .id = -1};
+    packinfo info{ .id = -1 };
 
     // set running flag to true
-    running = true;
-    while (running) {
+    m_Running = true;
+    while (m_Running) {
         auto t0 = high_resolution_clock::now();
 
         // read bee eye frame
-        if (!eye.get_eye_view(view))
-            throw new runtime_error("Error: Could not read from webcam");
+        if (!m_Eye.get_eye_view(view)) {
+            throw new std::runtime_error("Error: Could not read from webcam");
+        }
 
         // convert image to JPEG; store in buff
         imencode(".jpg", view, buff);
@@ -71,63 +74,82 @@ void ImageSender::run()
             info.tot = 1;
 
             // insert header into buffer
-            buff.insert(buff.begin(), (uchar*) & info, (uchar*) (& info + 1));
+            buff.insert(buff.begin(), (uchar *) &info, (uchar *) (&info + 1));
 
             // send packet
             debug_imagepack(info, buff.size());
-            if (sendto(connfd, (buff_t *) buff.data(), buff.size(), MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
-                cerr << "Error: " << strerror(errno) << endl;
-        } else if (buff.size() < 2 * MAX_IM_BYTES) { // frame fits in two packets
+            if (sendto(m_Fd,
+                       (buff_t *) buff.data(),
+                       buff.size(),
+                       MSG_NOSIGNAL,
+                       (const sockaddr *) m_DestAddr,
+                       sizeof(sockaddr_in)) == -1)
+                std::cerr << "Error: " << strerror(errno) << std::endl;
+        } else if (buff.size() <
+                   2 * MAX_IM_BYTES) { // frame fits in two packets
             // there are two packets in series
             info.tot = 2;
 
             // insert header for first packet
-            buff.insert(buff.begin(), (uchar*) & info, (uchar*) ((&info) + 1));
+            buff.insert(buff.begin(), (uchar *) &info, (uchar *) ((&info) + 1));
 
-            // send header plus as many of the image's bytes as we can fit in packet
+            // send header plus as many of the image's bytes as we can fit in
+            // packet
             debug_imagepack(info, MAX_UDP_PACKET_SIZE);
-            if (sendto(connfd, (buff_t *) buff.data(), MAX_UDP_PACKET_SIZE, MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
-                cerr << "Error: " << strerror(errno) << endl;
+            if (sendto(m_Fd,
+                       (buff_t *) buff.data(),
+                       MAX_UDP_PACKET_SIZE,
+                       MSG_NOSIGNAL,
+                       (const sockaddr *) m_DestAddr,
+                       sizeof(sockaddr_in)) == -1)
+                std::cerr << "Error: " << strerror(errno) << std::endl;
 
             // start second packet
             info.num = 1;
             buff2.clear();
 
             // insert header for second packet
-            buff2.insert(buff2.begin(), (uchar*) & info, (uchar*) ((&info) + 1));
+            buff2.insert(
+                    buff2.begin(), (uchar *) &info, (uchar *) ((&info) + 1));
 
             // insert second half of image data
-            buff2.insert(buff2.end(), buff.begin() + MAX_UDP_PACKET_SIZE, buff.end());
+            buff2.insert(buff2.end(),
+                         buff.begin() + MAX_UDP_PACKET_SIZE,
+                         buff.end());
 
             // send second packet
             debug_imagepack(info, buff2.size());
-            if (sendto(connfd, (buff_t *) buff2.data(), buff2.size(), MSG_NOSIGNAL, (const sockaddr*) dest, sizeof (sockaddr_in)) == -1)
-                cerr << "Error: " << strerror(errno) << endl;
-        } else // can't handle more than two packets in a series
-            cerr << "Too big!" << endl;
+            if (sendto(m_Fd,
+                       (buff_t *) buff2.data(),
+                       buff2.size(),
+                       MSG_NOSIGNAL,
+                       (const sockaddr *) m_DestAddr,
+                       sizeof(sockaddr_in)) == -1)
+                std::cerr << "Error: " << strerror(errno) << std::endl;
+        } else { // can't handle more than two packets in a series
+            std::cerr << "Too big!" << std::endl;
+        }
 
 #ifdef DEBUG_IMAGEPACK
-        cout << "image len: " << buff.size() << endl;
+        std::cout << "image len: " << buff.size() << std::endl;
 #endif
 
         // throttle framerate at max_fps
         auto t1 = high_resolution_clock::now();
         long tdiff = duration_cast<nanoseconds>(t1 - t0).count();
         if (tdiff < max_period) {
-            timespec ts{
-                .tv_sec = 0,
-                .tv_nsec = max_period - tdiff};
+            timespec ts{ .tv_sec = 0, .tv_nsec = max_period - tdiff };
 
             nanosleep(&ts, nullptr);
         }
     }
 }
 
-void* ImageSender::start_sending(void *destAddress)
+void
+ImageSender::startSending(const sockaddr_in *destAddress)
 {
     // create new image sender and run in loop
-    ImageSender sender((const sockaddr_in*) destAddress);
+    ImageSender sender(destAddress);
     sender.run();
-
-    return nullptr;
+}
 }

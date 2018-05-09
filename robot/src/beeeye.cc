@@ -121,7 +121,7 @@ bool BeeEye::get_eye_view(cv::Mat& view)
     return true;
 }
 
-bool BeeEye::read(cv::Mat *view)
+bool BeeEye::read(cv::Mat &view)
 {
-    return this->get_eye_view(*view);
+    return this->get_eye_view(view);
 }
