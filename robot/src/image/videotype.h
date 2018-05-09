@@ -7,6 +7,8 @@ struct vid_t {
     bool is_see3cam;
 };
 
+namespace Image {
 // different video devices
-vid_t* get_usb();
-vid_t* get_pixpro_wifi();
+vid_t* getUSB();
+vid_t* getPixProWifi();
+}

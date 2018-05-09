@@ -8,11 +8,12 @@
 
 using namespace std;
 
-namespace {
+namespace Image {
+
 /* get the number for a camera with a given name (-1 if not found) */
 template<size_t N>
 int
-get_camera_by_name(const char *const (&names)[N], int &selected)
+getCameraByName(const char *const (&names)[N], int &selected)
 {
     char cname[4096];
 
@@ -58,11 +59,10 @@ get_camera_by_name(const char *const (&names)[N], int &selected)
          << endl;
     return defcam;
 }
-}
 
 /* get a PixPro or webcam video device over USB */
 vid_t *
-get_usb()
+getUSB()
 {
     vid_t *vid = new vid_t;
     int sel = 2;
@@ -70,7 +70,7 @@ get_usb()
 #ifdef _WIN32
     vid->dev_int = 0;
 #else
-    vid->dev_int = get_camera_by_name(
+    vid->dev_int = getCameraByName(
             { "See3CAM_CU40", "PIXPRO SP360 4K", "USB 2.0 Camera" }, sel);
 #endif
     vid->dev_char = NULL;
@@ -95,7 +95,7 @@ get_usb()
 
 /* get PixPro over wifi */
 vid_t *
-get_pixpro_wifi()
+getPixProWifi()
 {
     vid_t *vid = new vid_t;
     vid->dev_int = -1;
@@ -104,4 +104,5 @@ get_pixpro_wifi()
     vid->height = 1024;
     vid->ini_file = "beerobot_pixpro_wifi.ini";
     return vid;
+}
 }

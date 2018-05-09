@@ -75,9 +75,9 @@ main(int argc, char **argv)
             } else if (vid) {
                 showusage();
             } else if (strcmp(argv[i], "usb") == 0) { // use a USB camera
-                vid = get_usb();
+                vid = Image::getUSB();
             } else if (strcmp(argv[i], "wifi") == 0) { // use PixPro over wifi
-                vid = get_pixpro_wifi();
+                vid = Image::getPixProWifi();
             } else if (strcmp(argv[i], "viewer") == 0) {
                 // start the viewer client
                 if (argc < i + 2) {
@@ -146,7 +146,7 @@ main(int argc, char **argv)
                 return 0;
             } else if (config || vid) {
                 if (!vid) { // default to usb for config
-                    vid = get_usb();
+                    vid = Image::getUSB();
                 }
 
                 // code run if just showing video locally
@@ -199,7 +199,7 @@ main(int argc, char **argv)
 
     if (localflag) {
         if (!vid) {
-            vid = get_usb();
+            vid = Image::getUSB();
         }
 
         Eye::BeeEye eye(vid);
