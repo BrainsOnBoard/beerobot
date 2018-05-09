@@ -4,7 +4,12 @@
 #include <cstddef>
 #include <iostream>
 
+#ifdef _MSC_VER
+#pragma pack(push,1)
+struct packinfo
+#else
 struct __attribute__ ((packed)) packinfo
+#endif
 {
     int id;
     uint8_t num;
@@ -17,7 +22,7 @@ static const int IMAGE_PORT = 5555;
 
 //#define DEBUG_IMAGEPACK
 
-inline void debug_imagepack(packinfo& info, int len)
+inline void debug_imagepack(packinfo &info, int len)
 {
 #ifdef DEBUG_IMAGEPACK
     std::cout << "packet " << (int) (info.num + 1) << "/" << (int) info.tot << endl;
@@ -25,3 +30,7 @@ inline void debug_imagepack(packinfo& info, int len)
     std::cout << "- len: " << len << endl;
 #endif
 }
+
+#ifdef _MSC_VER
+#pragma pack(pop)
+#endif
