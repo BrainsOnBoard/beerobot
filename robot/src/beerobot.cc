@@ -10,8 +10,8 @@
 #endif
 
 // to exchange messages between robot and viewer
-#include "mainclient.h"
-#include "mainserver.h"
+#include "net/mainclient.h"
+#include "net/mainserver.h"
 
 // for displaying robot's bee eye view remotely
 #include "eye/beeeyeviewer.h"
@@ -19,7 +19,7 @@
 // for config mode (i.e. editing .ini files)
 #include "eye/beeeyeconfig.h"
 
-#include "imagereceiver.h"
+#include "net/imagereceiver.h"
 
 // for processing single image files
 #include "image/file.h"
