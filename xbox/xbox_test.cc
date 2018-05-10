@@ -4,7 +4,7 @@ using namespace std;
 using namespace Xbox;
 
 void
-handleButton(uint8_t number, int16_t value)
+handleButton(unsigned int number, int16_t value)
 {
     const char *name = Controller::getButtonName(number);
     if (value) {

@@ -1,13 +1,13 @@
-#include "CXBOXController.h"
+#include "xbox_windows.h"
 #include <iostream>
 #include <string>
 
 using namespace std;
 
-Controller* Player1;
+Xbox::Controller* Player1;
 int main(int argc, char* argv[])
 {
-    Player1 = new Controller(1);
+    Player1 = new Xbox::Controller(1);
     int state1 = Player1->Read().dwPacketNumber;
     Xbox::JoystickEvent event;
     while (true)
@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
         }
         else
         {
+
             Player1->close();
             break;
         }
