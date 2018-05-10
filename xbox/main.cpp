@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 {
     Player1 = new Controller(1);
     int state1 = Player1->Read().dwPacketNumber;
-    JoystickEvent event;
+    Xbox::JoystickEvent event;
     while (true)
     {
         if (Player1->open())
@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
             while (Player1->Change())
             {
                 Player1->read(event);
-                std::cout << "Button " << event.number << "was " << event.value << std::endl;
+                std::cout << "Button " << (int)event.number << "was " << event.value << std::endl;
             }
         }
         else

@@ -23,7 +23,7 @@ enum Axis
 struct JoystickEvent
 {
     int16_t value;
-    uint8_t number;
+    unsigned int number;
     bool isAxis;
     bool isInitial;
 };

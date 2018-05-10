@@ -53,7 +53,7 @@ bool Controller::Change()
 }
 
 // read the buttons on the controller and report which button(s) are pressed/unpressed
-void Controller::read(JoystickEvent &js)
+void Controller::read(Xbox::JoystickEvent &js)
 {
     while (true)
     {

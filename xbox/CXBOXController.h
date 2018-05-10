@@ -7,19 +7,20 @@
 // We need the Windows Header and the XInput Header
 #include <windows.h>
 #include <XInput.h>
+#include "xbox_defines.h"
 
 // Now, the XInput Library
 // NOTE: COMMENT THIS OUT IF YOU ARE NOT USING A COMPILER THAT SUPPORTS THIS METHOD OF LINKING LIBRARIES
 #pragma comment(lib, "XInput.lib")
 
-// XBOX Controller Class Definition
-struct JoystickEvent
-{
-    bool value;
-    unsigned int number;
-    bool isAxis;
-    bool isInitial;
-};
+// XBOX Controller Class DefinitionB
+//struct JoystickEvent
+//{
+//    bool value;
+//    unsigned int number;
+//    bool isAxis;
+//    bool isInitial;
+//};
 
 class Controller
 {
@@ -33,7 +34,7 @@ public:
 	bool open();
 	void close();
 	bool Change();
-    void read(JoystickEvent &js);
+    void read(Xbox::JoystickEvent &js);
 };
 
 enum Button
