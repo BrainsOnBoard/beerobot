@@ -10,7 +10,7 @@ main(int argc, char **argv)
               << "Inner radius: " << params.m_RadiusInner << std::endl
               << "Outer radius: " << params.m_RadiusOuter << std::endl
               << "Flipped: " << params.m_Flipped << std::endl
-              << "Offset: " << params.m_DegreeOffset << std::endl;
+              << "Offset: " << params.m_DegreeOffset << " deg" << std::endl;
 
     return 0;
 }

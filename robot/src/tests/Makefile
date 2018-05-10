@@ -1,7 +1,12 @@
-.PHONY: clean
+.PHONY: all clean
+
+all: yaml_read_test yaml_write_test
 
 yaml_read_test: yaml_read_test.cc
-	$(CXX) -o yaml_read_test yaml_read_test.cc `pkg-config --cflags --libs yaml-cpp opencv`
+	$(CXX) -o $@ $< `pkg-config --cflags --libs yaml-cpp opencv`
+
+yaml_write_test: yaml_write_test.cc
+	$(CXX) -o $@ $< `pkg-config --cflags --libs yaml-cpp opencv`
 
 clean:
-	rm -f yaml_read_test
+	rm -f yaml_read_test yaml_write_test{,.yaml}
