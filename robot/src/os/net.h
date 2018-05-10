@@ -26,6 +26,8 @@
 	{
 		closesocket(sock);
 	}
+
+#pragma comment(lib, "Ws2_32.lib")
 #else
 	typedef int socket_t;
 #endif
