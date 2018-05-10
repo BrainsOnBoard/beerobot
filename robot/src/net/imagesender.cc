@@ -138,7 +138,7 @@ ImageSender::run()
 
         // throttle framerate at max_fps
         auto t1 = high_resolution_clock::now();
-        __int64 tdiff = duration_cast<nanoseconds>(t1 - t0).count();
+        int64_t tdiff = duration_cast<nanoseconds>(t1 - t0).count();
         if (tdiff < max_period) {
 			std::this_thread::sleep_for(nanoseconds(max_period - tdiff));
         }

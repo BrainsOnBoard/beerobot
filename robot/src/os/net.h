@@ -15,8 +15,8 @@
 	#include <arpa/inet.h>
 	#include <netinet/in.h>
 	#include <sys/socket.h>
-	typedef uchar buff_t;
-	typedef uchar mybuff_t;
+	typedef unsigned char buff_t;
+	typedef unsigned char mybuff_t;
 #endif
 
 #ifdef _MSC_VER
