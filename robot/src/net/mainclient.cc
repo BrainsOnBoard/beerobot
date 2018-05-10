@@ -28,9 +28,10 @@ MainClient::MainClient(const std::string host)
 #else
     in_addr addr = { .s_addr = inet_addr(host.c_str()) };
 #endif
-    sockaddr_in destAddress = { .sin_family = AF_INET,
-                                .sin_port = htons(MAIN_PORT),
-                                .sin_addr = addr };
+	sockaddr_in destAddress;
+	destAddress.sin_family = AF_INET;
+	destAddress.sin_port = htons(MAIN_PORT);
+	destAddress.sin_addr = addr;
 
     // Connect socket
     if (connect(m_Fd,

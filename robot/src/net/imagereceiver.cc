@@ -1,15 +1,10 @@
 #include "imagereceiver.h"
+#include "os/net.h"
 
 #include <errno.h>
 #include <iostream>
+#ifndef _MSC_VER
 #include <unistd.h>
-
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #endif
 
 namespace Net {

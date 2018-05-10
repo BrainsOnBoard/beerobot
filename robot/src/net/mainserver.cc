@@ -79,7 +79,7 @@ MainServer::run()
     for (;;) {
         // wait for incoming TCP connection
         std::cout << "Waiting for incoming connection..." << std::endl;
-        int connfd = accept(m_Fd, (sockaddr *) &addr, &addrlen);
+        socket_t connfd = accept(m_Fd, (sockaddr *) &addr, &addrlen);
         if (!send(connfd, "HEY\n", 4)) {
             throw std::runtime_error("Could not write to socket");
         }

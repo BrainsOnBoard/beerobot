@@ -1,21 +1,15 @@
 #pragma once
 
 #include "image/common.h"
+#include "os/net.h"
 #include "readable.h"
-
-#ifdef _WIN32
-#include <winsock2.h>
-typedef char mybuff_t;
-#else
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-typedef uchar mybuff_t;
-#endif
 
 #include <errno.h>
 #include <opencv2/opencv.hpp>
+
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 
 namespace Net {
 class ImageReceiver : public Readable
@@ -26,7 +20,7 @@ public:
     virtual bool read(cv::Mat &view) override;
 
 private:
-    int m_Fd = -1;
+    socket_t m_Fd = -1;
     mybuff_t m_Buffer[Image::MAX_UDP_PACKET_SIZE];
     std::vector<mybuff_t> m_LastBuffer;
     int m_LastId;

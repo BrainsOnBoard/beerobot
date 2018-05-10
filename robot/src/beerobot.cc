@@ -158,8 +158,13 @@ main(int argc, char **argv)
 
     // start appropriate motor device
     Motor *mtr;
+#ifdef _WIN32
+	cout << "Motor disabled on Windows" << endl;
+	mtr = new MotorDummy();
+
+	cout << "Controller is disabled in Windows" << endl;
+#else
     switch (mtype) {
-#ifndef _WIN32
     case Surveyor:
         cout << "Using Surveyor as motor" << endl;
         try {
@@ -180,7 +185,6 @@ main(int argc, char **argv)
         }
         break;
 #endif
-#endif
     default:
         cout << "Motor disabled" << endl;
         mtr = new MotorDummy();
@@ -188,14 +192,11 @@ main(int argc, char **argv)
 
     // if using Xbox controller, start it
     if (controller) {
-#ifdef _WIN32
-        cout << "Controller is disabled in Windows" << endl;
-#else
         Controller::start(mtr);
-#endif
     } else {
         cout << "Use of controller is disabled" << endl;
     }
+#endif
 
     if (localflag) {
         if (!vid) {

@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <thread>
 #include <opencv2/opencv.hpp>
 #include <stdexcept>
 
@@ -48,7 +49,8 @@ ImageSender::run()
 
     // header for packets, containing ID, number of packets in this series and
     // packet number
-    Image::PacketInfo info{ .Id = -1 };
+	Image::PacketInfo info;
+	info.Id = -1;
 
     // set running flag to true
     m_Running = true;
@@ -136,11 +138,9 @@ ImageSender::run()
 
         // throttle framerate at max_fps
         auto t1 = high_resolution_clock::now();
-        long tdiff = duration_cast<nanoseconds>(t1 - t0).count();
+        __int64 tdiff = duration_cast<nanoseconds>(t1 - t0).count();
         if (tdiff < max_period) {
-            timespec ts{ .tv_sec = 0, .tv_nsec = max_period - tdiff };
-
-            nanosleep(&ts, nullptr);
+			std::this_thread::sleep_for(nanoseconds(max_period - tdiff));
         }
     }
 }

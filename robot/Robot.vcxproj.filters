@@ -67,6 +67,9 @@
     <ClInclude Include="src\image\videotype.h">
       <Filter>image</Filter>
     </ClInclude>
+    <ClInclude Include="src\os\net.h">
+      <Filter>os</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="eye">
@@ -77,6 +80,9 @@
     </Filter>
     <Filter Include="image">
       <UniqueIdentifier>{1b575382-92b5-45a7-bf59-55aa0fba3289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="os">
+      <UniqueIdentifier>{cf5c9a3a-a4b6-4f33-8eac-226c5f325a81}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
