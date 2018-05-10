@@ -1,6 +1,3 @@
-[submodule "iniparser"]
-	path = robot/iniparser
-	url = https://github.com/ndevilla/iniparser.git
 [submodule "robot/GeNN_Robotics"]
 	path = robot/GeNN_Robotics
 	url = https://github.com/BrainsOnBoard/GeNN_Robotics.git

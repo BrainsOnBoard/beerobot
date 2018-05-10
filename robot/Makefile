@@ -57,9 +57,7 @@ OBJECTS := \
 	${OBJ_DIR}/mainclient.o \
 	${OBJ_DIR}/mainserver.o \
 	${OBJ_DIR}/socketcommon.o \
-	${OBJ_DIR}/videotype.o \
-	${OBJ_DIR}/iniparser.o \
-	${OBJ_DIR}/dictionary.o
+	${OBJ_DIR}/videotype.o
 
 .PHONY: all build clean git_submodules mingw
 
@@ -79,12 +77,6 @@ $(OBJ_DIR)/videotype.o: src/image/videotype.cc
 
 $(OBJ_DIR)/beeeye.o: src/eye/beeeye.cc src/eye/*.h
 	$(_PREFIX)$(CXX) -o $@ -c src/eye/beeeye.cc $(CXXFLAGS)
-
-${OBJ_DIR}/iniparser.o:
-	$(_PREFIX)$(CC) -O2 -c -o ${OBJ_DIR}/iniparser.o iniparser/src/iniparser.c
-
-${OBJ_DIR}/dictionary.o:
-	$(_PREFIX)$(CC) -O2 -c -o ${OBJ_DIR}/dictionary.o iniparser/src/dictionary.c
 
 git_submodules:
 	git submodule update --init
