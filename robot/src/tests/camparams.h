@@ -50,8 +50,8 @@ public:
 
         // resolution
         std::vector<int> resolution(2);
-        resolution.at(0) = m_SizeSource.width;
-        resolution.at(1) = m_SizeSource.height;
+        resolution.at(0) = m_SizeDest.width;
+        resolution.at(1) = m_SizeDest.height;
         out << YAML::Key << "resolution" << YAML::Value << YAML::Flow
             << resolution;
 
