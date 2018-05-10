@@ -18,11 +18,11 @@ processFile(const char *filepath)
     std::cout << "Processing " << filepath << std::endl;
 
     vid_t dummy;
-    dummy.dev_char = NULL;
+    dummy.dev_char = nullptr;
     dummy.dev_int = -1;
     dummy.width = im.cols;
     dummy.height = im.rows;
-    dummy.ini_file = "beerobot_usb.ini";
+    dummy.yaml_file = "webcam.yaml";
     Eye::BeeEye eye(&dummy);
 
     cv::Mat unwrap;

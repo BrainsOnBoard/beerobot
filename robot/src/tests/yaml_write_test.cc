@@ -1,10 +1,10 @@
 #include <iostream>
-#include "camparams.h"
+#include "../image/camparams.h"
 
 int
 main(int argc, char **argv)
 {
-    CamParams params;
+    Image::CamParams params;
     params.m_FilePath = "yaml_write_test.yaml";
     params.m_SizeSource.width = 1280;
     params.m_SizeSource.height = 400;

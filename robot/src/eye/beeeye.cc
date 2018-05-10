@@ -8,7 +8,7 @@
 
 namespace Eye {
 BeeEye::BeeEye(vid_t *vid)
-  : m_Params(vid)
+  : m_Params(vid->yaml_file)
 {
     if (vid->dev_int != -1 || vid->dev_char != nullptr) {
 #ifndef _WIN32

@@ -4,7 +4,7 @@ BUILD := build
 ifndef USE_LOCAL_GENN_ROBOTICS
 	GENN_ROBOTICS_PATH := GeNN_Robotics
 endif
-CXXFLAGS := -pthread -std=c++11 -Isrc -I../xbox -Iiniparser/src \
+CXXFLAGS := -pthread -std=c++11 -Isrc -I../xbox \
 	-I$(GENN_ROBOTICS_PATH)
 LDFLAGS := -O2 -lstdc++ -lm
 
@@ -46,7 +46,8 @@ else
 	LDFLAGS += `pkg-config --libs opencv x11`
 endif
 
-CXXFLAGS += $(shell $(_PREFIX)pkg-config --cflags opencv)
+CXXFLAGS += $(shell $(_PREFIX)pkg-config --cflags opencv yaml-cpp)
+LDFLAGS += $(shell $(_PREFIX)pkg-config --libs yaml-cpp)
 
 OBJECTS := \
 	${OBJ_DIR}/beeeye.o \

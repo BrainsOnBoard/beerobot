@@ -1,10 +1,10 @@
 #include <iostream>
-#include "camparams.h"
+#include "../image/camparams.h"
 
 int
 main(int argc, char **argv)
 {
-    CamParams params("yaml_read_test.yaml");
+    Image::CamParams params("yaml_read_test.yaml");
     std::cout << "Size: " << params.m_SizeSource << std::endl
               << "Centre: " << params.m_Center << std::endl
               << "Inner radius: " << params.m_RadiusInner << std::endl
