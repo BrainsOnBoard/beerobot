@@ -14,11 +14,8 @@ int main(int argc, char* argv[])
     {
         if (Player1->open())
         {
-            while (Player1->Change())
-            {
-                Player1->read(event);
-                std::cout << "Button " << (int)event.number << "was " << event.value << std::endl;
-            }
+            Player1->read(event);
+            std::cout << "Button " << (int)event.number << "was " << event.value << std::endl;
         }
         else
         {

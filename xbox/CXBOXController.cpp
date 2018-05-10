@@ -55,7 +55,7 @@ bool Controller::Change()
 // read the buttons on the controller and report which button(s) are pressed/unpressed
 void Controller::read(Xbox::JoystickEvent &js)
 {
-    while (true)
+    while (Change())
     {
         unsigned int buttState = Read().Gamepad.wButtons;
         if (~pressed & buttState)
@@ -75,8 +75,72 @@ void Controller::read(Xbox::JoystickEvent &js)
                 break;
             }
             else
-            {
-                break;
+            {   
+                int lTrigState = Read().Gamepad.bLeftTrigger;
+                int rTrigState = Read().Gamepad.bRightTrigger;
+                int lThumbYState2 = Read().Gamepad.sThumbLX;
+                int lThumbXState2 = Read().Gamepad.sThumbLY;
+                int rThumbXState2 = Read().Gamepad.sThumbRX;
+                int rThumbYState2 = Read().Gamepad.sThumbRY;
+                if (lThumbXState2 != lThumbXState1)
+                {
+                    js.number = LeftStickHorizontal;
+                    js.value = lThumbXState2;
+                    js.isAxis = true;
+                    lThumbXState1 = lThumbXState2;
+                    break;
+                }
+                if (lThumbYState2 != lThumbYState1)
+                {
+                    js.number = LeftStickVertical;
+                    js.value = lThumbYState2;
+                    js.isAxis = true;
+                    lThumbYState1 = lThumbYState2;
+                    break;
+                }
+                if (rThumbXState2 != rThumbXState1)
+                {
+                    js.number = RightStickHorizontal;
+                    js.value = rThumbXState2;
+                    js.isAxis = true;
+                    rThumbXState1 = rThumbXState2;
+                    break;
+                }
+                if (rThumbYState2 != rThumbYState1)
+                {
+                    js.number =RightStickVertical;
+                    js.value = rThumbYState2;
+                    js.isAxis = true;
+                    rThumbYState1 = rThumbYState2;
+                    break;
+                }
+                if (lTrigState >= 1)
+                {
+                    js.number = LeftTrigger;
+                    js.value = lTrigState;
+                    js.isAxis = true;
+                    break;
+                }
+                if (rTrigState >= 1)
+                {
+                    js.number = RightTrigger;
+                    js.value = rTrigState;
+                    js.isAxis = true;
+                    break;
+                }
+                else
+                {
+                    if (js.number == LeftTrigger && lTrigState < 1)
+                    {
+                        js.value = 0;
+                        break;
+                    }
+                    if (js.number == RightTrigger && rTrigState < 1)
+                    {
+                        js.value = 0;
+                        break;
+                    }
+                }
             }
         }
     }

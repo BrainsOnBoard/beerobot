@@ -13,21 +13,16 @@
 // NOTE: COMMENT THIS OUT IF YOU ARE NOT USING A COMPILER THAT SUPPORTS THIS METHOD OF LINKING LIBRARIES
 #pragma comment(lib, "XInput.lib")
 
-// XBOX Controller Class DefinitionB
-//struct JoystickEvent
-//{
-//    bool value;
-//    unsigned int number;
-//    bool isAxis;
-//    bool isInitial;
-//};
-
 class Controller
 {
 private:
 	XINPUT_STATE _controllerState;
 	int _controllerNum;
     unsigned int pressed = 0;
+    int lThumbXState1 = 0;
+    int lThumbYState1 = 0;
+    int rThumbXState1 = 0;
+    int rThumbYState1 = 0;
 public:
 	Controller(int playerNumber);
 	XINPUT_STATE Read();
@@ -66,6 +61,5 @@ enum Axis
 	DpadHorizontal = 6,
 	DpadVertical = 7
 };
-
-
 #endif
+
