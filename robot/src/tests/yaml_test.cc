@@ -7,7 +7,7 @@ class CamParams
 public:
     cv::Size m_SizeSource, m_SizeDest;
     cv::Point m_Center;
-    double m_RadiusInner, m_RadiusOuter;
+    int m_RadiusInner, m_RadiusOuter;
     bool m_Flipped;
     int m_DegreeOffset;
 
@@ -18,13 +18,13 @@ public:
         m_SizeSource.width = resolution[0].as<int>();
         m_SizeSource.height = resolution[1].as<int>();
 
-        /*YAML::Node center = params["center"];
-        m_Center.x = center[0].as<int>();
-        m_Center.y = center[1].as<int>();*/
+        YAML::Node center = params["center"];
+        m_Center.x = round(m_SizeSource.width * center[0].as<double>());
+        m_Center.y = round(m_SizeSource.height * center[1].as<double>());
 
         YAML::Node radii = params["radius"];
-        m_RadiusInner = radii["inner"].as<double>();
-        m_RadiusOuter = radii["outer"].as<double>();
+        m_RadiusInner = round(m_SizeSource.height * radii["inner"].as<double>());
+        m_RadiusOuter = round(m_SizeSource.height * radii["outer"].as<double>());
 
         m_Flipped = params["flipped"].as<bool>();
         m_DegreeOffset = params["degreeoffset"].as<int>();
