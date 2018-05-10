@@ -52,6 +52,37 @@ bool Controller::Change()
 	}
 }
 
+// read the buttons on the controller and report which button(s) are pressed/unpressed
+void Controller::read(JoystickEvent &js)
+{
+    while (true)
+    {
+        unsigned int buttState = Read().Gamepad.wButtons;
+        if (~pressed & buttState)
+        {
+            js.number = ~pressed & buttState;
+            js.value = true;
+            pressed = buttState;
+            break;
+        }
+        else
+        {
+            if (pressed & ~buttState)
+            {
+                js.number = pressed & ~buttState;
+                js.value = false;
+                pressed = buttState;
+                break;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    return;
+}
+
 void Controller::close()
 {
 	std::cout << "\n\tERROR! PLAYER 1 - XBOX 360 Controller Not Found!\n";

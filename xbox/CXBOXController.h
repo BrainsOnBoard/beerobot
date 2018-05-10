@@ -13,17 +13,27 @@
 #pragma comment(lib, "XInput.lib")
 
 // XBOX Controller Class Definition
+struct JoystickEvent
+{
+    bool value;
+    unsigned int number;
+    bool isAxis;
+    bool isInitial;
+};
+
 class Controller
 {
 private:
 	XINPUT_STATE _controllerState;
 	int _controllerNum;
+    unsigned int pressed = 0;
 public:
 	Controller(int playerNumber);
 	XINPUT_STATE Read();
 	bool open();
 	void close();
 	bool Change();
+    void read(JoystickEvent &js);
 };
 
 enum Button
@@ -55,4 +65,6 @@ enum Axis
 	DpadHorizontal = 6,
 	DpadVertical = 7
 };
+
+
 #endif
