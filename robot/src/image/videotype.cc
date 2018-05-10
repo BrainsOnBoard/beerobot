@@ -29,15 +29,21 @@ getCameraByName(const char *const (&names)[N], int &selected)
         }
 
         file.read(cname, sizeof(cname));
-        cname[file.gcount() - 1] =
-                '\0'; // delete the last char, which is always newline
+        int len = file.gcount() - 1;
+        cname[len] = '\0'; // delete the last char, which is always newline
         file.close();
+
+        // compare until colon or end of string (newer kernels add extra crap to
+        // the name)
+        int ncmp;
+        for (ncmp = 0; cname[ncmp] != ':' && cname[ncmp]; ncmp++)
+            ;
 
         // Loop through camera names we're looking for
         // **NOTE* these are in priority order
         for (int c = 0; c < N; c++) {
-            // If name matches select it and return it's device ID
-            if (strcmp(names[c], cname) == 0) {
+            // If name matches select it and return its device ID
+            if (strncmp(names[c], cname, ncmp) == 0) {
                 selected = c;
                 return i;
             }
