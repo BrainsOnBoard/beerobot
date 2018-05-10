@@ -1,12 +1,9 @@
+#include "videotype.h"
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include "videotype.h"
-
-using namespace std;
 
 namespace Image {
 
@@ -19,51 +16,61 @@ getCameraByName(const char *const (&names)[N], int &selected)
 
     // iterate through devices /dev/video0, /dev/video1 etc. reading the device
     // name from sysfs until the correct device is found
-    int defcam = -1;
-    int cam1 = -1;
+    int bestcamnum = -1;
+    int bestcamscore = -1;
     for (int i = 0; i < 10; i++) {
-        string vfn = "/sys/class/video4linux/video" + to_string(i) + "/name";
-        ifstream file(vfn, ios::in);
+        std::string vfn =
+                "/sys/class/video4linux/video" + std::to_string(i) + "/name";
+        std::ifstream file(vfn, std::ios::in);
         if (!file.is_open()) {
             continue;
         }
 
         file.read(cname, sizeof(cname));
-        int len = file.gcount() - 1;
-        cname[len] = '\0'; // delete the last char, which is always newline
         file.close();
 
-        // compare until colon or end of string (newer kernels add extra crap to
-        // the name)
-        int ncmp;
-        for (ncmp = 0; cname[ncmp] != ':' && cname[ncmp]; ncmp++)
+        // compare until colon or end (newer kernels add extra crap to the name)
+        int len;
+        for (len = 0; cname[len] != ':' && cname[len] != '\n'; len++)
             ;
+        cname[len] = '\0';
+        std::cout << "Found camera #" << i << ": " << cname << std::endl;
 
         // Loop through camera names we're looking for
         // **NOTE* these are in priority order
-        for (int c = 0; c < N; c++) {
+        for (int j = 0; j < N; j++) {
             // If name matches select it and return its device ID
-            if (strncmp(names[c], cname, ncmp) == 0) {
-                selected = c;
-                return i;
+            if (strcmp(names[j], cname) == 0) {
+                int cscore = N - j;
+                if (cscore > bestcamscore) {
+                    bestcamnum = i;
+                    bestcamscore = cscore;
+                }
+                break;
             }
         }
 
         // At least this is a camera - use it by default
-        defcam = i;
+        if (bestcamscore == -1) {
+            bestcamnum = i;
+        }
     }
 
-    if (defcam == -1) {
-        cerr << "Error: Could not find listed video devices and there are no "
-                "other cameras attached"
-             << endl;
-        exit(1);
+    if (bestcamscore == -1) {
+        if (bestcamnum == -1) {
+            std::cerr << "Error: Could not find listed video devices and there "
+                         "are no other cameras attached"
+                      << std::endl;
+            exit(1);
+        } else {
+            std::cerr << "Warning: Could not find listed video devices. Using "
+                         "default instead."
+                      << std::endl;
+        }
     }
 
-    cerr << "Warning: Could not find listed video devices. Using default "
-            "instead."
-         << endl;
-    return defcam;
+    std::cout << "Selecting camera #" << bestcamnum << std::endl;
+    return bestcamnum;
 }
 
 /* get a PixPro or webcam video device over USB */
