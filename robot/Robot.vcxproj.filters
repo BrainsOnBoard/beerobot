@@ -2,29 +2,31 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\beerobot.cc" />
-    <ClCompile Include="src\imagereceiver.cc" />
-    <ClCompile Include="src\imagesender.cc" />
-    <ClCompile Include="src\mainclient.cc" />
-    <ClCompile Include="src\mainserver.cc" />
-    <ClCompile Include="src\socketcommon.cc" />
-    <ClCompile Include="src\videotype.cc" />
     <ClCompile Include="src\eye\beeeye.cc">
       <Filter>eye</Filter>
     </ClCompile>
+    <ClCompile Include="src\net\imagereceiver.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\imagesender.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\mainclient.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\mainserver.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\socketcommon.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\image\videotype.cc">
+      <Filter>image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\camparams.h" />
-    <ClInclude Include="src\imagecommon.h" />
-    <ClInclude Include="src\imagefile.h" />
-    <ClInclude Include="src\imagereceiver.h" />
-    <ClInclude Include="src\imagesender.h" />
-    <ClInclude Include="src\mainclient.h" />
-    <ClInclude Include="src\mainserver.h" />
-    <ClInclude Include="src\motor_dummy.h" />
     <ClInclude Include="src\readable.h" />
-    <ClInclude Include="src\socketcommon.h" />
     <ClInclude Include="src\targetver.h" />
-    <ClInclude Include="src\videotype.h" />
     <ClInclude Include="src\xboxrobot.h" />
     <ClInclude Include="src\eye\beeeye.h">
       <Filter>eye</Filter>
@@ -38,10 +40,43 @@
     <ClInclude Include="src\eye\gigerdatacam.h">
       <Filter>eye</Filter>
     </ClInclude>
+    <ClInclude Include="src\net\imagereceiver.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\imagesender.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\mainclient.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\mainserver.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\socketcommon.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image\camparams.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image\common.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image\file.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image\videotype.h">
+      <Filter>image</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="eye">
       <UniqueIdentifier>{c57e7cd5-e2bd-4988-9cd2-55ee8e09fa97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{cd161868-b803-45c5-9bb2-9f466c01ac75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image">
+      <UniqueIdentifier>{1b575382-92b5-45a7-bf59-55aa0fba3289}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

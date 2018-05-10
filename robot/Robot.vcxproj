@@ -75,8 +75,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <ExecutablePath>C:\opencv\build\bin\Release;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>GeNN_Robotics;iniparser\src;C:\opencv\build\include;$(IncludePath)</IncludePath>
+    <ExecutablePath>C:\opencv\build\bin\Release;C:\yaml-cpp\build\Release;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>src;GeNN_Robotics;C:\opencv\build\include;C:\yaml-cpp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -149,33 +149,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\camparams.h" />
     <ClInclude Include="src\eye\beeeye.h" />
     <ClInclude Include="src\eye\beeeyeconfig.h" />
     <ClInclude Include="src\eye\beeeyeviewer.h" />
     <ClInclude Include="src\eye\gigerdatacam.h" />
-    <ClInclude Include="src\imagecommon.h" />
-    <ClInclude Include="src\imagefile.h" />
-    <ClInclude Include="src\imagereceiver.h" />
-    <ClInclude Include="src\imagesender.h" />
-    <ClInclude Include="src\mainclient.h" />
-    <ClInclude Include="src\mainserver.h" />
-    <ClInclude Include="src\motor_dummy.h" />
+    <ClInclude Include="src\image\camparams.h" />
+    <ClInclude Include="src\image\common.h" />
+    <ClInclude Include="src\image\file.h" />
+    <ClInclude Include="src\image\videotype.h" />
+    <ClInclude Include="src\net\imagereceiver.h" />
+    <ClInclude Include="src\net\imagesender.h" />
+    <ClInclude Include="src\net\mainclient.h" />
+    <ClInclude Include="src\net\mainserver.h" />
+    <ClInclude Include="src\net\socketcommon.h" />
     <ClInclude Include="src\readable.h" />
-    <ClInclude Include="src\socketcommon.h" />
     <ClInclude Include="src\targetver.h" />
-    <ClInclude Include="src\videotype.h" />
     <ClInclude Include="src\xboxrobot.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\beerobot.cc" />
     <ClCompile Include="src\eye\beeeye.cc" />
-    <ClCompile Include="src\imagereceiver.cc" />
-    <ClCompile Include="src\imagesender.cc" />
-    <ClCompile Include="src\mainclient.cc" />
-    <ClCompile Include="src\mainserver.cc" />
-    <ClCompile Include="src\socketcommon.cc" />
-    <ClCompile Include="src\videotype.cc" />
+    <ClCompile Include="src\image\videotype.cc" />
+    <ClCompile Include="src\net\imagereceiver.cc" />
+    <ClCompile Include="src\net\imagesender.cc" />
+    <ClCompile Include="src\net\mainclient.cc" />
+    <ClCompile Include="src\net\mainserver.cc" />
+    <ClCompile Include="src\net\socketcommon.cc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\eye\gigerommatidiamodel.py" />
