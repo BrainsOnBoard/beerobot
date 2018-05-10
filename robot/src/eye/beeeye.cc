@@ -128,7 +128,7 @@ BeeEye::getEyeView(cv::Mat &view)
         return false;
     }
 
-    getUnwrappedImage(m_ImUnwrap, m_ImUnwrap);
+    getUnwrappedImage(m_ImUnwrap, m_ImOrig);
     getEyeView(view, m_ImUnwrap);
     return true;
 }
