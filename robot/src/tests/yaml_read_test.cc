@@ -4,7 +4,7 @@
 int
 main(int argc, char **argv)
 {
-    CamParams params("webcam_usb.yaml");
+    CamParams params("yaml_read_test.yaml");
     std::cout << "Size: " << params.m_SizeSource << std::endl
               << "Centre: " << params.m_Center << std::endl
               << "Inner radius: " << params.m_RadiusInner << std::endl
