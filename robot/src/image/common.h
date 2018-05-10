@@ -24,7 +24,7 @@ static const int IMAGE_PORT = 5555;
 //#define DEBUG_IMAGEPACK
 
 inline void
-debugImagePacket(PacketInfo &info, int len)
+debugImagePacket(PacketInfo &info, size_t len)
 {
 #ifdef DEBUG_IMAGEPACK
     std::cout << "packet " << (int) (info.Number + 1) << "/" << (int) info.Count

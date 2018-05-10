@@ -24,7 +24,7 @@ runEyeViewer(Readable &recv, bool showoverlay)
     int xoff;
     cv::Mat overlay, overlayinner, iminner, mask;
     if (showoverlay) {
-        int w = round((float) oversz.height * 970.0 / 1048.0);
+        int w = (int)round((float) oversz.height * 970.0 / 1048.0);
         xoff = (oversz.width - w) / 2;
 
         cv::Mat overlayfull = cv::imread("honeycomb_overlay.png", 3);

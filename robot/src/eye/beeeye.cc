@@ -45,14 +45,14 @@ BeeEye::BeeEye(vid_t *vid)
     m_MapY.create(sz_out, CV_32FC1);
     for (int i = 0; i < gdataLength; i++) {
         // left eye
-        m_MapX.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][0]);
-        m_MapY.at<float>(gdata[i][3], 15 + gdata[i][2]) = floor(gdata[i][1]);
+        m_MapX.at<float>((int)gdata[i][3], 15 + (int)gdata[i][2]) = floor(gdata[i][0]);
+        m_MapY.at<float>((int)gdata[i][3], 15 + (int)gdata[i][2]) = floor(gdata[i][1]);
 
         // right eye
-        m_MapX.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) =
+        m_MapX.at<float>((int)gdata[i][3], 720 - 316 - eye_size[0] - (int)gdata[i][2]) =
                 gim_size[0] - floor(gdata[i][0]);
-        m_MapY.at<float>(gdata[i][3], 720 - 316 - eye_size[0] - gdata[i][2]) =
-                floor(gdata[i][1]);
+        m_MapY.at<float>((int)gdata[i][3], 720 - 316 - eye_size[0] - (int)gdata[i][2]) =
+			floor(gdata[i][1]);
     }
 
     // create pixel maps for unwrapping panoramic images

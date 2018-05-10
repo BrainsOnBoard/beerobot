@@ -82,10 +82,10 @@ ImageSender::run()
             Image::debugImagePacket(info, buff.size());
             if (sendto(m_Fd,
                        (buff_t *) buff.data(),
-                       buff.size(),
+                       (socklen_t) buff.size(),
                        MSG_NOSIGNAL,
                        (const sockaddr *) m_DestAddr,
-                       sizeof(sockaddr_in)) == -1)
+                       (socklen_t) sizeof(sockaddr_in)) == -1)
                 std::cerr << "Error: " << strerror(errno) << std::endl;
         } else if (buff.size() <
                    2 * Image::MAX_IM_BYTES) { // frame fits in two packets
@@ -123,10 +123,10 @@ ImageSender::run()
             debugImagePacket(info, buff2.size());
             if (sendto(m_Fd,
                        (buff_t *) buff2.data(),
-                       buff2.size(),
+                       (socklen_t) buff2.size(),
                        MSG_NOSIGNAL,
                        (const sockaddr *) m_DestAddr,
-                       sizeof(sockaddr_in)) == -1)
+                       (socklen_t) sizeof(sockaddr_in)) == -1)
                 std::cerr << "Error: " << strerror(errno) << std::endl;
         } else { // can't handle more than two packets in a series
             std::cerr << "Too big!" << std::endl;

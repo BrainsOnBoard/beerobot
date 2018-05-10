@@ -42,14 +42,14 @@ public:
         m_SizeSource.height = resolution[1].as<int>();
 
         YAML::Node center = params["center"];
-        m_Center.x = round(m_SizeSource.width * center[0].as<double>());
-        m_Center.y = round(m_SizeSource.height * center[1].as<double>());
+        m_Center.x = (int)round(m_SizeSource.width * center[0].as<double>());
+        m_Center.y = (int)round(m_SizeSource.height * center[1].as<double>());
 
         YAML::Node radii = params["radius"];
         m_RadiusInner =
-                round(m_SizeSource.height * radii["inner"].as<double>());
+			(int)round(m_SizeSource.height * radii["inner"].as<double>());
         m_RadiusOuter =
-                round(m_SizeSource.height * radii["outer"].as<double>());
+			(int)round(m_SizeSource.height * radii["outer"].as<double>());
 
         m_Flipped = params["flipped"].as<bool>();
         m_DegreeOffset = params["degreeoffset"].as<int>();
@@ -107,16 +107,16 @@ public:
                 // Get i as a fraction of unwrapped height, flipping if desired
                 float frac =
                         m_Flipped
-                                ? 1.0 - ((float) i / (float) m_SizeDest.height)
+                                ? 1.0f - ((float) i / (float) m_SizeDest.height)
                                 : ((float) i / (float) m_SizeDest.height);
 
                 // Convert i and j to polar
                 float r =
                         frac * (m_RadiusOuter - m_RadiusInner) + m_RadiusInner;
 
-                float th = 2 * M_PI *
+                float th = 2 * (float) M_PI *
                            (((float) j / (float) m_SizeDest.width) -
-                            ((float) m_DegreeOffset / 360.0));
+                            ((float) m_DegreeOffset / 360.0f));
                 float x = m_Center.x - r * sin(th);
                 float y = m_Center.y + r * cos(th);
                 m_MapX.at<float>(i, j) = x;

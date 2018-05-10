@@ -13,7 +13,7 @@ public:
     virtual ~MainServer();
 
 private:
-    int m_Fd;
+    socket_t m_Fd;
     Motor *m_Motor;
     void run();
 };
