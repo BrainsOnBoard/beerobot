@@ -1,0 +1,7 @@
+resolution: [1280, 400]
+center: [0.49375, 0.461111]
+radius:
+  inner: 0.183333
+  outer: 0.408333
+flipped: true
+degreeoffset: -90
