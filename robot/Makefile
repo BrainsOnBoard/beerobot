@@ -46,8 +46,8 @@ else
 	LDFLAGS += `pkg-config --libs opencv x11`
 endif
 
-CXXFLAGS += $(shell $(_PREFIX)pkg-config --cflags opencv yaml-cpp)
-LDFLAGS += $(shell $(_PREFIX)pkg-config --libs yaml-cpp)
+CXXFLAGS += $(shell $(_PREFIX)pkg-config --cflags opencv)
+LDFLAGS += $(shell $(_PREFIX)pkg-config --libs) -lyaml-cpp
 
 OBJECTS := \
 	${OBJ_DIR}/beeeye.o \
@@ -65,7 +65,7 @@ all: build $(TARGET)
 
 $(TARGET): git_submodules $(OBJECTS)
 	$(_PREFIX)$(CXX) -o $(TARGET) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS)
-	
+
 $(OBJ_DIR)/%.o: src/%.cc
 	$(_PREFIX)$(CXX) -o $@ -c $< $(CXXFLAGS)
 
