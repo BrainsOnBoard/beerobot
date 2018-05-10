@@ -56,15 +56,17 @@ public:
             << resolution;
 
         // centre
-        std::vector<int> center(2);
-        center.at(0) = m_Center.x;
-        center.at(1) = m_Center.y;
+        std::vector<double> center(2);
+        center.at(0) = (double) m_Center.x / (double) m_SizeSource.width;
+        center.at(1) = (double) m_Center.y / (double) m_SizeSource.height;
         out << YAML::Key << "center" << YAML::Value << YAML::Flow << center;
 
         // radii
         out << YAML::Key << "radius" << YAML::BeginMap;
-        out << YAML::Key << "inner" << m_RadiusInner;
-        out << YAML::Key << "outer" << m_RadiusOuter;
+        out << YAML::Key << "inner"
+            << (double) m_RadiusInner / (double) m_SizeSource.height;
+        out << YAML::Key << "outer"
+            << (double) m_RadiusOuter / (double) m_SizeSource.height;
         out << YAML::EndMap;
 
         // other
