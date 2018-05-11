@@ -1,7 +1,6 @@
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN
-#include "xbox_defines.h"
 #include <windows.h>
 
 #include <XInput.h>
@@ -14,33 +13,6 @@
 #include <thread>
 
 namespace Xbox {
-class Controller
-{
-private:
-    XINPUT_STATE _controllerState;
-    int _controllerNum = 0;
-    unsigned int pressed = 0;
-    int lThumbXState1 = 0;
-    int lThumbYState1 = 0;
-    int rThumbXState1 = 0;
-    int rThumbYState1 = 0;
-
-public:
-    XINPUT_STATE Read();
-    bool open();
-    void close();
-    bool Change();
-    bool read(Xbox::JoystickEvent &js);
-    std::string getButtonName(unsigned int number);
-    std::string getAxisName(unsigned int number);
-    void startThread(ControllerCallback callback, void *data);
-    bool read();
-
-    std::thread *m_Thread = nullptr;
-    bool m_Closing = false;
-    JoystickEvent m_JsEvent;
-};
-
 enum Button
 {
     A = XINPUT_GAMEPAD_A,
@@ -57,6 +29,29 @@ enum Button
     Right = XINPUT_GAMEPAD_DPAD_RIGHT,
     Up = XINPUT_GAMEPAD_DPAD_UP,
     Down = XINPUT_GAMEPAD_DPAD_DOWN
+};
+}
+
+#include "xbox_base.h"
+
+namespace Xbox {
+class Controller : public ControllerBase
+{
+private:
+    XINPUT_STATE _controllerState;
+    int _controllerNum = 0;
+    unsigned int pressed = 0;
+    int lThumbXState1 = 0;
+    int lThumbYState1 = 0;
+    int rThumbXState1 = 0;
+    int rThumbYState1 = 0;
+
+    bool Change();
+
+public:
+    XINPUT_STATE Read();
+    bool open();
+    bool read(Xbox::JoystickEvent &js);
 };
 
 XINPUT_STATE
@@ -184,106 +179,5 @@ Controller::read(Xbox::JoystickEvent &js)
         }
     }
     return true;
-}
-
-bool
-Controller::read()
-{
-    return read(m_JsEvent);
-}
-
-void
-Controller::close()
-{
-    if (m_Closing) {
-        return;
-    }
-    m_Closing = true;
-
-    if (m_Thread) {
-        m_Thread->join();
-        delete m_Thread;
-    }
-    return;
-}
-
-std::string
-Controller::getButtonName(unsigned int number) // Get the name of the button
-                                               // corresponding to number.
-{
-    switch (number) {
-    case A:
-        return "A";
-    case B:
-        return "B";
-    case X:
-        return "X";
-    case Y:
-        return "Y";
-    case LB:
-        return "LB";
-    case RB:
-        return "RB";
-    case Back:
-        return "BACK";
-    case Start:
-        return "START";
-    case LeftStickButton:
-        return "LSTICK";
-    case RightStickButton:
-        return "RSTICK";
-    case Left:
-        return "LEFT";
-    case Right:
-        return "RIGHT";
-    case Up:
-        return "UP";
-    case Down:
-        return "DOWN";
-    }
-    return "(unknown)";
-}
-
-std::string
-Controller::getAxisName(unsigned int number)
-{
-    switch (number) {
-    case LeftStickHorizontal:
-        return "LSTICKH";
-    case LeftStickVertical:
-        return "LSTICKV";
-    case RightStickHorizontal:
-        return "RSTICKH";
-    case RightStickVertical:
-        return "RSTICKV";
-    case LeftTrigger:
-        return "LTRIGGER";
-    case RightTrigger:
-        return "RTRIGGER";
-    case DpadHorizontal:
-        return "DPADH";
-    case DpadVertical:
-        return "DPADV";
-    }
-    return "(unknown)";
-}
-
-static void
-runThread(Controller *c, ControllerCallback callback, void *userData)
-{
-    while (c->read()) {
-        callback(&c->m_JsEvent, userData);
-    }
-    if (!c->m_Closing) {
-        callback(nullptr, userData);
-    }
-}
-
-void
-Controller::startThread(ControllerCallback callback, void *data)
-{
-    if (!m_Thread) {
-        m_Thread = new std::thread(runThread, this, callback, data);
-    }
 }
 }

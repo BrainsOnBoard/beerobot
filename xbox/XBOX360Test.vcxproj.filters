@@ -23,13 +23,13 @@
     <ClInclude Include="xbox_windows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xbox_defines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="xbox_linux.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="xbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xbox_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

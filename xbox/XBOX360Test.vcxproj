@@ -94,8 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="xbox.h" />
+    <ClInclude Include="xbox_base.h" />
     <ClInclude Include="xbox_windows.h" />
-    <ClInclude Include="xbox_defines.h" />
     <ClInclude Include="xbox_linux.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>

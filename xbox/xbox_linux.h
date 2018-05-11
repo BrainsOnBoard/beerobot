@@ -8,7 +8,7 @@
 #include <thread>
 #include <unistd.h>
 
-#include "xbox_defines.h"
+#include "xbox_base.h"
 
 namespace Xbox {
 
