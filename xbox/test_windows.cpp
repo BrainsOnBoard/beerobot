@@ -3,8 +3,13 @@
 #include <string>
 
 using namespace std;
+using namespace Xbox;
 
 Xbox::Controller* Player1;
+
+
+
+
 int main(int argc, char* argv[])
 {
     Player1 = new Xbox::Controller(1);
@@ -15,7 +20,6 @@ int main(int argc, char* argv[])
         if (Player1->open())
         {
             Player1->read(event);
-            std::cout << "Button " << (int)event.number << "was " << event.value << std::endl;
         }
         else
         {

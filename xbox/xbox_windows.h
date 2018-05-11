@@ -6,9 +6,13 @@
 #include "xbox_defines.h"
 #pragma comment(lib, "XInput.lib")
 #include "iostream"
+#include <sys/stat.h>
+#include <thread>
+#include <cstdint>
+#include <fcntl.h>
 #endif
 
-namespace Xbox 
+namespace Xbox
 {
     class Controller
     {
@@ -21,12 +25,19 @@ namespace Xbox
         int rThumbXState1 = 0;
         int rThumbYState1 = 0;
     public:
-        Controller(int playerNumber);
         XINPUT_STATE Read();
         bool open();
         void close();
         bool Change();
-        void read(Xbox::JoystickEvent &js);
+        bool read(Xbox::JoystickEvent &js);
+        std::string getButtonName(unsigned int number);
+        std::string getAxisName(unsigned int number);
+        void startThread(ControllerCallback callback, void *data);
+        bool read();
+
+        std::thread *m_Thread = nullptr; 
+        bool m_Closing = false;
+        JoystickEvent m_JsEvent;
     };
 
     enum Button
@@ -47,11 +58,6 @@ namespace Xbox
         Down = XINPUT_GAMEPAD_DPAD_DOWN
     };
 
-    Controller::Controller(int playerNumber)
-    {
-        // Set the Controller Number
-        _controllerNum = playerNumber - 1;
-    }
 
     XINPUT_STATE Controller::Read()
     {
@@ -99,7 +105,7 @@ namespace Xbox
     }
 
     // read the buttons on the controller and report which button(s) are pressed/unpressed
-    void Controller::read(Xbox::JoystickEvent &js)
+    bool Controller::read(Xbox::JoystickEvent &js)
     {
         while (Change())
         {
@@ -190,14 +196,100 @@ namespace Xbox
                 }
             }
         }
-        return;
+        return true;
+    }
+
+    bool Controller::read() {
+        return read(m_JsEvent);
     }
 
     void Controller::close()
     {
-        std::cout << "\n\tERROR! PLAYER 1 - XBOX 360 Controller Not Found!\n";
-        std::cout << "Press Any Key To Exit.";
-        std::cin.get();
+        if (m_Closing) {
+            return;
+        }
+        m_Closing = true;
+
+        if (m_Thread) {
+            m_Thread->join();
+            delete m_Thread;
+        }
         return;
+    }
+
+    std::string Controller::getButtonName(unsigned int number)       //Get the name of the button corresponding to number.
+    {
+        switch (number) {
+        case A:
+            return "A";
+        case B:
+            return "B";
+        case X:
+            return "X";
+        case Y:
+            return "Y";
+        case LB:
+            return "LB";
+        case RB:
+            return "RB";
+        case Back:
+            return "BACK";
+        case Start:
+            return "START";
+        case LeftStickButton:
+            return "LSTICK";
+        case RightStickButton:
+            return "RSTICK";
+        case Left:
+            return "LEFT";
+        case Right:
+            return "RIGHT";
+        case Up:
+            return "UP";
+        case Down:
+            return "DOWN";
+        }
+        return "(unknown)";
+    }
+
+
+    std::string Controller::getAxisName(unsigned int number)
+    {
+        switch (number) {
+        case LeftStickHorizontal:
+            return "LSTICKH";
+        case LeftStickVertical:
+            return "LSTICKV";
+        case RightStickHorizontal:
+            return "RSTICKH";
+        case RightStickVertical:
+            return "RSTICKV";
+        case LeftTrigger:
+            return "LTRIGGER";
+        case RightTrigger:
+            return "RTRIGGER";
+        case DpadHorizontal:
+            return "DPADH";
+        case DpadVertical:
+            return "DPADV";
+        }
+        return "(unknown)";
+    }
+
+    static void runThread(Controller *c, ControllerCallback callback, void *userData)
+    {
+        while (c->read()) {
+            callback(&c->m_JsEvent, userData);
+        }
+        if (!c->m_Closing) {
+            callback(nullptr, userData);
+        }
+    }
+
+    void Controller::startThread(ControllerCallback callback, void *data)
+    {
+        if (!m_Thread) {
+            m_Thread = new std::thread(runThread, this, callback, data);
+        }
     }
 }

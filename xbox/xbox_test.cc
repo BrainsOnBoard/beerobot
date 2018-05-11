@@ -1,30 +1,28 @@
-#include "xbox_linux.h"
+#include "xbox_windows.h"
+#include <string>                   //included <string> 
 
 using namespace std;
 using namespace Xbox;
 
-void
-handleButton(unsigned int number, int16_t value)
+Xbox::Controller cont;              //moved this up here. Functions handleButten and handleAxis use cont Controller now.
+
+void handleButton(unsigned int number, int16_t value)           //changed all uint8_t for unsignet int
 {
-    const char *name = Controller::getButtonName(number);
+    string name = cont.getButtonName(number);                   //changed all char to strings
     if (value) {
-        cout << "Button pushed: " << name << " (" << (int) number << ")"
-             << endl;
+        cout << "Button pushed: " << name << " (" << (int) number << ")" << endl;
     } else {
-        cout << "Button released: " << name << " (" << (int) number << ")"
-             << endl;
+        cout << "Button released: " << name << " (" << (int) number << ")" << endl;
     }
 }
 
-void
-handleAxis(uint8_t number, int16_t value)
+void handleAxis(unsigned int number, int16_t value)             //changed all uint8_t for unsignet int
 {
-    const char *name = Controller::getAxisName(number);
+    string name = cont.getAxisName(number);                      //changed all char to strings
     cout << "Axis " << name << " (" << (int) number << "): " << value << endl;
 }
 
-void
-callback(JoystickEvent *js, void *)
+void callback(JoystickEvent *js, void *)
 {
     if (!js) {
         cerr << "Error reading from joystick" << endl;
@@ -38,13 +36,11 @@ callback(JoystickEvent *js, void *)
     }
 }
 
-int
-main()
+int main()                                                          //moved Controller cont; to the top
 {
     cout << "Xbox controller test program" << endl;
     cout << "Press return to quit" << endl << endl;
 
-    Controller cont;
     if (!cont.open()) {
         cerr << "Error: Could not open joystick" << endl;
         return 1;
