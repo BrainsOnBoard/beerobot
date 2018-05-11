@@ -1,14 +1,14 @@
 #include "xbox.h"
-#include <string>                   //included <string> 
+#include <string>
 
 using namespace std;
 using namespace Xbox;
 
-Xbox::Controller cont;              //moved this up here. Functions handleButten and handleAxis use cont Controller now.
+Xbox::Controller cont;
 
-void handleButton(unsigned int number, int16_t value)           //changed all uint8_t for unsignet int
+void handleButton(unsigned int number, int16_t value)
 {
-    string name = cont.getButtonName(number);                   //changed all char to strings
+    string name = cont.getButtonName(number);
     if (value) {
         cout << "Button pushed: " << name << " (" << (int) number << ")" << endl;
     } else {
@@ -16,9 +16,9 @@ void handleButton(unsigned int number, int16_t value)           //changed all ui
     }
 }
 
-void handleAxis(unsigned int number, int16_t value)             //changed all uint8_t for unsignet int
+void handleAxis(unsigned int number, int16_t value)
 {
-    string name = cont.getAxisName(number);                      //changed all char to strings
+    string name = cont.getAxisName(number);
     cout << "Axis " << name << " (" << (int) number << "): " << value << endl;
 }
 
@@ -36,7 +36,7 @@ void callback(JoystickEvent *js, void *)
     }
 }
 
-int main()                                                          //moved Controller cont; to the top
+int main()
 {
     cout << "Xbox controller test program" << endl;
     cout << "Press return to quit" << endl << endl;
