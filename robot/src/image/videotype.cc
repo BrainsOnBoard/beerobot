@@ -44,6 +44,7 @@ getCameraByName(const char *const (&names)[N], int &selected)
                 int cscore = N - j;
                 if (cscore > bestcamscore) {
                     bestcamnum = i;
+                    selected = j;
                     bestcamscore = cscore;
                 }
                 break;
