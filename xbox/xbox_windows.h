@@ -3,7 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include <XInput.h>
+#include <xinput.h>
 #pragma comment(lib, "XInput.lib")
 
 #include "iostream"
