@@ -18,7 +18,7 @@ namespace Xbox
     {
     private:
         XINPUT_STATE _controllerState;
-        int _controllerNum;
+        int _controllerNum = 0;
         unsigned int pressed = 0;
         int lThumbXState1 = 0;
         int lThumbYState1 = 0;
