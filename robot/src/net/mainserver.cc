@@ -6,12 +6,6 @@
 #include <string.h>
 #include <thread>
 
-#ifdef _WIN32
-#undef _WIN32_WINNT
-#define _WIN32_WINNT _WIN32_WINNT_WIN7
-#include <ws2tcpip.h>
-#endif
-
 namespace Net {
 
 /*
@@ -23,7 +17,10 @@ MainServer::MainServer(Motor *mtr)
     struct sockaddr_in addr;
     int on = 1;
 
-    if ((m_Socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
+	WSAStartup();
+
+    m_Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (m_Socket == INVALID_SOCKET) {
         goto error;
     }
 #ifndef _WIN32
@@ -59,6 +56,8 @@ MainServer::~MainServer()
     if (m_Socket != INVALID_SOCKET) {
         close(m_Socket);
     }
+
+	WSACleanup();
 }
 
 /*

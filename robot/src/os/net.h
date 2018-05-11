@@ -5,6 +5,7 @@
 #define _WIN32_WINNT _WIN32_WINNT_WIN7
 #endif
 #include <winsock2.h>
+#include <ws2tcpip.h>
 
 #define MSG_NOSIGNAL 0
 #define INET_ADDRSTRLEN 22
@@ -35,4 +36,18 @@ close(socket_t sock)
 #pragma comment(lib, "Ws2_32.lib")
 #else
 typedef int socket_t;
+#endif
+
+#ifdef _WIN32
+#define WSAStartup()                                                           \
+{                                                                              \
+        WSADATA wsaData;                                                       \
+        int result = WSAStartup(MAKEWORD(2, 2), &wsaData);                     \
+        if (result != NO_ERROR) {                                              \
+            throw std::runtime_error("Error at WSAStartup");                   \
+        }                                                                      \
+}
+#else
+#define WSAStartup() {}
+#define WSACleanup() {}
 #endif
