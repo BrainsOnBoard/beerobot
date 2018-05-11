@@ -20,7 +20,6 @@ BeeEye::BeeEye(vid_t *vid)
                     "/dev/video" + std::to_string(vid->dev_int),
                     See3CAM_CU40::Resolution::_1280x720);
             see3cam->setBrightness(20);
-            see3cam->setOutputSize(m_Params.m_SizeSource);
 
             m_Camera = see3cam;
         } else {
@@ -32,15 +31,13 @@ BeeEye::BeeEye(vid_t *vid)
                 cam = new VideoIn::OpenCVInput(vid->dev_int);
             }
 
-            // set resolution
-            cam->set(cv::CAP_PROP_FRAME_WIDTH, m_Params.m_SizeSource.width);
-            cam->set(cv::CAP_PROP_FRAME_HEIGHT, m_Params.m_SizeSource.height);
-
             m_Camera = cam;
 #ifndef _WIN32
         }
 #endif
     }
+
+    m_Camera->setOutputSize(m_Params.m_SizeSource);
 
     // create x and y pixel maps
     cv::Size sz_out(eye_size[0], eye_size[1]);
