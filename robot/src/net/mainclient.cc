@@ -1,8 +1,3 @@
-#ifdef _WIN32
-#define _WIN32_WINNT 0x600
-#include <ws2tcpip.h>
-#endif
-
 #include <cstring>
 #include <iostream>
 
@@ -19,15 +14,9 @@ MainClient::MainClient(const std::string host)
         throw std::runtime_error("Cannot open socket");
     }
 
-        // Create socket address structure
-#ifdef _WIN32
+    // Create socket address structure
     in_addr addr;
-    if (inet_pton(AF_INET, host.c_str(), &addr)) {
-        throw std::runtime_error("Cannot parse address: " + host);
-    }
-#else
-    in_addr addr = { .s_addr = inet_addr(host.c_str()) };
-#endif
+    addr.s_addr = inet_addr(host.c_str());
     sockaddr_in destAddress;
     destAddress.sin_family = AF_INET;
     destAddress.sin_port = htons(MAIN_PORT);
