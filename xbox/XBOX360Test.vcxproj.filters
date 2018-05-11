@@ -32,5 +32,8 @@
     <ClInclude Include="xbox_linux.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="xbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
