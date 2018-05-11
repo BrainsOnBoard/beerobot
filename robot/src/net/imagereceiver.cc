@@ -13,7 +13,7 @@ namespace Net {
 ImageReceiver::ImageReceiver()
 {
     // create socket
-    if ((m_Fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+    if ((m_Socket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
         goto error;
     }
 
@@ -23,7 +23,7 @@ ImageReceiver::ImageReceiver()
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = htons(Image::IMAGE_PORT);
 
-    if (bind(m_Fd, (struct sockaddr *) &addr, sizeof(addr))) {
+    if (bind(m_Socket, (struct sockaddr *) &addr, sizeof(addr))) {
         goto error;
     }
 
@@ -40,8 +40,8 @@ error:
 /* Close socket if needed */
 ImageReceiver::~ImageReceiver()
 {
-    if (m_Fd != -1) {
-        close(m_Fd);
+    if (m_Socket != INVALID_SOCKET) {
+        close(m_Socket);
     }
 }
 
@@ -54,7 +54,7 @@ ImageReceiver::read(cv::Mat &view)
     for (;;) {
         // read UDP packet
         int len = recvfrom(
-                m_Fd, m_Buffer, Image::MAX_UDP_PACKET_SIZE, 0, NULL, NULL);
+                m_Socket, m_Buffer, Image::MAX_UDP_PACKET_SIZE, 0, NULL, NULL);
         if (len == -1) {
             std::cerr << "Error: " << strerror(errno) << std::endl;
             continue;

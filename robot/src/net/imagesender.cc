@@ -20,8 +20,8 @@ ImageSender::ImageSender(const sockaddr_in *dest)
     std::cout << "Starting image sender" << std::endl;
 
     // Create socket
-    m_Fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (m_Fd < 0) {
+    m_Socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (m_Socket == INVALID_SOCKET) {
         throw std::runtime_error("Cannot open socket");
     }
 }
@@ -29,8 +29,8 @@ ImageSender::ImageSender(const sockaddr_in *dest)
 /* Close socket if needed */
 ImageSender::~ImageSender()
 {
-    if (m_Fd != -1) {
-        close(m_Fd);
+    if (m_Socket != INVALID_SOCKET) {
+        close(m_Socket);
     }
 }
 
@@ -80,7 +80,7 @@ ImageSender::run()
 
             // send packet
             Image::debugImagePacket(info, buff.size());
-            if (sendto(m_Fd,
+            if (sendto(m_Socket,
                        (buff_t *) buff.data(),
                        (socklen_t) buff.size(),
                        MSG_NOSIGNAL,
@@ -98,7 +98,7 @@ ImageSender::run()
             // send header plus as many of the image's bytes as we can fit in
             // packet
             debugImagePacket(info, Image::MAX_UDP_PACKET_SIZE);
-            if (sendto(m_Fd,
+            if (sendto(m_Socket,
                        (buff_t *) buff.data(),
                        Image::MAX_UDP_PACKET_SIZE,
                        MSG_NOSIGNAL,
@@ -121,7 +121,7 @@ ImageSender::run()
 
             // send second packet
             debugImagePacket(info, buff2.size());
-            if (sendto(m_Fd,
+            if (sendto(m_Socket,
                        (buff_t *) buff2.data(),
                        (socklen_t) buff2.size(),
                        MSG_NOSIGNAL,

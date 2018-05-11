@@ -20,7 +20,7 @@ public:
     virtual bool read(cv::Mat &view) override;
 
 private:
-    socket_t m_Fd = -1;
+    socket_t m_Socket = INVALID_SOCKET;
     mybuff_t m_Buffer[Image::MAX_UDP_PACKET_SIZE];
     std::vector<mybuff_t> m_LastBuffer;
     int m_LastId;

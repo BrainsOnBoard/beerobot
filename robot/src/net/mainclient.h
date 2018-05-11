@@ -15,7 +15,7 @@ public:
     virtual void tank(float left, float right);
 
 private:
-    socket_t m_Fd = -1;
+    socket_t m_Socket = INVALID_SOCKET;
     float m_OldLeft = std::numeric_limits<float>::quiet_NaN();
     float m_OldRight = std::numeric_limits<float>::quiet_NaN();
     char m_Buffer[MAIN_BUFFSIZE];

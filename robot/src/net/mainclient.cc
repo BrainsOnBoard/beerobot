@@ -14,12 +14,12 @@ namespace Net {
 MainClient::MainClient(const std::string host)
 {
     // Create socket
-    m_Fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_Fd < 0) {
+    m_Socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (m_Socket == INVALID_SOCKET) {
         throw std::runtime_error("Cannot open socket");
     }
 
-    // Create socket address structure
+        // Create socket address structure
 #ifdef _WIN32
     in_addr addr;
     if (inet_pton(AF_INET, host.c_str(), &addr)) {
@@ -28,13 +28,13 @@ MainClient::MainClient(const std::string host)
 #else
     in_addr addr = { .s_addr = inet_addr(host.c_str()) };
 #endif
-	sockaddr_in destAddress;
-	destAddress.sin_family = AF_INET;
-	destAddress.sin_port = htons(MAIN_PORT);
-	destAddress.sin_addr = addr;
+    sockaddr_in destAddress;
+    destAddress.sin_family = AF_INET;
+    destAddress.sin_port = htons(MAIN_PORT);
+    destAddress.sin_addr = addr;
 
     // Connect socket
-    if (connect(m_Fd,
+    if (connect(m_Socket,
                 reinterpret_cast<sockaddr *>(&destAddress),
                 sizeof(destAddress)) < 0) {
         throw std::runtime_error("Cannot connect socket to " + host + ":" +
@@ -44,16 +44,17 @@ MainClient::MainClient(const std::string host)
     std::cout << "Opened socket" << std::endl;
 
     // NB: this will give info about "image server" in future
-    if (readline(m_Fd, m_Buffer) == -1)
+    if (readLine(m_Socket, m_Buffer) == -1) {
         throw std::runtime_error(std::string("Error: ") + strerror(errno));
+    }
 }
 
 /* Destructor: send BYE message and close connection */
 MainClient::~MainClient()
 {
-    if (m_Fd >= 0) {
-        send(m_Fd, "BYE\n", 4);
-        close(m_Fd);
+    if (m_Socket != INVALID_SOCKET) {
+        send(m_Socket, "BYE\n", 4);
+        close(m_Socket);
     }
 }
 
@@ -67,7 +68,7 @@ MainClient::tank(float left, float right)
 
     // send steering command
     int len = sprintf(m_Buffer, "TNK %g %g\n", left, right);
-    if (!send(m_Fd, m_Buffer, len)) {
+    if (!send(m_Socket, m_Buffer, len)) {
         throw std::runtime_error(
                 std::string("Could not send steering command: ") +
                 strerror(errno));

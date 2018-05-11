@@ -23,11 +23,11 @@ MainServer::MainServer(Motor *mtr)
     struct sockaddr_in addr;
     int on = 1;
 
-    if ((m_Fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    if ((m_Socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
         goto error;
     }
 #ifndef _WIN32
-    if (setsockopt(m_Fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) {
+    if (setsockopt(m_Socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) {
         goto error;
     }
 #endif
@@ -37,10 +37,10 @@ MainServer::MainServer(Motor *mtr)
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = htons(MAIN_PORT);
 
-    if (bind(m_Fd, (sockaddr *) &addr, sizeof(addr))) {
+    if (bind(m_Socket, (sockaddr *) &addr, sizeof(addr))) {
         goto error;
     }
-    if (listen(m_Fd, 10)) {
+    if (listen(m_Socket, 10)) {
         goto error;
     }
     std::cout << "Listening on port " << MAIN_PORT << std::endl;
@@ -56,7 +56,9 @@ error:
 /* Stop listening */
 MainServer::~MainServer()
 {
-    close(m_Fd);
+    if (m_Socket != INVALID_SOCKET) {
+        close(m_Socket);
+    }
 }
 
 /*
@@ -79,8 +81,8 @@ MainServer::run()
     for (;;) {
         // wait for incoming TCP connection
         std::cout << "Waiting for incoming connection..." << std::endl;
-        socket_t connfd = accept(m_Fd, (sockaddr *) &addr, &addrlen);
-        if (!send(connfd, "HEY\n", 4)) {
+        socket_t sock = accept(m_Socket, (sockaddr *) &addr, &addrlen);
+        if (!send(sock, "HEY\n", 4)) {
             throw std::runtime_error("Could not write to socket");
         }
 
@@ -102,7 +104,7 @@ MainServer::run()
 
         // motor command
         float left, right;
-        while ((len = readline(connfd, buff)) > 0) {
+        while ((len = readLine(sock, buff)) == -1) {
             sbuff = std::string(buff);
             if (sbuff.compare(0, 4, "TNK ") ==
                 0) { // driving command (e.g. TNK 0.5 0.5)
@@ -117,17 +119,19 @@ MainServer::run()
 
                 // send motor command
                 m_Motor->tank(left, right);
-            } else if (sbuff.compare(0, 3, "BYE") ==
-                       0) // client closing connection
+            } else if (sbuff.compare(0, 3, "BYE") == 0) {
+                // client closing connection
                 break;
-            else // no other commands supported
+            } else { // no other commands supported
                 throw std::runtime_error("Error: Unknown command received");
+            }
         }
-        if (len == -1) // loop ended because an error occurred
+        if (len == -1) { // loop ended because an error occurred
             throw std::runtime_error(std::string("Error: ") + strerror(errno));
+        }
 
         // close current connection
-        close(connfd);
+        close(sock);
         std::cout << "Connection closed" << std::endl;
 
         // stop ImageSender thread
