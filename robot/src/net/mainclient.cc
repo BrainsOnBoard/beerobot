@@ -8,6 +8,8 @@ namespace Net {
 /* Create client, connect to host on MAIN_PORT over TCP */
 MainClient::MainClient(const std::string host)
 {
+    WSAStartup();
+
     // Create socket
     m_Socket = socket(AF_INET, SOCK_STREAM, 0);
     if (m_Socket == INVALID_SOCKET) {
@@ -45,6 +47,8 @@ MainClient::~MainClient()
         send(m_Socket, "BYE\n", 4);
         close(m_Socket);
     }
+
+	WSACleanup();
 }
 
 /* Motor command: send TNK command over TCP */
