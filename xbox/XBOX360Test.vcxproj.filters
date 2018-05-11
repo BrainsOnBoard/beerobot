@@ -18,9 +18,6 @@
     <ClCompile Include="xbox_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_windows.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="xbox_windows.h">
