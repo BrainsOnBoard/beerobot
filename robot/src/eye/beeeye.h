@@ -2,16 +2,13 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
-
-#include "image/camparams.h"
-#include "readable.h"
 #include <opencv2/opencv.hpp>
 
-// Forward declarations
-class See3CAM_CU40;
+#include "image/camparams.h"
+#include "videoin/videoinput.h"
 
 namespace Eye {
-class BeeEye : public Readable
+class BeeEye : public VideoIn::VideoInput
 {
 public:
     Image::CamParams m_Params;
@@ -23,13 +20,10 @@ public:
     void getUnwrappedImage(cv::Mat &unwrap, cv::Mat &imorig);
     void getEyeView(cv::Mat &view, cv::Mat &imunwrap);
     bool getEyeView(cv::Mat &view);
-    virtual bool read(cv::Mat &view) override;
+    virtual bool readFrame(cv::Mat &view);
 
 private:
-    cv::VideoCapture *m_Cap = nullptr;
-#ifndef _WIN32
-    See3CAM_CU40 *m_See3Cam = nullptr;
-#endif
+    VideoInput *m_Camera = nullptr;
     cv::Mat m_MapX, m_MapY;
     cv::Mat m_ImOrig, m_ImUnwrap, m_ImEye;
 };

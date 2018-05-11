@@ -48,7 +48,7 @@ ImageReceiver::~ImageReceiver()
 /* Read a single frame in. This will usually take two UDP packets' worth of
  * data. */
 bool
-ImageReceiver::read(cv::Mat &view)
+ImageReceiver::readFrame(cv::Mat &view)
 {
     // loop until we have a whole frame to copy to view
     for (;;) {
@@ -111,6 +111,6 @@ ImageReceiver::read(cv::Mat &view)
                                 &m_Buffer[len]);
         }
     }
-    return true;
+    return view.cols != 0;
 }
 }

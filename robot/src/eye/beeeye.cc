@@ -1,5 +1,6 @@
 #include "beeeye.h"
 #include "gigerdatacam.h"
+#include "videoin/opencvinput.h"
 
 #ifndef _WIN32
 // GeNN robotics includes
@@ -15,25 +16,27 @@ BeeEye::BeeEye(vid_t *vid)
         if (vid->is_see3cam) {
             std::cout << "Opening /dev/video" + std::to_string(vid->dev_int)
                       << std::endl;
-            m_See3Cam = new See3CAM_CU40("/dev/video" +
-                                                 std::to_string(vid->dev_int),
-                                         See3CAM_CU40::Resolution::_1280x720);
-            m_See3Cam->setBrightness(20);
+            auto see3cam = new See3CAM_CU40(
+                    "/dev/video" + std::to_string(vid->dev_int),
+                    See3CAM_CU40::Resolution::_1280x720);
+            see3cam->setBrightness(20);
+            see3cam->setOutputSize(m_Params.m_SizeSource);
+
+            m_Camera = see3cam;
         } else {
 #endif
+            VideoIn::OpenCVInput *cam;
             if (vid->dev_char) {
-                m_Cap = new cv::VideoCapture(vid->dev_char);
+                cam = new VideoIn::OpenCVInput(vid->dev_char);
             } else {
-                m_Cap = new cv::VideoCapture(vid->dev_int);
-            }
-            if (!m_Cap->isOpened()) {
-                std::cerr << "Error: Could not open webcam" << std::endl;
-                exit(1);
+                cam = new VideoIn::OpenCVInput(vid->dev_int);
             }
 
             // set resolution
-            m_Cap->set(cv::CAP_PROP_FRAME_WIDTH, m_Params.m_SizeSource.width);
-            m_Cap->set(cv::CAP_PROP_FRAME_HEIGHT, m_Params.m_SizeSource.height);
+            cam->set(cv::CAP_PROP_FRAME_WIDTH, m_Params.m_SizeSource.width);
+            cam->set(cv::CAP_PROP_FRAME_HEIGHT, m_Params.m_SizeSource.height);
+
+            m_Camera = cam;
 #ifndef _WIN32
         }
 #endif
@@ -45,14 +48,18 @@ BeeEye::BeeEye(vid_t *vid)
     m_MapY.create(sz_out, CV_32FC1);
     for (int i = 0; i < gdataLength; i++) {
         // left eye
-        m_MapX.at<float>((int)gdata[i][3], 15 + (int)gdata[i][2]) = floor(gdata[i][0]);
-        m_MapY.at<float>((int)gdata[i][3], 15 + (int)gdata[i][2]) = floor(gdata[i][1]);
+        m_MapX.at<float>((int) gdata[i][3], 15 + (int) gdata[i][2]) =
+                floor(gdata[i][0]);
+        m_MapY.at<float>((int) gdata[i][3], 15 + (int) gdata[i][2]) =
+                floor(gdata[i][1]);
 
         // right eye
-        m_MapX.at<float>((int)gdata[i][3], 720 - 316 - eye_size[0] - (int)gdata[i][2]) =
+        m_MapX.at<float>((int) gdata[i][3],
+                         720 - 316 - eye_size[0] - (int) gdata[i][2]) =
                 gim_size[0] - floor(gdata[i][0]);
-        m_MapY.at<float>((int)gdata[i][3], 720 - 316 - eye_size[0] - (int)gdata[i][2]) =
-			floor(gdata[i][1]);
+        m_MapY.at<float>((int) gdata[i][3],
+                         720 - 316 - eye_size[0] - (int) gdata[i][2]) =
+                floor(gdata[i][1]);
     }
 
     // create pixel maps for unwrapping panoramic images
@@ -65,13 +72,8 @@ BeeEye::BeeEye(vid_t *vid)
 BeeEye::~BeeEye()
 {
     // stop reading from camera and free memory for object
-    if (m_Cap) {
-        m_Cap->release();
-        delete m_Cap;
-#ifndef _WIN32
-    } else if (m_See3Cam) {
-        delete m_See3Cam;
-#endif
+    if (m_Camera) {
+        delete m_Camera;
     }
 }
 
@@ -79,20 +81,7 @@ bool
 BeeEye::getImage(cv::Mat &imorig)
 {
     // read frame from camera
-    if (m_Cap) {
-        (*m_Cap) >> imorig;
-
-        return imorig.size().width != 0;
-#ifndef _WIN32
-    } else if (m_See3Cam) {
-        if (imorig.size().width == 0) {
-            imorig.create(m_Params.m_SizeSource, CV_8UC3);
-        }
-        return m_See3Cam->captureSuperPixelWBU30(imorig);
-#endif
-    }
-
-    return false;
+    return m_Camera && m_Camera->readFrame(imorig);
 }
 
 void
@@ -134,7 +123,7 @@ BeeEye::getEyeView(cv::Mat &view)
 }
 
 bool
-BeeEye::read(cv::Mat &view)
+BeeEye::readFrame(cv::Mat &view)
 {
     return getEyeView(view);
 }

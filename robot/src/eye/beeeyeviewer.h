@@ -1,6 +1,6 @@
 #pragma once
-#include "readable.h"
 #include <opencv2/opencv.hpp>
+#include "videoin/videoinput.h"
 
 #ifndef _WIN32
 #include <X11/Xlib.h>
@@ -9,7 +9,7 @@
 namespace Eye {
 /* run the remote bee eye viewer */
 void
-runEyeViewer(Readable &recv, bool showoverlay)
+runEyeViewer(VideoIn::VideoInput &vid, bool showoverlay)
 {
 #ifdef _WIN32
     cv::Size oversz(1024, 768);
@@ -47,12 +47,9 @@ runEyeViewer(Readable &recv, bool showoverlay)
 
     // display remote camera input on loop until user presses escape
     while (true) {
-        // read frame over socket
-        recv.read(view);
-
         // bad JPEGs give a 0x0 frame
-        if (view.rows == 0 && view.cols == 0) {
-            std::cerr << "Warning: Could not process JPEG" << std::endl;
+        if (!vid.readFrame(view)) {
+            std::cerr << "Warning: Could not read frame" << std::endl;
             continue;
         }
 

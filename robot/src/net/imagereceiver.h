@@ -2,7 +2,7 @@
 
 #include "image/common.h"
 #include "os/net.h"
-#include "readable.h"
+#include "videoin/videoinput.h"
 
 #include <errno.h>
 #include <opencv2/opencv.hpp>
@@ -12,12 +12,12 @@
 #endif
 
 namespace Net {
-class ImageReceiver : public Readable
+class ImageReceiver : public VideoIn::VideoInput
 {
 public:
     ImageReceiver();
     virtual ~ImageReceiver();
-    virtual bool read(cv::Mat &view) override;
+    virtual bool readFrame(cv::Mat &view);
 
 private:
     socket_t m_Socket = INVALID_SOCKET;
