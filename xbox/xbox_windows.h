@@ -128,9 +128,9 @@ Controller::read(Xbox::JoystickEvent &js)
                 int lTrigState = Read().Gamepad.bLeftTrigger;
                 int rTrigState = Read().Gamepad.bRightTrigger;
                 int lThumbYState2 = Read().Gamepad.sThumbLX;
-                int lThumbXState2 = Read().Gamepad.sThumbLY;
+                int lThumbXState2 = -Read().Gamepad.sThumbLY;
                 int rThumbXState2 = Read().Gamepad.sThumbRX;
-                int rThumbYState2 = Read().Gamepad.sThumbRY;
+                int rThumbYState2 = -Read().Gamepad.sThumbRY;
                 if (lThumbXState2 != lThumbXState1) {
                     js.number = LeftStickHorizontal;
                     js.value = lThumbXState2;
