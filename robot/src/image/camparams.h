@@ -27,29 +27,33 @@ public:
       : m_SizeDest(1280, 400)
     {}
 
+    CamParams(vid_t *vid)
+      : CamParams(vid->yaml_file, vid->width, vid->height)
+    {}
+
     /*
      * Read parameters from YAML file.
      */
-    CamParams(std::string filePath)
-      : m_SizeDest(1280, 400)
+    CamParams(std::string filePath, int width = 1280, int height = 400)
+      : m_SizeSource(width, height)
     {
         m_FilePath = filePath;
 
         YAML::Node params = YAML::LoadFile(filePath);
 
         YAML::Node resolution = params["resolution"];
-        m_SizeSource.width = resolution[0].as<int>();
-        m_SizeSource.height = resolution[1].as<int>();
+        m_SizeDest.width = resolution[0].as<int>();
+        m_SizeDest.height = resolution[1].as<int>();
 
         YAML::Node center = params["center"];
-        m_Center.x = (int)round(m_SizeSource.width * center[0].as<double>());
-        m_Center.y = (int)round(m_SizeSource.height * center[1].as<double>());
+        m_Center.x = (int) round(m_SizeSource.width * center[0].as<double>());
+        m_Center.y = (int) round(m_SizeSource.height * center[1].as<double>());
 
         YAML::Node radii = params["radius"];
         m_RadiusInner =
-			(int)round(m_SizeSource.height * radii["inner"].as<double>());
+                (int) round(m_SizeSource.height * radii["inner"].as<double>());
         m_RadiusOuter =
-			(int)round(m_SizeSource.height * radii["outer"].as<double>());
+                (int) round(m_SizeSource.height * radii["outer"].as<double>());
 
         m_Flipped = params["flipped"].as<bool>();
         m_DegreeOffset = params["degreeoffset"].as<int>();
