@@ -24,10 +24,8 @@
 // for processing single image files
 #include "image/file.h"
 
-#ifndef _WIN32
 // for using the Xbox controller to drive the robot
 #include "xboxrobot.h"
-#endif
 
 using namespace std;
 
@@ -126,23 +124,17 @@ main(int argc, char **argv)
             if (server_ip) { // then start the viewer
                 // code run by client (connecting to robot)
                 Net::MainClient client(server_ip);
-#ifndef _WIN32
                 if (controller) {
                     Controller::start(&client);
                 }
-#endif
 
                 Net::ImageReceiver recv;
                 Eye::runEyeViewer(recv, overlayflag);
-
-#ifndef _WIN32
 
                 // TODO: this is a case where smart pointers would be better
                 if (controller) {
                     Controller::stop();
                 }
-#endif
-
                 return 0;
             } else if (config || vid) {
                 if (!vid) { // default to usb for config
@@ -159,10 +151,8 @@ main(int argc, char **argv)
     // start appropriate motor device
     Motor *mtr;
 #ifdef _WIN32
-	cout << "Motor disabled on Windows" << endl;
-	mtr = new MotorDummy();
-
-	cout << "Controller is disabled in Windows" << endl;
+    cout << "Motor disabled on Windows" << endl;
+    mtr = new MotorDummy();
 #else
     switch (mtype) {
     case Surveyor:
@@ -189,6 +179,7 @@ main(int argc, char **argv)
         cout << "Motor disabled" << endl;
         mtr = new MotorDummy();
     }
+#endif
 
     // if using Xbox controller, start it
     if (controller) {
@@ -196,7 +187,6 @@ main(int argc, char **argv)
     } else {
         cout << "Use of controller is disabled" << endl;
     }
-#endif
 
     if (localflag) {
         if (!vid) {
@@ -210,15 +200,12 @@ main(int argc, char **argv)
         Net::MainServer::runServer(mtr);
     }
 
-#ifndef _WIN32
     // TODO: this is a case where smart pointers would be better
     if (controller) {
         Controller::stop();
     } else {
         delete mtr;
     }
-#else
-    delete mtr;
-#endif
+
     return 0;
 }

@@ -76,7 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <IncludePath>src;GeNN_Robotics;C:\opencv\build\include;C:\yaml-cpp\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\xbox;src;GeNN_Robotics;C:\opencv\build\include;C:\yaml-cpp\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;</LibraryPath>
     <TargetName>beerobot</TargetName>
   </PropertyGroup>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/motor.h"
-#include "xbox_linux.h"
+#include "xbox.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <iostream>
