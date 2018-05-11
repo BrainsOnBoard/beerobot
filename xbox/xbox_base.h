@@ -34,18 +34,28 @@ using ControllerCallback = void (*)(JoystickEvent *js, void *userData);
 class ControllerBase
 {
 private:
-    bool m_Closing = false;
     JoystickEvent m_JsEvent;
+
+protected:
+    bool m_Closing = false;
 
 public:
     virtual bool open() = 0;
     virtual bool read(Xbox::JoystickEvent &js) = 0;
+
+    virtual ~ControllerBase()
+    {
+        close();
+    }
 
     bool read()
     {
         return read(m_JsEvent);
     }
 
+    /*
+     * Get the name of the button corresponding to number. 
+     */
     std::string getButtonName(unsigned int number)
     {
         switch (number) {
@@ -81,6 +91,9 @@ public:
         return "(unknown)";
     }
 
+    /*
+     * Get the name of the axis corresponding to number. 
+     */
     std::string getAxisName(unsigned int number)
     {
         switch (number) {
@@ -104,6 +117,10 @@ public:
         return "(unknown)";
     }
 
+    /*
+     * Start the read thread in the background. Call callback when an event 
+     * occurs. 
+     */
     void startThread(ControllerCallback callback, void *data)
     {
         if (!m_Thread) {
@@ -111,7 +128,7 @@ public:
         }
     }
 
-    void close()
+    virtual void close()
     {
         if (m_Closing) {
             return;
@@ -127,6 +144,12 @@ public:
 private:
     std::thread *m_Thread = nullptr;
 
+    /*
+     * This function is invoked by the read thread. It repeatedly polls the
+     * controller, calling the callback function as appropriate. If an error
+     * occurs, the callback is called with a nullptr in place of the js_event
+     * struct.
+     */
     static void runThread(ControllerBase *c,
                           ControllerCallback callback,
                           void *userData)
