@@ -2,9 +2,11 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include "xbox_defines.h"
-#include <XInput.h>
 #include <windows.h>
+
+#include <XInput.h>
 #pragma comment(lib, "XInput.lib")
+
 #include "iostream"
 #include <cstdint>
 #include <fcntl.h>
