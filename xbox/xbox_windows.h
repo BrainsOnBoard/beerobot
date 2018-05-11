@@ -112,12 +112,14 @@ Controller::read(Xbox::JoystickEvent &js)
         if (~pressed & buttState) {
             js.number = ~pressed & buttState;
             js.value = true;
+            js.isAxis = false;
             pressed = buttState;
             break;
         } else {
             if (pressed & ~buttState) {
                 js.number = pressed & ~buttState;
                 js.value = false;
+                js.isAxis = false;
                 pressed = buttState;
                 break;
             } else {
