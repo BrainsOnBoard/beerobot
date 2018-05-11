@@ -21,7 +21,7 @@ typedef char mybuff_t;
 typedef unsigned char buff_t;
 typedef unsigned char mybuff_t;
 
-#define INAVLID_SOCKET -1
+#define INVALID_SOCKET -1
 #endif
 
 #ifdef _MSC_VER
