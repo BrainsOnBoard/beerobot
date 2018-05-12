@@ -9,12 +9,12 @@
 #include "common/motor_surveyor.h"
 #endif
 
+// for rendering bee's eye view on screen
+#include "image/overlaydisplay.h"
+
 // to exchange messages between robot and viewer
 #include "net/mainclient.h"
 #include "net/mainserver.h"
-
-// for displaying robot's bee eye view remotely
-#include "eye/beeeyeviewer.h"
 
 // for config mode (i.e. editing .ini files)
 #include "eye/beeeyeconfig.h"
@@ -135,8 +135,8 @@ main(int argc, char **argv)
                 }
 
                 Net::ImageReceiver recv;
-                Eye::runEyeViewer(recv, overlayFlag);
-
+                Image::OverlayDisplay display(recv, overlayFlag);
+                display.run();
                 return 0;
             } else if (config || vid) {
                 if (!vid) { // default to usb for config
@@ -200,7 +200,8 @@ main(int argc, char **argv)
         }
 
         Eye::BeeEye eye(vid, vidDeviceNum);
-        Eye::runEyeViewer(eye, overlayFlag);
+        Image::OverlayDisplay display(eye, overlayFlag);
+        display.run();
     } else {
         // run main server
         Net::MainServer::runServer(pMotor);

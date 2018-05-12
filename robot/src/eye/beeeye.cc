@@ -1,9 +1,9 @@
 #include "beeeye.h"
 #include "gigerdatacam.h"
-#include "videoin/opencvinput.h"
 
-#ifndef _WIN32
 // GeNN robotics includes
+#include "videoin/opencvinput.h"
+#ifndef _WIN32
 #include "common/see3cam_cu40.h"
 #endif
 
@@ -11,6 +11,7 @@ namespace Eye {
 BeeEye::BeeEye(const CameraInfo *vid, int vidDeviceNum)
   : m_Params(vid)
 {
+    // create camera object
     if (vidDeviceNum != -1 || vid->deviceURL) {
 #ifndef _WIN32
         if (vid->isSee3Cam) {
@@ -40,9 +41,9 @@ BeeEye::BeeEye(const CameraInfo *vid, int vidDeviceNum)
     m_Camera->setOutputSize(m_Params.m_SizeSource);
 
     // create x and y pixel maps
-    cv::Size sz_out(eye_size[0], eye_size[1]);
-    m_MapX.create(sz_out, CV_32FC1);
-    m_MapY.create(sz_out, CV_32FC1);
+    cv::Size outSize(eye_size[0], eye_size[1]);
+    m_MapX.create(outSize, CV_32FC1);
+    m_MapY.create(outSize, CV_32FC1);
     for (int i = 0; i < gdataLength; i++) {
         // left eye
         m_MapX.at<float>((int) gdata[i][3], 15 + (int) gdata[i][2]) =
@@ -63,7 +64,7 @@ BeeEye::BeeEye(const CameraInfo *vid, int vidDeviceNum)
     m_Params.generateMap();
 
     m_ImUnwrap.create(m_Params.m_SizeDest, CV_8UC3);
-    m_ImEye.create(sz_out, CV_8UC3);
+    m_ImEye.create(outSize, CV_8UC3);
 }
 
 bool

@@ -19,7 +19,8 @@ public:
     void getUnwrappedImage(cv::Mat &unwrap, cv::Mat &imorig);
     void getEyeView(cv::Mat &view, cv::Mat &imunwrap);
     bool getEyeView(cv::Mat &view);
-    virtual bool readFrame(cv::Mat &view);
+    bool readFrame(cv::Mat &view);
+    void runDisplay();
 
 private:
     std::unique_ptr<VideoInput> m_Camera;
