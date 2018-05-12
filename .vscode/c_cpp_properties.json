@@ -5,8 +5,7 @@
             "includePath": [
                 "/usr/include",
                 "/usr/local/include",
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/iniparser/src"
+                "${workspaceFolder}/src"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -14,8 +13,7 @@
                 "path": [
                     "/usr/include",
                     "/usr/local/include",
-                    "${workspaceFolder}/src",
-                    "${workspaceFolder}/iniparser/src"
+                    "${workspaceFolder}/src"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
@@ -65,8 +63,7 @@
             "name": "Win32",
             "includePath": [
                 "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include",
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/iniparser/src"
+                "${workspaceFolder}/src"
             ],
             "defines": [
                 "_DEBUG",
@@ -77,8 +74,7 @@
             "browse": {
                 "path": [
                     "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include/*",
-                    "${workspaceFolder}/src",
-                    "${workspaceFolder}/iniparser/src"
+                    "${workspaceFolder}/src"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
