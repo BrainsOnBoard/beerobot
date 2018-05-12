@@ -32,7 +32,7 @@ enum Button
 };
 }
 
-#include "base.h"
+#include "joystick_base.h"
 
 namespace Joystick {
 class Joystick : public JoystickBase
@@ -51,7 +51,7 @@ private:
 public:
     XINPUT_STATE Read();
     bool open();
-    bool read(Joystick::Event &js);
+    bool read(Event &js);
 };
 
 XINPUT_STATE
@@ -97,7 +97,7 @@ Joystick::Change()
 // read the buttons on the controller and report which button(s) are
 // pressed/unpressed
 bool
-Joystick::read(Joystick::Event &js)
+Joystick::read(Event &js)
 {
     while (Change()) {
         unsigned int buttState = Read().Gamepad.wButtons;
