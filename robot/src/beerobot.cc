@@ -25,7 +25,7 @@
 #include "image/file.h"
 
 // for using the Xbox controller to drive the robot
-#include "xboxrobot.h"
+#include "controller_thread.h"
 
 using namespace std;
 
@@ -62,6 +62,7 @@ main(int argc, char **argv)
     char *serverIP = nullptr;        // IP of robot
     const CameraInfo *vid = nullptr; // video device to read from
     int vidDeviceNum = -1;
+    std::unique_ptr<ControllerThread> controllerThread;
 
     if (argc > 1) { // if we have command line args
         bool config =
@@ -89,8 +90,9 @@ main(int argc, char **argv)
                 overlayFlag = false;
             } else if (strcmp(argv[i], "--controller") == 0) {
                 // enable controller
-                if (controllerFlag)
+                if (controllerFlag) {
                     showusage();
+                }
                 controllerFlag = true;
                 controller = true;
             } else if (strcmp(argv[i], "--no-controller") == 0) {
@@ -125,18 +127,16 @@ main(int argc, char **argv)
         if (!localFlag) {
             if (serverIP) { // then start the viewer
                 // code run by client (connecting to robot)
-                Net::MainClient client(serverIP);
+                auto client =
+                        std::shared_ptr<Motor>(new Net::MainClient(serverIP));
                 if (controller) {
-                    Controller::start(&client);
+                    controllerThread = std::unique_ptr<ControllerThread>(
+                            new ControllerThread(client));
                 }
 
                 Net::ImageReceiver recv;
                 Eye::runEyeViewer(recv, overlayFlag);
 
-                // TODO: this is a case where smart pointers would be better
-                if (controller) {
-                    Controller::stop();
-                }
                 return 0;
             } else if (config || vid) {
                 if (!vid) { // default to usb for config
@@ -151,41 +151,45 @@ main(int argc, char **argv)
     }
 
     // start appropriate motor device
-    Motor *mtr;
+    Motor *motor;
 #ifdef _WIN32
     cout << "Motor disabled on Windows" << endl;
-    mtr = new MotorDummy();
+    motor = new MotorDummy();
 #else
     switch (motorType) {
     case Surveyor:
         cout << "Using Surveyor as motor" << endl;
         try {
-            mtr = new MotorSurveyor("192.168.1.1", 2000);
+            motor = new MotorSurveyor("192.168.1.1", 2000);
         } catch (exception &e) {
             cout << "An error occurred: Disabling motor output" << endl;
-            mtr = new MotorDummy();
+            motor = new MotorDummy();
         }
         break;
 #ifndef NO_I2C_ROBOT
     case Arduino:
         cout << "Using Arduino as motor" << endl;
         try {
-            mtr = new MotorI2C();
+            motor = new MotorI2C();
         } catch (exception &e) {
             cout << "An error occurred: Disabling motor output" << endl;
-            mtr = new MotorDummy();
+            motor = new MotorDummy();
         }
         break;
 #endif
     default:
         cout << "Motor disabled" << endl;
-        mtr = new MotorDummy();
+        motor = new MotorDummy();
     }
 #endif
 
+    // so motor is freed when program exits
+    auto pMotor = std::shared_ptr<Motor>(motor);
+
     // if using Xbox controller, start it
     if (controller) {
-        Controller::start(mtr);
+        controllerThread =
+                std::unique_ptr<ControllerThread>(new ControllerThread(pMotor));
     } else {
         cout << "Use of controller is disabled" << endl;
     }
@@ -199,14 +203,7 @@ main(int argc, char **argv)
         Eye::runEyeViewer(eye, overlayFlag);
     } else {
         // run main server
-        Net::MainServer::runServer(mtr);
-    }
-
-    // TODO: this is a case where smart pointers would be better
-    if (controller) {
-        Controller::stop();
-    } else {
-        delete mtr;
+        Net::MainServer::runServer(pMotor);
     }
 
     return 0;

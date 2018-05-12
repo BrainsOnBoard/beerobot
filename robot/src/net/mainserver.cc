@@ -11,8 +11,8 @@ namespace Net {
 /*
  * Create a server listening on MAIN_PORT (TCP), sending motor commands to *mtr
  */
-MainServer::MainServer(Motor *mtr)
-  : m_Motor(mtr)
+MainServer::MainServer(std::shared_ptr<Motor> motor)
+  : m_Motor(motor)
 {
     struct sockaddr_in addr;
     int on = 1;
@@ -140,9 +140,9 @@ MainServer::run()
 }
 
 void
-MainServer::runServer(Motor *mtr)
+MainServer::runServer(std::shared_ptr<Motor> &motor)
 {
-    MainServer srv(mtr);
-    srv.run();
+    MainServer server(motor);
+    server.run();
 }
 }
