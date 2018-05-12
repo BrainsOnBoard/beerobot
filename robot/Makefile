@@ -4,7 +4,7 @@ BUILD := build
 ifndef USE_LOCAL_GENN_ROBOTICS
 	GENN_ROBOTICS_PATH := GeNN_Robotics
 endif
-CXXFLAGS := -g -pthread -std=c++11 -Isrc -I../xbox \
+CXXFLAGS := -g -pthread -std=c++11 -Isrc -I.. \
 	-I$(GENN_ROBOTICS_PATH)
 LDFLAGS := -O2 -lstdc++ -lm
 

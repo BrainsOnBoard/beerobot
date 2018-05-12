@@ -5,10 +5,9 @@
 #include <iostream>
 #include <linux/joystick.h>
 #include <sys/stat.h>
-#include <thread>
 #include <unistd.h>
 
-namespace Xbox {
+namespace Joystick {
 
 /*
  * Controller buttons. The left stick and right stick are also buttons (you can
@@ -34,10 +33,10 @@ enum Button
 };
 }
 
-#include "xbox_base.h"
+#include "joystick_base.h"
 
-namespace Xbox {
-class Controller : public ControllerBase
+namespace Joystick {
+class Joystick : public JoystickBase
 {
 public:
     /*
@@ -55,7 +54,7 @@ public:
      */
     void close()
     {
-        ControllerBase::close();
+        JoystickBase::close();
         ::close(m_Fd);
     }
 
@@ -63,7 +62,7 @@ public:
      * Read controller event into js struct. Returns true if read successfully,
      * false if an error occurs.
      */
-    bool read(JoystickEvent &js)
+    bool read(Event &js)
     {
         while (!m_Closing) {
             const ssize_t bytes = ::read(m_Fd, &m_JsEvent, sizeof(m_JsEvent));

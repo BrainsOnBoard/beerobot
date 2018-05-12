@@ -1,8 +1,11 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
+#include <string>
+#include <thread>
 
-namespace Xbox {
+namespace Joystick {
 /*
  * Controller axes. Note that the triggers are axes as is the dpad. The dpad is
  * slightly strange in that it's also treated as buttons (i.e. pressing up gives
@@ -20,30 +23,30 @@ enum Axis
     DpadVertical = 7
 };
 
-struct JoystickEvent
+struct Event
 {
-    int16_t value;
     unsigned int number;
+    int16_t value;
     bool isAxis;
     bool isInitial;
 };
 
 // For callbacks when a controller event occurs (button is pressed, axis moves)
-using ControllerCallback = void (*)(JoystickEvent *js, void *userData);
+using Callback = void (*)(Event *js, void *userData);
 
-class ControllerBase
+class JoystickBase
 {
 private:
-    JoystickEvent m_JsEvent;
+    Event m_JsEvent;
 
 protected:
     bool m_Closing = false;
 
 public:
     virtual bool open() = 0;
-    virtual bool read(Xbox::JoystickEvent &js) = 0;
+    virtual bool read(Event &js) = 0;
 
-    virtual ~ControllerBase()
+    virtual ~JoystickBase()
     {
         close();
     }
@@ -58,6 +61,7 @@ public:
      */
     std::string getButtonName(unsigned int number)
     {
+        // these values should be defined before this header is included
         switch (number) {
         case A:
             return "A";
@@ -121,10 +125,11 @@ public:
      * Start the read thread in the background. Call callback when an event
      * occurs.
      */
-    void startThread(ControllerCallback callback, void *data)
+    void startThread(Callback callback, void *data)
     {
         if (!m_Thread) {
-            m_Thread = new std::thread(runThread, this, callback, data);
+            m_Thread = std::unique_ptr<std::thread>(
+                    new std::thread(runThread, this, callback, data));
         }
     }
 
@@ -137,12 +142,11 @@ public:
 
         if (m_Thread) {
             m_Thread->join();
-            delete m_Thread;
         }
     }
 
 private:
-    std::thread *m_Thread = nullptr;
+    std::unique_ptr<std::thread> m_Thread;
 
     /*
      * This function is invoked by the read thread. It repeatedly polls the
@@ -150,9 +154,7 @@ private:
      * occurs, the callback is called with a nullptr in place of the js_event
      * struct.
      */
-    static void runThread(ControllerBase *c,
-                          ControllerCallback callback,
-                          void *userData)
+    static void runThread(JoystickBase *c, Callback callback, void *userData)
     {
         while (c->read()) {
             callback(&c->m_JsEvent, userData);

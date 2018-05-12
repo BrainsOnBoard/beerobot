@@ -25,7 +25,7 @@
 #include "image/file.h"
 
 // for using the Xbox controller to drive the robot
-#include "controller_thread.h"
+#include "joystickthread.h"
 
 using namespace std;
 
@@ -62,7 +62,7 @@ main(int argc, char **argv)
     char *serverIP = nullptr;        // IP of robot
     const CameraInfo *vid = nullptr; // video device to read from
     int vidDeviceNum = -1;
-    std::unique_ptr<ControllerThread> controllerThread;
+    std::unique_ptr<JoystickThread> joystickThread;
 
     if (argc > 1) { // if we have command line args
         bool config =
@@ -130,8 +130,8 @@ main(int argc, char **argv)
                 auto client =
                         std::shared_ptr<Motor>(new Net::MainClient(serverIP));
                 if (controller) {
-                    controllerThread = std::unique_ptr<ControllerThread>(
-                            new ControllerThread(client));
+                    joystickThread = std::unique_ptr<JoystickThread>(
+                            new JoystickThread(client));
                 }
 
                 Net::ImageReceiver recv;
@@ -188,8 +188,8 @@ main(int argc, char **argv)
 
     // if using Xbox controller, start it
     if (controller) {
-        controllerThread =
-                std::unique_ptr<ControllerThread>(new ControllerThread(pMotor));
+        joystickThread =
+                std::unique_ptr<JoystickThread>(new JoystickThread(pMotor));
     } else {
         cout << "Use of controller is disabled" << endl;
     }

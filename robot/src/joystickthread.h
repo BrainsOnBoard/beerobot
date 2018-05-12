@@ -1,31 +1,31 @@
 #pragma once
 
 #include "common/motor.h"
-#include "xbox.h"
+#include "joystick/joystick.h"
 
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <iostream>
 #include <memory>
 
-class ControllerThread
+class JoystickThread
 {
 public:
-    ControllerThread(std::shared_ptr<Motor> motor)
+    JoystickThread(std::shared_ptr<Motor> motor)
       : m_Motor(motor)
     {
-        m_Controller.open();
-        m_Controller.startThread(run, this);
+        m_Joystick.open();
+        m_Joystick.startThread(run, this);
         std::cout << "Running controller service" << std::endl;
     }
 
 private:
     std::shared_ptr<Motor> m_Motor;
-    Xbox::Controller m_Controller;
+    Joystick::Joystick m_Joystick;
     float m_X = 0;
     float m_Y = 0;
 
-    static void run(Xbox::JoystickEvent *js, void *userData)
+    static void run(Joystick::Event *js, void *userData)
     {
         if (!js) {
             std::cerr << "An error occurred reading from Xbox controller"
@@ -38,17 +38,17 @@ private:
             return;
         }
 
-        // our ControllerThread object was passed to thread as user data
-        auto thread = reinterpret_cast<ControllerThread *>(userData);
+        // our JoystickThread object was passed to thread as user data
+        auto thread = reinterpret_cast<JoystickThread *>(userData);
 
         // only interested in left joystick
         float x = thread->m_X;
         float y = thread->m_Y;
         switch (js->number) {
-        case Xbox::LeftStickVertical:
+        case Joystick::LeftStickVertical:
             y = js->value / (float) std::numeric_limits<int16_t>::max();
             break;
-        case Xbox::LeftStickHorizontal:
+        case Joystick::LeftStickHorizontal:
             x = js->value / (float) std::numeric_limits<int16_t>::max();
             break;
         default:

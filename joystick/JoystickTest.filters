@@ -15,21 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="xbox_test.cc">
+    <ClCompile Include="joystick_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="xbox_windows.h">
+    <ClInclude Include="joystick_windows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xbox_linux.h">
+    <ClInclude Include="joystick_linux.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xbox.h">
+    <ClInclude Include="joystick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xbox_base.h">
+    <ClInclude Include="joystick_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

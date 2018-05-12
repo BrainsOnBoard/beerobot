@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <thread>
 
-namespace Xbox {
+namespace Joystick {
 enum Button
 {
     A = XINPUT_GAMEPAD_A,
@@ -32,10 +32,10 @@ enum Button
 };
 }
 
-#include "xbox_base.h"
+#include "base.h"
 
-namespace Xbox {
-class Controller : public ControllerBase
+namespace Joystick {
+class Joystick : public JoystickBase
 {
 private:
     XINPUT_STATE _controllerState;
@@ -51,11 +51,11 @@ private:
 public:
     XINPUT_STATE Read();
     bool open();
-    bool read(Xbox::JoystickEvent &js);
+    bool read(Joystick::Event &js);
 };
 
 XINPUT_STATE
-Controller::Read()
+Joystick::Read()
 {
     // Zeroise the state
     ZeroMemory(&_controllerState, sizeof(XINPUT_STATE));
@@ -67,23 +67,18 @@ Controller::Read()
 }
 
 bool
-Controller::open()
+Joystick::open()
 {
     // Zeroise the state
     ZeroMemory(&_controllerState, sizeof(XINPUT_STATE));
 
     // Get the state
     DWORD Result = XInputGetState(_controllerNum, &_controllerState);
-
-    if (Result == ERROR_SUCCESS) {
-        return true;
-    } else {
-        return false;
-    }
+    return Result == ERROR_SUCCESS;
 }
 
 bool
-Controller::Change()
+Joystick::Change()
 {
     // Zeroise the state
     ZeroMemory(&_controllerState, sizeof(XINPUT_STATE));
@@ -94,7 +89,7 @@ Controller::Change()
         int state2 = Read().dwPacketNumber;
         if (state1 != state2) {
             state1 = state2;
-            return (true);
+            return true;
         }
     }
 }
@@ -102,7 +97,7 @@ Controller::Change()
 // read the buttons on the controller and report which button(s) are
 // pressed/unpressed
 bool
-Controller::read(Xbox::JoystickEvent &js)
+Joystick::read(Joystick::Event &js)
 {
     while (Change()) {
         unsigned int buttState = Read().Gamepad.wButtons;
