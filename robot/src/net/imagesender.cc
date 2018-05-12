@@ -15,9 +15,13 @@ static const long max_period = (long) (1000000000.0 / max_fps);
 /* Create socket, start BeeEye (camera etc.) */
 ImageSender::ImageSender(const sockaddr_in *dest)
   : m_DestAddr(dest)
-  , m_Eye(Image::getUSB())
 {
     std::cout << "Starting image sender" << std::endl;
+
+    // Make bee-eye object
+    int vidDeviceNum;
+    const vid_t *vid = Image::getUSB(&vidDeviceNum);
+    m_Eye = std::unique_ptr<Eye::BeeEye>(new Eye::BeeEye(vid, vidDeviceNum));
 
     // Create socket
     m_Socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -58,7 +62,7 @@ ImageSender::run()
         auto t0 = high_resolution_clock::now();
 
         // read bee eye frame
-        if (!m_Eye.getEyeView(view)) {
+        if (!m_Eye->getEyeView(view)) {
             throw std::runtime_error("Error: Could not read from webcam");
         }
 

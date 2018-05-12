@@ -12,6 +12,9 @@ template<size_t N>
 int
 getCameraByName(const char *const (&names)[N], int &selected)
 {
+#ifdef _WIN32
+    return 0;
+#else
     char cname[4096];
 
     // iterate through devices /dev/video0, /dev/video1 etc. reading the device
@@ -72,51 +75,28 @@ getCameraByName(const char *const (&names)[N], int &selected)
 
     std::cout << "Selecting camera #" << bestcamnum << std::endl;
     return bestcamnum;
+#endif
 }
 
 /* get a PixPro or webcam video device over USB */
-vid_t *
-getUSB()
+const vid_t *
+getUSB(int *usbDeviceNum)
 {
-    vid_t *vid = new vid_t;
     int sel = 2;
 
 #ifdef _WIN32
-    vid->dev_int = 0;
+    *usbDeviceNum = 0;
 #else
-    vid->dev_int = getCameraByName(
+    *usbDeviceNum = getCameraByName(
             { "See3CAM_CU40", "PIXPRO SP360 4K", "USB 2.0 Camera" }, sel);
 #endif
-    vid->dev_char = NULL;
-    if (sel == 0) {
-        vid->width = 640;
-        vid->height = 360;
-        vid->yaml_file = "see3cam.yaml";
-        vid->is_see3cam = true;
-    } else if (sel == 1) {
-        vid->width = 1440;
-        vid->height = 1440;
-        vid->yaml_file = "pixpro_usb.yaml";
-        vid->is_see3cam = false;
-    } else {
-        vid->width = 1280;
-        vid->height = 720;
-        vid->yaml_file = "webcam.yaml";
-        vid->is_see3cam = false;
+    switch (sel) {
+    case 0:
+        return &See3CamDevice;
+    case 1:
+        return &PixProUSBDevice;
+    default:
+        return &WebcamDevice;
     }
-    return vid;
-}
-
-/* get PixPro over wifi */
-vid_t *
-getPixProWifi()
-{
-    vid_t *vid = new vid_t;
-    vid->dev_int = -1;
-    vid->dev_char = "http://172.16.0.254:9176/;dummy_parameter=bee.mjpg";
-    vid->width = 1024;
-    vid->height = 1024;
-    vid->yaml_file = "pixpro_wifi.yaml";
-    return vid;
 }
 }

@@ -19,11 +19,10 @@ processFile(const char *filepath)
 
     vid_t dummy;
     dummy.dev_char = nullptr;
-    dummy.dev_int = -1;
     dummy.width = im.cols;
     dummy.height = im.rows;
     dummy.yaml_file = "webcam.yaml";
-    Eye::BeeEye eye(&dummy);
+    Eye::BeeEye eye((const vid_t*) &dummy);
 
     cv::Mat unwrap;
     eye.getUnwrappedImage(unwrap, im);

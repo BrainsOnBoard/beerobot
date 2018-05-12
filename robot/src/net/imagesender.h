@@ -26,6 +26,6 @@ private:
 
     socket_t m_Socket = INVALID_SOCKET;
     const sockaddr_in *m_DestAddr;
-    Eye::BeeEye m_Eye;
+    std::unique_ptr<Eye::BeeEye> m_Eye;
 };
 }

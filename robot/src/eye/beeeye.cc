@@ -8,16 +8,16 @@
 #endif
 
 namespace Eye {
-BeeEye::BeeEye(vid_t *vid)
+BeeEye::BeeEye(const vid_t *vid, int vidDeviceNum)
   : m_Params(vid)
 {
-    if (vid->dev_int != -1 || vid->dev_char != nullptr) {
+    if (vidDeviceNum != -1 || vid->dev_char) {
 #ifndef _WIN32
         if (vid->is_see3cam) {
-            std::cout << "Opening /dev/video" + std::to_string(vid->dev_int)
+            std::cout << "Opening /dev/video" + std::to_string(vidDeviceNum)
                       << std::endl;
             auto see3cam = new See3CAM_CU40(
-                    "/dev/video" + std::to_string(vid->dev_int),
+                    "/dev/video" + std::to_string(vidDeviceNum),
                     See3CAM_CU40::Resolution::_1280x720);
             see3cam->setBrightness(20);
 
@@ -28,7 +28,7 @@ BeeEye::BeeEye(vid_t *vid)
             if (vid->dev_char) {
                 cam = new VideoIn::OpenCVInput(vid->dev_char);
             } else {
-                cam = new VideoIn::OpenCVInput(vid->dev_int);
+                cam = new VideoIn::OpenCVInput(vidDeviceNum);
             }
 
             m_Camera = std::unique_ptr<VideoIn::VideoInput>(cam);

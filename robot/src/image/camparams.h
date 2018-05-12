@@ -27,7 +27,7 @@ public:
       : m_SizeDest(1280, 400)
     {}
 
-    CamParams(vid_t *vid)
+    CamParams(const vid_t *vid)
       : CamParams(vid->yaml_file, vid->width, vid->height)
     {}
 

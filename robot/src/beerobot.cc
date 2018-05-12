@@ -58,8 +58,9 @@ main(int argc, char **argv)
     bool localflag = false;
     bool overlayflag = true;
     MotorType mtype = Arduino; // type of Motor to use (server only)
-    char *server_ip = NULL;    // IP of robot
-    vid_t *vid = NULL;         // video device to read from
+    char *server_ip = nullptr;    // IP of robot
+    const vid_t *vid = nullptr;         // video device to read from
+    int vidDeviceNum = -1;
 
     if (argc > 1) { // if we have command line args
         bool config =
@@ -73,9 +74,9 @@ main(int argc, char **argv)
             } else if (vid) {
                 showusage();
             } else if (strcmp(argv[i], "usb") == 0) { // use a USB camera
-                vid = Image::getUSB();
+                vid = Image::getUSB(&vidDeviceNum);
             } else if (strcmp(argv[i], "wifi") == 0) { // use PixPro over wifi
-                vid = Image::getPixProWifi();
+                vid = &Image::PixProWifiDevice;
             } else if (strcmp(argv[i], "viewer") == 0) {
                 // start the viewer client
                 if (argc < i + 2) {
@@ -138,11 +139,11 @@ main(int argc, char **argv)
                 return 0;
             } else if (config || vid) {
                 if (!vid) { // default to usb for config
-                    vid = Image::getUSB();
+                    vid = Image::getUSB(&vidDeviceNum);
                 }
 
                 // code run if just showing video locally
-                Eye::runEyeConfig(vid, config);
+                Eye::runEyeConfig(vid, vidDeviceNum, config);
                 return 0;
             }
         }
@@ -190,10 +191,10 @@ main(int argc, char **argv)
 
     if (localflag) {
         if (!vid) {
-            vid = Image::getUSB();
+            vid = Image::getUSB(&vidDeviceNum);
         }
 
-        Eye::BeeEye eye(vid);
+        Eye::BeeEye eye(vid, vidDeviceNum);
         Eye::runEyeViewer(eye, overlayflag);
     } else {
         // run main server

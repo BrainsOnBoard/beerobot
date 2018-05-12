@@ -24,9 +24,9 @@ DrawCalibrationLine(cv::Mat &imorig, cv::Point p1, cv::Point p2)
 
 /* run the bee eye config display */
 void
-runEyeConfig(vid_t *vid, bool calib_enabled)
+runEyeConfig(const vid_t *vid, int vidDeviceNum, bool calib_enabled)
 {
-    BeeEye eye(vid);
+    BeeEye eye(vid, vidDeviceNum);
 
     bool do_calib = true;      // whether calibration screen is visible or not
     int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration
