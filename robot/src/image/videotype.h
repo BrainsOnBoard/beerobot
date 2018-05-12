@@ -13,9 +13,9 @@ const CameraInfo *
 getUSB(int *deviceNum);
 
 static const CameraInfo See3CamDevice{ .width = 640,
-                                  .height = 360,
-                                  .configFile = "see3cam.yaml",
-                                  .isSee3Cam = true };
+                                       .height = 360,
+                                       .configFile = "see3cam.yaml",
+                                       .isSee3Cam = true };
 
 static const CameraInfo PixProUSBDevice{
     .width = 1440,
@@ -31,6 +31,6 @@ static const CameraInfo PixProWifiDevice{
 };
 
 static const CameraInfo WebcamDevice{ .width = 1280,
-                                 .height = 720,
-                                 .configFile = "webcam.yaml" };
+                                      .height = 720,
+                                      .configFile = "webcam.yaml" };
 }

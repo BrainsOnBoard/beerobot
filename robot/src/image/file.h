@@ -22,7 +22,7 @@ processFile(const char *filepath)
     dummy.width = im.cols;
     dummy.height = im.rows;
     dummy.configFile = "webcam.yaml";
-    Eye::BeeEye eye((const CameraInfo*) &dummy);
+    Eye::BeeEye eye((const CameraInfo *) &dummy);
 
     cv::Mat unwrap;
     eye.getUnwrappedImage(unwrap, im);

@@ -87,7 +87,8 @@ public:
         // if it's an axis event for the left or right stick, account for
         // deadzone
         if (js.isAxis && js.number >= LeftStickHorizontal &&
-            js.number <= RightStickVertical && abs(m_JsEvent.value) < deadzone) {
+            js.number <= RightStickVertical &&
+            abs(m_JsEvent.value) < deadzone) {
             js.value = 0;
         } else {
             js.value = m_JsEvent.value;
@@ -97,8 +98,8 @@ public:
     }
 
 private:
-    int m_Fd = 0;                    // file descriptor for joystick device
-    js_event m_JsEvent;   // struct to contain joystick event
+    int m_Fd = 0;       // file descriptor for joystick device
+    js_event m_JsEvent; // struct to contain joystick event
     static const int16_t deadzone = 10000; // size of deadzone for axes (i.e.
                                            // region within which not activated)
     static const long sleepmillis = 25; // number of milliseconds between polls

@@ -41,14 +41,16 @@ typedef int socket_t;
 
 #ifdef _WIN32
 #define WSAStartup()                                                           \
-{                                                                              \
+    {                                                                          \
         WSADATA wsaData;                                                       \
         int result = WSAStartup(MAKEWORD(2, 2), &wsaData);                     \
         if (result != NO_ERROR) {                                              \
             throw std::runtime_error("Error at WSAStartup");                   \
         }                                                                      \
-}
+    }
 #else
-#define WSAStartup() {}
-#define WSACleanup() {}
+#define WSAStartup()                                                           \
+    {}
+#define WSACleanup()                                                           \
+    {}
 #endif

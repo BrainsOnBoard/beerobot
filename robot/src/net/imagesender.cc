@@ -2,9 +2,9 @@
 
 #include <chrono>
 #include <iostream>
-#include <thread>
 #include <opencv2/opencv.hpp>
 #include <stdexcept>
+#include <thread>
 
 namespace Net {
 using namespace std::chrono;
@@ -53,8 +53,8 @@ ImageSender::run()
 
     // header for packets, containing ID, number of packets in this series and
     // packet number
-	Image::PacketInfo info;
-	info.Id = -1;
+    Image::PacketInfo info;
+    info.Id = -1;
 
     // set running flag to true
     m_Running = true;
@@ -75,7 +75,8 @@ ImageSender::run()
         // this is the first packet
         info.Number = 0;
 
-        if (buff.size() < Image::MAX_IM_BYTES) { // whole frame fits in one packet
+        if (buff.size() <
+            Image::MAX_IM_BYTES) { // whole frame fits in one packet
             // there is one packet in series
             info.Count = 1;
 
@@ -144,7 +145,7 @@ ImageSender::run()
         auto t1 = high_resolution_clock::now();
         int64_t tdiff = duration_cast<nanoseconds>(t1 - t0).count();
         if (tdiff < max_period) {
-			std::this_thread::sleep_for(nanoseconds(max_period - tdiff));
+            std::this_thread::sleep_for(nanoseconds(max_period - tdiff));
         }
     }
 }

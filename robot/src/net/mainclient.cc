@@ -48,7 +48,7 @@ MainClient::~MainClient()
         close(m_Socket);
     }
 
-	WSACleanup();
+    WSACleanup();
 }
 
 /* Motor command: send TNK command over TCP */

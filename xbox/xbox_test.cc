@@ -6,23 +6,28 @@ using namespace Xbox;
 
 Xbox::Controller cont;
 
-void handleButton(unsigned int number, int16_t value)
+void
+handleButton(unsigned int number, int16_t value)
 {
     string name = cont.getButtonName(number);
     if (value) {
-        cout << "Button pushed: " << name << " (" << (int) number << ")" << endl;
+        cout << "Button pushed: " << name << " (" << (int) number << ")"
+             << endl;
     } else {
-        cout << "Button released: " << name << " (" << (int) number << ")" << endl;
+        cout << "Button released: " << name << " (" << (int) number << ")"
+             << endl;
     }
 }
 
-void handleAxis(unsigned int number, int16_t value)
+void
+handleAxis(unsigned int number, int16_t value)
 {
     string name = cont.getAxisName(number);
     cout << "Axis " << name << " (" << (int) number << "): " << value << endl;
 }
 
-void callback(JoystickEvent *js, void *)
+void
+callback(JoystickEvent *js, void *)
 {
     if (!js) {
         cerr << "Error reading from joystick" << endl;
@@ -36,7 +41,8 @@ void callback(JoystickEvent *js, void *)
     }
 }
 
-int main()
+int
+main()
 {
     cout << "Xbox controller test program" << endl;
     cout << "Press return to quit" << endl << endl;

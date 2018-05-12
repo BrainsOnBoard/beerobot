@@ -57,9 +57,9 @@ main(int argc, char **argv)
     bool motorflag = false;      // motor CL arg present
     bool localflag = false;
     bool overlayflag = true;
-    MotorType mtype = Arduino; // type of Motor to use (server only)
-    char *server_ip = nullptr;    // IP of robot
-    const CameraInfo *vid = nullptr;         // video device to read from
+    MotorType mtype = Arduino;       // type of Motor to use (server only)
+    char *server_ip = nullptr;       // IP of robot
+    const CameraInfo *vid = nullptr; // video device to read from
     int vidDeviceNum = -1;
 
     if (argc > 1) { // if we have command line args

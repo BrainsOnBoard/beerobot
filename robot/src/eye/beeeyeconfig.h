@@ -54,11 +54,12 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
                                           eye.m_Params.m_Center.y),
                                 cv::Point(eye.m_Params.m_Center.x + CROSS_SIZE,
                                           eye.m_Params.m_Center.y));
-            DrawCalibrationLine(imorig,
-                                cv::Point(eye.m_Params.m_Center.x,
-                                          eye.m_Params.m_Center.y - CROSS_SIZE),
-                                cv::Point(eye.m_Params.m_Center.x,
-                                          eye.m_Params.m_Center.y + CROSS_SIZE));
+            DrawCalibrationLine(
+                    imorig,
+                    cv::Point(eye.m_Params.m_Center.x,
+                              eye.m_Params.m_Center.y - CROSS_SIZE),
+                    cv::Point(eye.m_Params.m_Center.x,
+                              eye.m_Params.m_Center.y + CROSS_SIZE));
 
             // draw inner and outer circles, showing the area which we will
             // unwrap
@@ -122,7 +123,8 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
                 case 's': // make inner circle smaller
                     if (eye.m_Params.m_RadiusInner > 0) {
                         eye.m_Params.m_RadiusInner -= px_jump;
-                        eye.m_Params.m_RadiusInner = std::max(0, eye.m_Params.m_RadiusInner);
+                        eye.m_Params.m_RadiusInner =
+                                std::max(0, eye.m_Params.m_RadiusInner);
                         eye.m_Params.generateMap();
                     }
                     break;
@@ -133,7 +135,8 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
                 case 'a': // make outer circle smaller
                     if (eye.m_Params.m_RadiusOuter > 0) {
                         eye.m_Params.m_RadiusOuter -= px_jump;
-                        eye.m_Params.m_RadiusOuter = std::max(0, eye.m_Params.m_RadiusOuter);
+                        eye.m_Params.m_RadiusOuter =
+                                std::max(0, eye.m_Params.m_RadiusOuter);
                         eye.m_Params.generateMap();
                     }
                     break;

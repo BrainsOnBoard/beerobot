@@ -17,7 +17,7 @@ MainServer::MainServer(Motor *mtr)
     struct sockaddr_in addr;
     int on = 1;
 
-	WSAStartup();
+    WSAStartup();
 
     m_Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (m_Socket == INVALID_SOCKET) {
@@ -57,7 +57,7 @@ MainServer::~MainServer()
         close(m_Socket);
     }
 
-	WSACleanup();
+    WSACleanup();
 }
 
 /*

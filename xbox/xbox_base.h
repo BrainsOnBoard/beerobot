@@ -54,7 +54,7 @@ public:
     }
 
     /*
-     * Get the name of the button corresponding to number. 
+     * Get the name of the button corresponding to number.
      */
     std::string getButtonName(unsigned int number)
     {
@@ -92,7 +92,7 @@ public:
     }
 
     /*
-     * Get the name of the axis corresponding to number. 
+     * Get the name of the axis corresponding to number.
      */
     std::string getAxisName(unsigned int number)
     {
@@ -118,8 +118,8 @@ public:
     }
 
     /*
-     * Start the read thread in the background. Call callback when an event 
-     * occurs. 
+     * Start the read thread in the background. Call callback when an event
+     * occurs.
      */
     void startThread(ControllerCallback callback, void *data)
     {
