@@ -13,7 +13,7 @@ class BeeEye : public VideoIn::VideoInput
 public:
     Image::CamParams m_Params;
 
-    BeeEye(const vid_t *vid, int vidDeviceNum = -1);
+    BeeEye(const CameraInfo *vid, int vidDeviceNum = -1);
 
     bool getImage(cv::Mat &imorig);
     void getUnwrappedImage(cv::Mat &unwrap, cv::Mat &imorig);

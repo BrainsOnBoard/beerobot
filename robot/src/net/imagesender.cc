@@ -20,7 +20,7 @@ ImageSender::ImageSender(const sockaddr_in *dest)
 
     // Make bee-eye object
     int vidDeviceNum;
-    const vid_t *vid = Image::getUSB(&vidDeviceNum);
+    const CameraInfo *vid = Image::getUSB(&vidDeviceNum);
     m_Eye = std::unique_ptr<Eye::BeeEye>(new Eye::BeeEye(vid, vidDeviceNum));
 
     // Create socket

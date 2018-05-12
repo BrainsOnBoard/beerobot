@@ -59,7 +59,7 @@ main(int argc, char **argv)
     bool overlayflag = true;
     MotorType mtype = Arduino; // type of Motor to use (server only)
     char *server_ip = nullptr;    // IP of robot
-    const vid_t *vid = nullptr;         // video device to read from
+    const CameraInfo *vid = nullptr;         // video device to read from
     int vidDeviceNum = -1;
 
     if (argc > 1) { // if we have command line args

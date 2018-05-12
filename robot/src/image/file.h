@@ -17,12 +17,12 @@ processFile(const char *filepath)
 
     std::cout << "Processing " << filepath << std::endl;
 
-    vid_t dummy;
-    dummy.dev_char = nullptr;
+    CameraInfo dummy;
+    dummy.deviceURL = nullptr;
     dummy.width = im.cols;
     dummy.height = im.rows;
-    dummy.yaml_file = "webcam.yaml";
-    Eye::BeeEye eye((const vid_t*) &dummy);
+    dummy.configFile = "webcam.yaml";
+    Eye::BeeEye eye((const CameraInfo*) &dummy);
 
     cv::Mat unwrap;
     eye.getUnwrappedImage(unwrap, im);

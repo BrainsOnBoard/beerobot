@@ -24,7 +24,7 @@ DrawCalibrationLine(cv::Mat &imorig, cv::Point p1, cv::Point p2)
 
 /* run the bee eye config display */
 void
-runEyeConfig(const vid_t *vid, int vidDeviceNum, bool calib_enabled)
+runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
 {
     BeeEye eye(vid, vidDeviceNum);
 

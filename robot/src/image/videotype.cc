@@ -79,7 +79,7 @@ getCameraByName(const char *const (&names)[N], int &selected)
 }
 
 /* get a PixPro or webcam video device over USB */
-const vid_t *
+const CameraInfo *
 getUSB(int *usbDeviceNum)
 {
     int sel = 2;

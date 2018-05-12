@@ -8,12 +8,12 @@
 #endif
 
 namespace Eye {
-BeeEye::BeeEye(const vid_t *vid, int vidDeviceNum)
+BeeEye::BeeEye(const CameraInfo *vid, int vidDeviceNum)
   : m_Params(vid)
 {
-    if (vidDeviceNum != -1 || vid->dev_char) {
+    if (vidDeviceNum != -1 || vid->deviceURL) {
 #ifndef _WIN32
-        if (vid->is_see3cam) {
+        if (vid->isSee3Cam) {
             std::cout << "Opening /dev/video" + std::to_string(vidDeviceNum)
                       << std::endl;
             auto see3cam = new See3CAM_CU40(
@@ -25,8 +25,8 @@ BeeEye::BeeEye(const vid_t *vid, int vidDeviceNum)
         } else {
 #endif
             VideoIn::OpenCVInput *cam;
-            if (vid->dev_char) {
-                cam = new VideoIn::OpenCVInput(vid->dev_char);
+            if (vid->deviceURL) {
+                cam = new VideoIn::OpenCVInput(vid->deviceURL);
             } else {
                 cam = new VideoIn::OpenCVInput(vidDeviceNum);
             }
