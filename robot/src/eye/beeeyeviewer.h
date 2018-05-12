@@ -12,6 +12,7 @@ void
 runEyeViewer(VideoIn::VideoInput &vid, bool showoverlay)
 {
 #ifdef _WIN32
+    // TODO: add code for getting screen resolution in Windows
     cv::Size oversz(1024, 768);
 #else
     Display *disp = XOpenDisplay(nullptr);
