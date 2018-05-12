@@ -24,18 +24,18 @@ DrawCalibrationLine(cv::Mat &imorig, cv::Point p1, cv::Point p2)
 
 /* run the bee eye config display */
 void
-runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
+runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
 {
     BeeEye eye(vid, vidDeviceNum);
 
-    bool do_calib = true;      // whether calibration screen is visible or not
-    int px_jump = BIG_PX_JUMP; // number of pixels to move by for calibration
-                               // (either 1 or 5)
+    bool doCalibration = true;   // whether calibration screen is visible or not
+    int pixelJump = BIG_PX_JUMP; // number of pixels to move by for calibration
+                                 // (either 1 or 5)
 
     cv::Mat imorig, unwrap, view;
 
     // display remapped camera output on loop until user presses escape
-    for (bool do_run = true; do_run;) {
+    for (bool runLoop = true; runLoop;) {
         if (!eye.getImage(imorig)) {
             std::cerr << "Error: Could not read from webcam" << std::endl;
             exit(1);
@@ -44,7 +44,7 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
         eye.getUnwrappedImage(unwrap, imorig);
         eye.getEyeView(view, unwrap);
 
-        if (do_calib) { // then show calibration screen
+        if (doCalibration) { // then show calibration screen
             // show unwrapped image
             imshow("unwrapped", unwrap);
 
@@ -87,8 +87,8 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
             cout << "key: " << key << endl;*/
         switch (key) {
         case 'c': // toggle display of calibration screen
-            if (calib_enabled) {
-                if (do_calib) { // we have to close window explicitly
+            if (calibrationEnabled) {
+                if (doCalibration) { // we have to close window explicitly
                     cv::destroyWindow("calibration");
                     cv::destroyWindow("unwrapped");
 
@@ -101,59 +101,59 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
                     cv::destroyWindow("bee view");
                 }
 
-                do_calib = !do_calib;
+                doCalibration = !doCalibration;
             }
             break;
         case KB_ESC: // quit program
-            do_run = false;
+            runLoop = false;
             break;
         default:
-            if (do_calib) {
+            if (doCalibration) {
                 switch (key) {
                 case ' ': // toggle 1px/5px jumps when moving/resizing
-                    if (px_jump == BIG_PX_JUMP)
-                        px_jump = 1;
+                    if (pixelJump == BIG_PX_JUMP)
+                        pixelJump = 1;
                     else
-                        px_jump = BIG_PX_JUMP;
+                        pixelJump = BIG_PX_JUMP;
                     break;
                 case 'w': // make inner circle bigger
-                    eye.m_Params.m_RadiusInner += px_jump;
+                    eye.m_Params.m_RadiusInner += pixelJump;
                     eye.m_Params.generateMap();
                     break;
                 case 's': // make inner circle smaller
                     if (eye.m_Params.m_RadiusInner > 0) {
-                        eye.m_Params.m_RadiusInner -= px_jump;
+                        eye.m_Params.m_RadiusInner -= pixelJump;
                         eye.m_Params.m_RadiusInner =
                                 std::max(0, eye.m_Params.m_RadiusInner);
                         eye.m_Params.generateMap();
                     }
                     break;
                 case 'q': // make outer circle bigger
-                    eye.m_Params.m_RadiusOuter += px_jump;
+                    eye.m_Params.m_RadiusOuter += pixelJump;
                     eye.m_Params.generateMap();
                     break;
                 case 'a': // make outer circle smaller
                     if (eye.m_Params.m_RadiusOuter > 0) {
-                        eye.m_Params.m_RadiusOuter -= px_jump;
+                        eye.m_Params.m_RadiusOuter -= pixelJump;
                         eye.m_Params.m_RadiusOuter =
                                 std::max(0, eye.m_Params.m_RadiusOuter);
                         eye.m_Params.generateMap();
                     }
                     break;
                 case KB_UP: // move centre up
-                    eye.m_Params.m_Center.y -= px_jump;
+                    eye.m_Params.m_Center.y -= pixelJump;
                     eye.m_Params.generateMap();
                     break;
                 case KB_DOWN: // move centre down
-                    eye.m_Params.m_Center.y += px_jump;
+                    eye.m_Params.m_Center.y += pixelJump;
                     eye.m_Params.generateMap();
                     break;
                 case KB_LEFT: // move centre left
-                    eye.m_Params.m_Center.x -= px_jump;
+                    eye.m_Params.m_Center.x -= pixelJump;
                     eye.m_Params.generateMap();
                     break;
                 case KB_RIGHT: // move centre right
-                    eye.m_Params.m_Center.x += px_jump;
+                    eye.m_Params.m_Center.x += pixelJump;
                     eye.m_Params.generateMap();
                     break;
                 }
@@ -161,7 +161,7 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calib_enabled)
         }
     }
 
-    if (calib_enabled) {
+    if (calibrationEnabled) {
         // write params to file
         // in particular we want to remember our calibration settings so we
         // don't have to recalibrate the next time we start the program

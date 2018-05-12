@@ -52,13 +52,14 @@ showusage()
 int
 main(int argc, char **argv)
 {
-    bool controllerflag = false; // controller CL arg present
-    bool controller = false;     // controller enabled
-    bool motorflag = false;      // motor CL arg present
-    bool localflag = false;
-    bool overlayflag = true;
-    MotorType mtype = Arduino;       // type of Motor to use (server only)
-    char *server_ip = nullptr;       // IP of robot
+    bool controllerFlag = false; // controller CL arg present
+    bool motorFlag = false;      // motor CL arg present
+    bool localFlag = false;
+    bool overlayFlag = true;
+
+    bool controller = false;         // controller enabled
+    MotorType motorType = Arduino;   // type of Motor to use (server only)
+    char *serverIP = nullptr;        // IP of robot
     const CameraInfo *vid = nullptr; // video device to read from
     int vidDeviceNum = -1;
 
@@ -82,55 +83,55 @@ main(int argc, char **argv)
                 if (argc < i + 2) {
                     showusage();
                 }
-                server_ip = argv[++i];
+                serverIP = argv[++i];
             } else if (strcmp(argv[i], "--no-overlay") == 0) {
                 // no honeycomb overlay
-                overlayflag = false;
+                overlayFlag = false;
             } else if (strcmp(argv[i], "--controller") == 0) {
                 // enable controller
-                if (controllerflag)
+                if (controllerFlag)
                     showusage();
-                controllerflag = true;
+                controllerFlag = true;
                 controller = true;
             } else if (strcmp(argv[i], "--no-controller") == 0) {
                 // disable controller
-                if (controllerflag) {
+                if (controllerFlag) {
                     showusage();
                 }
-                controllerflag = true;
+                controllerFlag = true;
                 controller = false;
             } else if (strcmp(argv[i], "--motor") == 0) { // set type of Motor
-                if (motorflag || i == argc - 1) {
+                if (motorFlag || i == argc - 1) {
                     showusage();
                 }
 
                 i++;
                 if (strcmp(argv[i], "dummy") == 0) {
-                    mtype = Dummy;
+                    motorType = Dummy;
                 } else if (strcmp(argv[i], "surveyor") == 0) {
-                    mtype = Surveyor;
+                    motorType = Surveyor;
                 } else if (strcmp(argv[i], "arduino") == 0) {
-                    mtype = Arduino;
+                    motorType = Arduino;
                 } else {
                     showusage();
                 }
-                motorflag = true;
+                motorFlag = true;
             } else if (strcmp(argv[i], "--local") == 0) { // run locally
-                localflag = true;
+                localFlag = true;
             } else if (config || !Image::processFile(argv[i]))
                 showusage();
         }
 
-        if (!localflag) {
-            if (server_ip) { // then start the viewer
+        if (!localFlag) {
+            if (serverIP) { // then start the viewer
                 // code run by client (connecting to robot)
-                Net::MainClient client(server_ip);
+                Net::MainClient client(serverIP);
                 if (controller) {
                     Controller::start(&client);
                 }
 
                 Net::ImageReceiver recv;
-                Eye::runEyeViewer(recv, overlayflag);
+                Eye::runEyeViewer(recv, overlayFlag);
 
                 // TODO: this is a case where smart pointers would be better
                 if (controller) {
@@ -155,7 +156,7 @@ main(int argc, char **argv)
     cout << "Motor disabled on Windows" << endl;
     mtr = new MotorDummy();
 #else
-    switch (mtype) {
+    switch (motorType) {
     case Surveyor:
         cout << "Using Surveyor as motor" << endl;
         try {
@@ -189,13 +190,13 @@ main(int argc, char **argv)
         cout << "Use of controller is disabled" << endl;
     }
 
-    if (localflag) {
+    if (localFlag) {
         if (!vid) {
             vid = Image::getUSB(&vidDeviceNum);
         }
 
         Eye::BeeEye eye(vid, vidDeviceNum);
-        Eye::runEyeViewer(eye, overlayflag);
+        Eye::runEyeViewer(eye, overlayFlag);
     } else {
         // run main server
         Net::MainServer::runServer(mtr);
