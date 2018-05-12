@@ -59,7 +59,7 @@ ImageSender::run()
 
         // read bee eye frame
         if (!m_Eye.getEyeView(view)) {
-            throw new std::runtime_error("Error: Could not read from webcam");
+            throw std::runtime_error("Error: Could not read from webcam");
         }
 
         // convert image to JPEG; store in buff
