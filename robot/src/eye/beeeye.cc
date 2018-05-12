@@ -21,7 +21,7 @@ BeeEye::BeeEye(vid_t *vid)
                     See3CAM_CU40::Resolution::_1280x720);
             see3cam->setBrightness(20);
 
-            m_Camera = see3cam;
+            m_Camera = std::unique_ptr<VideoIn::VideoInput>(see3cam);
         } else {
 #endif
             VideoIn::OpenCVInput *cam;
@@ -31,7 +31,7 @@ BeeEye::BeeEye(vid_t *vid)
                 cam = new VideoIn::OpenCVInput(vid->dev_int);
             }
 
-            m_Camera = cam;
+            m_Camera = std::unique_ptr<VideoIn::VideoInput>(cam);
 #ifndef _WIN32
         }
 #endif
@@ -64,14 +64,6 @@ BeeEye::BeeEye(vid_t *vid)
 
     m_ImUnwrap.create(m_Params.m_SizeDest, CV_8UC3);
     m_ImEye.create(sz_out, CV_8UC3);
-}
-
-BeeEye::~BeeEye()
-{
-    // stop reading from camera and free memory for object
-    if (m_Camera) {
-        delete m_Camera;
-    }
 }
 
 bool
