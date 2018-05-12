@@ -55,7 +55,7 @@ getCameraByName(const char *const (&names)[N], int &selected)
         }
 
         // At least this is a camera - use it by default
-        if (bestcamscore == -1) {
+        if (bestcamscore == -1 && bestcamnum == -1) {
             bestcamnum = i;
         }
     }
