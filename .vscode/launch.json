@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/robot/beerobot",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/robot",
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",
