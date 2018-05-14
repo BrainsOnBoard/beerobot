@@ -34,6 +34,7 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
 
     cv::Mat imorig, view;
     cv::Mat unwrap(eye.m_Unwrapper->m_UnwrappedResolution, CV_8UC3);
+    bool dirtyFlag = false;
 
     // display remapped camera output on loop until user presses escape
     for (bool runLoop = true; runLoop;) {
@@ -121,6 +122,7 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
                 case 'w': // make inner circle bigger
                     eye.m_Unwrapper->m_InnerPixel += pixelJump;
                     eye.m_Unwrapper->create();
+                    dirtyFlag = true;
                     break;
                 case 's': // make inner circle smaller
                     if (eye.m_Unwrapper->m_InnerPixel > 0) {
@@ -128,11 +130,13 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
                         eye.m_Unwrapper->m_InnerPixel =
                                 std::max(0, eye.m_Unwrapper->m_InnerPixel);
                         eye.m_Unwrapper->create();
+                        dirtyFlag = true;
                     }
                     break;
                 case 'q': // make outer circle bigger
                     eye.m_Unwrapper->m_OuterPixel += pixelJump;
                     eye.m_Unwrapper->create();
+                    dirtyFlag = true;
                     break;
                 case 'a': // make outer circle smaller
                     if (eye.m_Unwrapper->m_OuterPixel > 0) {
@@ -140,30 +144,35 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
                         eye.m_Unwrapper->m_OuterPixel =
                                 std::max(0, eye.m_Unwrapper->m_OuterPixel);
                         eye.m_Unwrapper->create();
+                        dirtyFlag = true;
                     }
                     break;
                 case KB_UP: // move centre up
                     eye.m_Unwrapper->m_CentrePixel.y -= pixelJump;
                     eye.m_Unwrapper->create();
+                    dirtyFlag = true;
                     break;
                 case KB_DOWN: // move centre down
                     eye.m_Unwrapper->m_CentrePixel.y += pixelJump;
                     eye.m_Unwrapper->create();
+                    dirtyFlag = true;
                     break;
                 case KB_LEFT: // move centre left
                     eye.m_Unwrapper->m_CentrePixel.x -= pixelJump;
                     eye.m_Unwrapper->create();
+                    dirtyFlag = true;
                     break;
                 case KB_RIGHT: // move centre right
                     eye.m_Unwrapper->m_CentrePixel.x += pixelJump;
                     eye.m_Unwrapper->create();
+                    dirtyFlag = true;
                     break;
                 }
             }
         }
     }
 
-    if (calibrationEnabled) {
+    if (calibrationEnabled && dirtyFlag) {
         // write params to file
         // in particular we want to remember our calibration settings so we
         // don't have to recalibrate the next time we start the program
