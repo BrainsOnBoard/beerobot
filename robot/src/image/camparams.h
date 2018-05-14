@@ -69,38 +69,30 @@ public:
     void write()
     {
         std::cout << "Writing to " << m_FilePath << "..." << std::endl;
-        std::ofstream fd(m_FilePath);
-
-        YAML::Emitter out(fd);
-        out << YAML::BeginMap;
+        cv::FileStorage fs(m_FilePath, cv::FileStorage::WRITE);
 
         // resolution
-        std::vector<int> resolution(2);
-        resolution.at(0) = m_SizeDest.width;
-        resolution.at(1) = m_SizeDest.height;
-        out << YAML::Key << "resolution" << YAML::Value << YAML::Flow
-            << resolution;
+        fs << "resolution" << m_SizeDest;
 
         // centre
-        std::vector<double> center(2);
-        center.at(0) = (double) m_Center.x / (double) m_SizeSource.width;
-        center.at(1) = (double) m_Center.y / (double) m_SizeSource.height;
-        out << YAML::Key << "center" << YAML::Value << YAML::Flow << center;
+        cv::Point2d center = { (double) m_Center.x /
+                                       (double) m_SizeSource.width,
+                               m_Center.y / (double) m_SizeSource.height };
+        fs << "center" << center;
 
         // radii
-        out << YAML::Key << "radius" << YAML::BeginMap;
-        out << YAML::Key << "inner"
-            << (double) m_RadiusInner / (double) m_SizeSource.height;
-        out << YAML::Key << "outer"
-            << (double) m_RadiusOuter / (double) m_SizeSource.height;
-        out << YAML::EndMap;
+        fs << "radius"
+           << "{"
+           << "inner" << (double) m_RadiusInner / (double) m_SizeSource.height
+           << "outer" << (double) m_RadiusOuter / (double) m_SizeSource.height
+           << "}";
 
         // other
-        out << YAML::Key << "flipped" << YAML::Value << m_Flipped;
-        out << YAML::Key << "degreeoffset" << YAML::Value << m_DegreeOffset;
+        fs << "flipped" << m_Flipped;
+        fs << "degreeoffset" << m_DegreeOffset;
 
-        out << YAML::EndMap;
-        fd.close();
+        // close file
+        fs.release();
     }
 
     /* generate a new pixel map, based on the current calibration settings */
