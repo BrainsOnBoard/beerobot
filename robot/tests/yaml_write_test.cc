@@ -1,4 +1,4 @@
-#include "../image/camparams.h"
+#include "image/camparams.h"
 #include <iostream>
 
 int
