@@ -2,7 +2,6 @@
 
 #include "opencv2/opencv.hpp"
 #include "videotype.h"
-#include "yaml-cpp/yaml.h"
 
 namespace Image {
 class CamParams
@@ -37,26 +36,32 @@ public:
     CamParams(std::string filePath, int width = 1280, int height = 400)
       : m_SizeSource(width, height)
     {
+        // open YAML file
         m_FilePath = filePath;
+        cv::FileStorage fs(m_FilePath, cv::FileStorage::READ);
 
-        YAML::Node params = YAML::LoadFile(filePath);
+        // resolution
+        fs["resolution"] >> m_SizeDest;
 
-        YAML::Node resolution = params["resolution"];
-        m_SizeDest.width = resolution[0].as<int>();
-        m_SizeDest.height = resolution[1].as<int>();
+        // centre
+        std::vector<double> center(2);
+        fs["center"] >> center;
+        m_Center.x = (int) round(m_SizeSource.width * center[0]);
+        m_Center.y = (int) round(m_SizeSource.height * center[1]);
 
-        YAML::Node center = params["center"];
-        m_Center.x = (int) round(m_SizeSource.width * center[0].as<double>());
-        m_Center.y = (int) round(m_SizeSource.height * center[1].as<double>());
-
-        YAML::Node radii = params["radius"];
+        // inner and outer radius
+        cv::FileNode radii = fs["radius"];
         m_RadiusInner =
-                (int) round(m_SizeSource.height * radii["inner"].as<double>());
+                (int) round(m_SizeSource.height * (double) radii["inner"]);
         m_RadiusOuter =
-                (int) round(m_SizeSource.height * radii["outer"].as<double>());
+                (int) round(m_SizeSource.height * (double) radii["outer"]);
 
-        m_Flipped = params["flipped"].as<bool>();
-        m_DegreeOffset = params["degreeoffset"].as<int>();
+        // other params
+        fs["flipped"] >> m_Flipped;
+        fs["degreeoffset"] >> m_DegreeOffset;
+
+        // close YAML file
+        fs.release();
 
         // define our x and y pixel maps
         m_MapX = cv::Mat(m_SizeDest, CV_32FC1);

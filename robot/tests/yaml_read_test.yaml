@@ -1,7 +1,9 @@
-resolution: [1280, 400]
-center: [0.454861, 0.204861]
+%YAML:1.0
+---
+resolution: [ 1280, 400 ]
+center: [ 4.5468750000000002e-01, 2.0499999999999999e-01 ]
 radius:
-  inner: 0.0868056
-  outer: 0.190972
-flipped: false
+   inner: 8.7499999999999994e-02
+   outer: 1.9000000000000000e-01
+flipped: 0
 degreeoffset: 0

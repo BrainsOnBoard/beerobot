@@ -47,7 +47,7 @@ else
 endif
 
 CXXFLAGS += $(shell $(_PREFIX)pkg-config --cflags opencv)
-LDFLAGS += $(shell $(_PREFIX)pkg-config --libs) -lyaml-cpp
+LDFLAGS += $(shell $(_PREFIX)pkg-config --libs)
 
 OBJECTS := \
 	${OBJ_DIR}/beeeye.o \
