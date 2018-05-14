@@ -32,7 +32,8 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
     int pixelJump = BIG_PX_JUMP; // number of pixels to move by for calibration
                                  // (either 1 or 5)
 
-    cv::Mat imorig, unwrap, view;
+    cv::Mat imorig, view;
+    cv::Mat unwrap(eye.m_Unwrapper->m_UnwrappedResolution, CV_8UC3);
 
     // display remapped camera output on loop until user presses escape
     for (bool runLoop = true; runLoop;) {
@@ -41,7 +42,7 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
             exit(1);
         }
 
-        eye.getUnwrappedImage(unwrap, imorig);
+        eye.m_Unwrapper->unwrap(imorig, unwrap);
         eye.getEyeView(view, unwrap);
 
         if (doCalibration) { // then show calibration screen
@@ -49,28 +50,29 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
             imshow("unwrapped", unwrap);
 
             // draw calibration cross at what we've chose as the center
-            DrawCalibrationLine(imorig,
-                                cv::Point(eye.m_Params.m_Center.x - CROSS_SIZE,
-                                          eye.m_Params.m_Center.y),
-                                cv::Point(eye.m_Params.m_Center.x + CROSS_SIZE,
-                                          eye.m_Params.m_Center.y));
             DrawCalibrationLine(
                     imorig,
-                    cv::Point(eye.m_Params.m_Center.x,
-                              eye.m_Params.m_Center.y - CROSS_SIZE),
-                    cv::Point(eye.m_Params.m_Center.x,
-                              eye.m_Params.m_Center.y + CROSS_SIZE));
+                    cv::Point(eye.m_Unwrapper->m_CentrePixel.x - CROSS_SIZE,
+                              eye.m_Unwrapper->m_CentrePixel.y),
+                    cv::Point(eye.m_Unwrapper->m_CentrePixel.x + CROSS_SIZE,
+                              eye.m_Unwrapper->m_CentrePixel.y));
+            DrawCalibrationLine(
+                    imorig,
+                    cv::Point(eye.m_Unwrapper->m_CentrePixel.x,
+                              eye.m_Unwrapper->m_CentrePixel.y - CROSS_SIZE),
+                    cv::Point(eye.m_Unwrapper->m_CentrePixel.x,
+                              eye.m_Unwrapper->m_CentrePixel.y + CROSS_SIZE));
 
             // draw inner and outer circles, showing the area which we will
             // unwrap
             circle(imorig,
-                   eye.m_Params.m_Center,
-                   eye.m_Params.m_RadiusInner,
+                   eye.m_Unwrapper->m_CentrePixel,
+                   eye.m_Unwrapper->m_InnerPixel,
                    cv::Scalar(0x00, 0x00, 0xff),
                    2);
             circle(imorig,
-                   eye.m_Params.m_Center,
-                   eye.m_Params.m_RadiusOuter,
+                   eye.m_Unwrapper->m_CentrePixel,
+                   eye.m_Unwrapper->m_OuterPixel,
                    cv::Scalar(0xff, 0x00, 0x00),
                    2);
 
@@ -117,44 +119,44 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
                         pixelJump = BIG_PX_JUMP;
                     break;
                 case 'w': // make inner circle bigger
-                    eye.m_Params.m_RadiusInner += pixelJump;
-                    eye.m_Params.generateMap();
+                    eye.m_Unwrapper->m_InnerPixel += pixelJump;
+                    eye.m_Unwrapper->create();
                     break;
                 case 's': // make inner circle smaller
-                    if (eye.m_Params.m_RadiusInner > 0) {
-                        eye.m_Params.m_RadiusInner -= pixelJump;
-                        eye.m_Params.m_RadiusInner =
-                                std::max(0, eye.m_Params.m_RadiusInner);
-                        eye.m_Params.generateMap();
+                    if (eye.m_Unwrapper->m_InnerPixel > 0) {
+                        eye.m_Unwrapper->m_InnerPixel -= pixelJump;
+                        eye.m_Unwrapper->m_InnerPixel =
+                                std::max(0, eye.m_Unwrapper->m_InnerPixel);
+                        eye.m_Unwrapper->create();
                     }
                     break;
                 case 'q': // make outer circle bigger
-                    eye.m_Params.m_RadiusOuter += pixelJump;
-                    eye.m_Params.generateMap();
+                    eye.m_Unwrapper->m_OuterPixel += pixelJump;
+                    eye.m_Unwrapper->create();
                     break;
                 case 'a': // make outer circle smaller
-                    if (eye.m_Params.m_RadiusOuter > 0) {
-                        eye.m_Params.m_RadiusOuter -= pixelJump;
-                        eye.m_Params.m_RadiusOuter =
-                                std::max(0, eye.m_Params.m_RadiusOuter);
-                        eye.m_Params.generateMap();
+                    if (eye.m_Unwrapper->m_OuterPixel > 0) {
+                        eye.m_Unwrapper->m_OuterPixel -= pixelJump;
+                        eye.m_Unwrapper->m_OuterPixel =
+                                std::max(0, eye.m_Unwrapper->m_OuterPixel);
+                        eye.m_Unwrapper->create();
                     }
                     break;
                 case KB_UP: // move centre up
-                    eye.m_Params.m_Center.y -= pixelJump;
-                    eye.m_Params.generateMap();
+                    eye.m_Unwrapper->m_CentrePixel.y -= pixelJump;
+                    eye.m_Unwrapper->create();
                     break;
                 case KB_DOWN: // move centre down
-                    eye.m_Params.m_Center.y += pixelJump;
-                    eye.m_Params.generateMap();
+                    eye.m_Unwrapper->m_CentrePixel.y += pixelJump;
+                    eye.m_Unwrapper->create();
                     break;
                 case KB_LEFT: // move centre left
-                    eye.m_Params.m_Center.x -= pixelJump;
-                    eye.m_Params.generateMap();
+                    eye.m_Unwrapper->m_CentrePixel.x -= pixelJump;
+                    eye.m_Unwrapper->create();
                     break;
                 case KB_RIGHT: // move centre right
-                    eye.m_Params.m_Center.x += pixelJump;
-                    eye.m_Params.generateMap();
+                    eye.m_Unwrapper->m_CentrePixel.x += pixelJump;
+                    eye.m_Unwrapper->create();
                     break;
                 }
             }
@@ -165,7 +167,7 @@ runEyeConfig(const CameraInfo *vid, int vidDeviceNum, bool calibrationEnabled)
         // write params to file
         // in particular we want to remember our calibration settings so we
         // don't have to recalibrate the next time we start the program
-        eye.m_Params.write();
+        eye.m_Unwrapper->writeFile();
     }
 }
 }

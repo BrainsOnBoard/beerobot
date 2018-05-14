@@ -1,19 +1,26 @@
 #include "beeeye.h"
 #include "gigerdatacam.h"
 
+#ifdef _WIN32
+#define NO_SEE3CAM
+#endif
+
 // GeNN robotics includes
 #include "videoin/opencvinput.h"
-#ifndef _WIN32
+#ifndef NO_SEE3CAM
 #include "common/see3cam_cu40.h"
 #endif
 
 namespace Eye {
 BeeEye::BeeEye(const CameraInfo *vid, int vidDeviceNum)
-  : m_Params(vid)
 {
+    auto unwrapper = OpenCVUnwrap360::loadFromFile(
+            vid->configFile, cv::Size(vid->width, vid->height));
+    m_Unwrapper = std::unique_ptr<OpenCVUnwrap360>(unwrapper);
+
     // create camera object
     if (vidDeviceNum != -1 || vid->deviceURL) {
-#ifndef _WIN32
+#ifndef NO_SEE3CAM
         if (vid->isSee3Cam) {
             std::cout << "Opening /dev/video" + std::to_string(vidDeviceNum)
                       << std::endl;
@@ -33,14 +40,14 @@ BeeEye::BeeEye(const CameraInfo *vid, int vidDeviceNum)
             }
 
             m_Camera = std::unique_ptr<VideoIn::VideoInput>(cam);
-#ifndef _WIN32
+#ifndef NO_SEE3CAM
         }
 #endif
     }
 
-    m_Camera->setOutputSize(m_Params.m_SizeSource);
+    m_Camera->setOutputSize(unwrapper->m_CameraResolution);
 
-    // create x and y pixel maps
+    // create x and y pixel maps for bee-eye transform
     cv::Size outSize(eye_size[0], eye_size[1]);
     m_MapX.create(outSize, CV_32FC1);
     m_MapY.create(outSize, CV_32FC1);
@@ -60,10 +67,7 @@ BeeEye::BeeEye(const CameraInfo *vid, int vidDeviceNum)
                 floor(gdata[i][1]);
     }
 
-    // create pixel maps for unwrapping panoramic images
-    m_Params.generateMap();
-
-    m_ImUnwrap.create(m_Params.m_SizeDest, CV_8UC3);
+    m_ImUnwrap.create(unwrapper->m_UnwrappedResolution, CV_8UC3);
     m_ImEye.create(outSize, CV_8UC3);
 }
 
@@ -72,16 +76,6 @@ BeeEye::getImage(cv::Mat &imorig)
 {
     // read frame from camera
     return m_Camera && m_Camera->readFrame(imorig);
-}
-
-void
-BeeEye::getUnwrappedImage(cv::Mat &imunwrap, cv::Mat &imorig)
-{
-    remap(imorig,
-          imunwrap,
-          m_Params.m_MapX,
-          m_Params.m_MapY,
-          cv::INTER_NEAREST);
 }
 
 void
@@ -107,7 +101,7 @@ BeeEye::getEyeView(cv::Mat &view)
         return false;
     }
 
-    getUnwrappedImage(m_ImUnwrap, m_ImOrig);
+    m_Unwrapper->unwrap(m_ImUnwrap, m_ImOrig);
     getEyeView(view, m_ImUnwrap);
     return true;
 }

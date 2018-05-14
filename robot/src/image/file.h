@@ -25,7 +25,7 @@ processFile(const char *filepath)
     Eye::BeeEye eye((const CameraInfo *) &dummy);
 
     cv::Mat unwrap;
-    eye.getUnwrappedImage(unwrap, im);
+    eye.m_Unwrapper->unwrap(unwrap, im);
 
     std::vector<int> imparams;
     imparams.push_back(CV_IMWRITE_JPEG_QUALITY);

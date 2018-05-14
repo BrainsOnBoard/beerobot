@@ -4,14 +4,17 @@
 #include <cmath>
 #include <opencv2/opencv.hpp>
 
-#include "image/camparams.h"
+#include "image/videotype.h"
+
+// GeNN_Robotics includes
+#include "common/opencv_unwrap_360.h"
 #include "videoin/videoinput.h"
 
 namespace Eye {
 class BeeEye : public VideoIn::VideoInput
 {
 public:
-    Image::CamParams m_Params;
+    std::unique_ptr<OpenCVUnwrap360> m_Unwrapper;
 
     BeeEye(const CameraInfo *vid, int vidDeviceNum = -1);
 
