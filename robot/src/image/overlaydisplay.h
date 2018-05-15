@@ -1,6 +1,6 @@
 #include "display/simpledisplay.h"
-#include "videoin/videoinput.h"
 #include "os/screen.h"
+#include "videoin/videoinput.h"
 
 #include <opencv2/opencv.hpp>
 
@@ -19,22 +19,21 @@ public:
         }
 
         // create overlay
-        int width, height;
-        if (!OS::Screen::getResolution(&width, &height)) {
+        cv::Size screenSize;
+        if (!OS::Screen::getResolution(screenSize)) {
             throw std::runtime_error("Could not get screen resolution");
         }
-        cv::Size overlaySize(width, height);
 
-        std::cout << "Screen resolution: " << overlaySize << std::endl;
+        std::cout << "Screen resolution: " << screenSize << std::endl;
 
-        int w = (int) round((float) overlaySize.height * 970.0 / 1048.0);
-        int xoff = (overlaySize.width - w) / 2;
+        int w = (int) round((float) screenSize.height * 970.0 / 1048.0);
+        int xoff = (screenSize.width - w) / 2;
 
         cv::Mat overlay = cv::imread("honeycomb_overlay.png", 3);
-        cv::resize(overlay, m_Overlay, overlaySize, 0, 0, cv::INTER_CUBIC);
+        cv::resize(overlay, m_Overlay, screenSize, 0, 0, cv::INTER_CUBIC);
 
-        m_OverlayInner = m_Overlay(cv::Range::all(), cv::Range(xoff, xoff +
-        w)); m_Mask = (m_OverlayInner == 0);
+        m_OverlayInner = m_Overlay(cv::Range::all(), cv::Range(xoff, xoff + w));
+        m_Mask = (m_OverlayInner == 0);
         m_ImInner.create(m_OverlayInner.size(), m_OverlayInner.type());
     }
 
@@ -47,7 +46,7 @@ public:
         if (!m_ShowOverlay) {
             frame = m_ImEyeOut;
             return;
-        }    
+        }
 
         cv::resize(m_ImEyeOut, m_ImInner, m_ImInner.size());
         m_ImInner.copyTo(m_OverlayInner, m_Mask);

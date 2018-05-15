@@ -1,3 +1,7 @@
+#pragma once
+
+#include <opencv2/opencv.hpp>
+
 namespace OS::Screen {
 extern "C"
 {
@@ -9,7 +13,7 @@ extern "C"
 using XScreen = Screen;
 
 bool
-getResolution(int *width, int *height)
+getResolution(cv::Size &resolution)
 {
 #ifdef _WIN32
     // TODO: implement this function on Windows
@@ -25,8 +29,8 @@ getResolution(int *width, int *height)
         return false;
     }
 
-    *width = screen->width;
-    *height = screen->height;
+    resolution.width = screen->width;
+    resolution.height = screen->height;
     XCloseDisplay(display);
     return true;
 #endif
