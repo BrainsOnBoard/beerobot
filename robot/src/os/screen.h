@@ -1,6 +1,9 @@
 #pragma once
 
+#ifdef _WIN32
 #include "windows_include.h"
+#pragma comment(lib, "user32.lib")
+#endif
 #include <opencv2/opencv.hpp>
 
 namespace OS::Screen {
@@ -11,27 +14,24 @@ using XScreen = Screen;
 }
 #endif
 
-bool
-getResolution(cv::Size &resolution)
+cv::Size
+getResolution()
 {
 #ifdef _WIN32
-    // TODO: implement this function on Windows
-    return false;
+    return cv::Size(GetSystemMetrics(SM_CXSCREEN),
+                    GetSystemMetrics(SM_CYSCREEN));
 #else
     Display *display = XOpenDisplay(nullptr);
     if (!display) {
-        return false;
+        return cv::Size();
     }
     XScreen *screen = DefaultScreenOfDisplay(display);
+    XCloseDisplay(display);
     if (!screen) {
-        XCloseDisplay(display);
-        return false;
+        return cv::Size();
     }
 
-    resolution.width = screen->width;
-    resolution.height = screen->height;
-    XCloseDisplay(display);
-    return true;
+    return cv::Size(screen->width, screen->height);
 #endif
 }
 }
