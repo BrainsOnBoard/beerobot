@@ -2,39 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\beerobot.cc" />
-    <ClCompile Include="src\eye\beeeye.cc">
-      <Filter>eye</Filter>
-    </ClCompile>
-    <ClCompile Include="src\net\imagereceiver.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="src\net\imagesender.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="src\net\mainclient.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="src\net\mainserver.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="src\net\socketcommon.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="src\image\videotype.cc">
-      <Filter>image</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\readable.h" />
     <ClInclude Include="src\targetver.h" />
     <ClInclude Include="src\xboxrobot.h" />
     <ClInclude Include="src\eye\beeeye.h">
-      <Filter>eye</Filter>
-    </ClInclude>
-    <ClInclude Include="src\eye\beeeyeconfig.h">
-      <Filter>eye</Filter>
-    </ClInclude>
-    <ClInclude Include="src\eye\beeeyeviewer.h">
       <Filter>eye</Filter>
     </ClInclude>
     <ClInclude Include="src\eye\gigerdatacam.h">
@@ -55,19 +28,19 @@
     <ClInclude Include="src\net\socketcommon.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="src\image\camparams.h">
-      <Filter>image</Filter>
-    </ClInclude>
     <ClInclude Include="src\image\common.h">
       <Filter>image</Filter>
     </ClInclude>
-    <ClInclude Include="src\image\file.h">
-      <Filter>image</Filter>
-    </ClInclude>
-    <ClInclude Include="src\image\videotype.h">
-      <Filter>image</Filter>
-    </ClInclude>
     <ClInclude Include="src\os\net.h">
+      <Filter>os</Filter>
+    </ClInclude>
+    <ClInclude Include="src\os\screen.h">
+      <Filter>os</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image\overlaydisplay.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\os\windows_include.h">
       <Filter>os</Filter>
     </ClInclude>
   </ItemGroup>

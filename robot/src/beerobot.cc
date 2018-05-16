@@ -1,8 +1,9 @@
+#include "os/windows_include.h"
 #include <cstdlib>
 
 // GeNN robotics includes
-#include "video/panoramic.h"
 #include "common/motor_dummy.h"
+#include "video/panoramic.h"
 #ifndef _WIN32
 #ifndef NO_I2C_ROBOT
 #include "common/motor_i2c.h"
@@ -54,7 +55,7 @@ main(int argc, char **argv)
     bool controller = false;       // controller enabled
     MotorType motorType = Arduino; // type of Motor to use (server only)
     char *serverIP = nullptr;      // IP of robot
-    std::unique_ptr<JoystickThread> joystickThread;
+    std::unique_ptr<JoystickThread> joystickThread(nullptr);
 
     if (argc > 1) { // if we have command line args
         for (int i = 1; i < argc; i++) {

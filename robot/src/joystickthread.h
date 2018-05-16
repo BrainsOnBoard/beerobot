@@ -6,7 +6,12 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <memory>
+
+#ifdef max
+#undef max
+#endif
 
 class JoystickThread
 {
@@ -62,14 +67,15 @@ private:
         const float twoTheta = 2.0f * theta;
 
         // Drive motor
-        if (theta >= 0.0f && theta < M_PI_2) {
+        const float pi = 3.141592653589793238462643383279502884f;
+        if (theta >= 0.0f && theta < pi / 2) {
             thread->m_Motor->tank(r, r * cos(twoTheta));
-        } else if (theta >= M_PI_2 && theta < M_PI) {
+        } else if (theta >= pi / 2 && theta < pi) {
             thread->m_Motor->tank(-r * cos(twoTheta), -r);
-        } else if (theta < 0.0f && theta >= -M_PI_2) {
+        } else if (theta < 0.0f && theta >= -pi / 2) {
             thread->m_Motor->tank(r * cos(twoTheta), r);
-        } else if (theta < -M_PI_2 && theta >= -M_PI) {
+        } else if (theta < -pi / 2 && theta >= -pi) {
             thread->m_Motor->tank(-r, -r * cos(twoTheta));
-        }        
+        }
     }
 };

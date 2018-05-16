@@ -46,7 +46,7 @@ MainServer::MainServer(std::shared_ptr<Motor> motor)
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = htons(MAIN_PORT);
 
-    if (bind(m_Socket, (sockaddr *) &addr, sizeof(addr))) {
+    if (bind(m_Socket, (const sockaddr *) &addr, (int) sizeof(addr))) {
         goto error;
     }
     if (listen(m_Socket, 10)) {

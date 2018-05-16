@@ -76,7 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <IncludePath>..\xbox;src;GeNN_Robotics;C:\opencv\build\include;C:\yaml-cpp\include;$(IncludePath)</IncludePath>
+    <IncludePath>src;GeNN_Robotics;C:\opencv\build\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;</LibraryPath>
     <TargetName>beerobot</TargetName>
   </PropertyGroup>
@@ -109,12 +109,13 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc15\lib;C:\yaml-cpp\build\Debug;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);libyaml-cppmdd.lib;opencv_world341d.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc15\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);opencv_world341d.lib;</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>git submodule update --init</Command>
@@ -161,32 +162,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\eye\beeeye.h" />
-    <ClInclude Include="src\eye\beeeyeconfig.h" />
-    <ClInclude Include="src\eye\beeeyeviewer.h" />
     <ClInclude Include="src\eye\gigerdatacam.h" />
-    <ClInclude Include="src\image\camparams.h" />
     <ClInclude Include="src\image\common.h" />
-    <ClInclude Include="src\image\file.h" />
-    <ClInclude Include="src\image\videotype.h" />
+    <ClInclude Include="src\image\overlaydisplay.h" />
     <ClInclude Include="src\net\imagereceiver.h" />
     <ClInclude Include="src\net\imagesender.h" />
     <ClInclude Include="src\net\mainclient.h" />
     <ClInclude Include="src\net\mainserver.h" />
     <ClInclude Include="src\net\socketcommon.h" />
     <ClInclude Include="src\os\net.h" />
+    <ClInclude Include="src\os\screen.h" />
+    <ClInclude Include="src\os\windows_include.h" />
     <ClInclude Include="src\readable.h" />
     <ClInclude Include="src\targetver.h" />
     <ClInclude Include="src\xboxrobot.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\beerobot.cc" />
-    <ClCompile Include="src\eye\beeeye.cc" />
-    <ClCompile Include="src\image\videotype.cc" />
-    <ClCompile Include="src\net\imagereceiver.cc" />
-    <ClCompile Include="src\net\imagesender.cc" />
-    <ClCompile Include="src\net\mainclient.cc" />
-    <ClCompile Include="src\net\mainserver.cc" />
-    <ClCompile Include="src\net\socketcommon.cc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\eye\gigerommatidiamodel.py" />

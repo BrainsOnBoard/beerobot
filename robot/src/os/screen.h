@@ -1,16 +1,15 @@
 #pragma once
 
+#include "windows_include.h"
 #include <opencv2/opencv.hpp>
 
 namespace OS::Screen {
-extern "C"
-{
 #ifndef _WIN32
+extern "C" {
 #include <X11/Xlib.h>
-#endif
-}
-
 using XScreen = Screen;
+}
+#endif
 
 bool
 getResolution(cv::Size &resolution)
