@@ -1,16 +1,16 @@
 #include "display/simpledisplay.h"
 #include "os/screen.h"
-#include "videoin/videoinput.h"
+#include "video/input.h"
 
 #include <opencv2/opencv.hpp>
 
 namespace Image {
 
-class OverlayDisplay : public Display::SimpleDisplay<VideoIn::VideoInput *>
+class OverlayDisplay : public Display::SimpleDisplay<Video::Input *>
 {
 public:
-    OverlayDisplay(VideoIn::VideoInput &vid, bool showOverlay)
-      : Display::SimpleDisplay<VideoIn::VideoInput *>(&vid)
+    OverlayDisplay(Video::Input &vid, bool showOverlay)
+      : Display::SimpleDisplay<Video::Input *>(&vid)
       , m_ShowOverlay(showOverlay)
     {
         if (!showOverlay) {
@@ -39,7 +39,7 @@ public:
 
     void getNextFrame(cv::Mat &frame)
     {
-        if (!Display::SimpleDisplay<VideoIn::VideoInput *>::m_VideoInput
+        if (!Display::SimpleDisplay<Video::Input *>::m_VideoInput
                      ->readFrame(m_ImEyeOut)) {
             throw std::runtime_error("Error reading from video input");
         }

@@ -50,14 +50,7 @@ CXXFLAGS += $(shell $(_PREFIX)pkg-config --cflags opencv)
 LDFLAGS += $(shell $(_PREFIX)pkg-config --libs)
 
 OBJECTS := \
-	${OBJ_DIR}/beeeye.o \
-	${OBJ_DIR}/beerobot.o \
-	${OBJ_DIR}/imagereceiver.o \
-	${OBJ_DIR}/imagesender.o \
-	${OBJ_DIR}/mainclient.o \
-	${OBJ_DIR}/mainserver.o \
-	${OBJ_DIR}/socketcommon.o \
-	${OBJ_DIR}/videotype.o
+	${OBJ_DIR}/beerobot.o
 
 .PHONY: all build clean git_submodules mingw
 
@@ -68,15 +61,6 @@ $(TARGET): git_submodules $(OBJECTS)
 
 $(OBJ_DIR)/%.o: src/%.cc
 	$(_PREFIX)$(CXX) -o $@ -c $< $(CXXFLAGS)
-
-$(OBJ_DIR)/%.o: src/net/%.cc
-	$(_PREFIX)$(CXX) -o $@ -c $< $(CXXFLAGS)
-
-$(OBJ_DIR)/videotype.o: src/image/videotype.cc
-	$(_PREFIX)$(CXX) -o $@ -c $< $(CXXFLAGS)
-
-$(OBJ_DIR)/beeeye.o: src/eye/beeeye.cc src/eye/*.h
-	$(_PREFIX)$(CXX) -o $@ -c src/eye/beeeye.cc $(CXXFLAGS)
 
 git_submodules:
 	git submodule update --init

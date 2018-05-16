@@ -1,6 +1,7 @@
 #include <cstdlib>
 
-// for motor control of robot
+// GeNN robotics includes
+#include "video/panoramic.h"
 #include "common/motor_dummy.h"
 #ifndef _WIN32
 #ifndef NO_I2C_ROBOT
@@ -13,16 +14,9 @@
 #include "image/overlaydisplay.h"
 
 // to exchange messages between robot and viewer
+#include "net/imagereceiver.h"
 #include "net/mainclient.h"
 #include "net/mainserver.h"
-
-// for config mode (i.e. editing .ini files)
-#include "eye/beeeyeconfig.h"
-
-#include "net/imagereceiver.h"
-
-// for processing single image files
-#include "image/file.h"
 
 // for using the Xbox controller to drive the robot
 #include "joystickthread.h"
@@ -42,8 +36,8 @@ void
 showusage()
 {
     cout << "Usage: beerobot "
-            "[--config|--controller|--no-controller|--local|--no-overlay] "
-            "[--motor dummy|surveyor|arduino] [usb|wifi|viewer [ip]]"
+            "[--controller|--no-controller|--local|--no-overlay] "
+            "[--motor dummy|surveyor|arduino] [viewer [ip]]"
          << endl;
     exit(1);
 }
@@ -57,29 +51,14 @@ main(int argc, char **argv)
     bool localFlag = false;
     bool overlayFlag = true;
 
-    bool controller = false;         // controller enabled
-    MotorType motorType = Arduino;   // type of Motor to use (server only)
-    char *serverIP = nullptr;        // IP of robot
-    const CameraInfo *vid = nullptr; // video device to read from
-    int vidDeviceNum = -1;
+    bool controller = false;       // controller enabled
+    MotorType motorType = Arduino; // type of Motor to use (server only)
+    char *serverIP = nullptr;      // IP of robot
     std::unique_ptr<JoystickThread> joystickThread;
 
     if (argc > 1) { // if we have command line args
-        bool config =
-                false; // whether or not to enter config mode (edit .ini files)
         for (int i = 1; i < argc; i++) {
-            if (strcmp(argv[i], "--config") == 0) { // enable config mode
-                if (config) {
-                    showusage();
-                }
-                config = true;
-            } else if (vid) {
-                showusage();
-            } else if (strcmp(argv[i], "usb") == 0) { // use a USB camera
-                vid = Image::getUSB(&vidDeviceNum);
-            } else if (strcmp(argv[i], "wifi") == 0) { // use PixPro over wifi
-                vid = &Image::PixProWifiDevice;
-            } else if (strcmp(argv[i], "viewer") == 0) {
+            if (strcmp(argv[i], "viewer") == 0) {
                 // start the viewer client
                 if (argc < i + 2) {
                     showusage();
@@ -120,7 +99,7 @@ main(int argc, char **argv)
                 motorFlag = true;
             } else if (strcmp(argv[i], "--local") == 0) { // run locally
                 localFlag = true;
-            } else if (config || !Image::processFile(argv[i]))
+            } else
                 showusage();
         }
 
@@ -138,15 +117,13 @@ main(int argc, char **argv)
                 Image::OverlayDisplay display(recv, overlayFlag);
                 display.run();
                 return 0;
-            } else if (config || vid) {
-                if (!vid) { // default to usb for config
-                    vid = Image::getUSB(&vidDeviceNum);
-                }
-
-                // code run if just showing video locally
-                Eye::runEyeConfig(vid, vidDeviceNum, config);
-                return 0;
             }
+
+            // code run if just showing video locally
+            Video::PanoramicCamera cam;
+            Eye::BeeEye eye(cam);
+            Image::OverlayDisplay display(eye, overlayFlag);
+            return 0;
         }
     }
 
@@ -195,11 +172,8 @@ main(int argc, char **argv)
     }
 
     if (localFlag) {
-        if (!vid) {
-            vid = Image::getUSB(&vidDeviceNum);
-        }
-
-        Eye::BeeEye eye(vid, vidDeviceNum);
+        Video::PanoramicCamera cam;
+        Eye::BeeEye eye(cam);
         Image::OverlayDisplay display(eye, overlayFlag);
         display.run();
     } else {
