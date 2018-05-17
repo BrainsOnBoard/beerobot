@@ -47,7 +47,7 @@ else
 endif
 
 CXXFLAGS += $(shell $(_PREFIX)pkg-config --cflags opencv)
-LDFLAGS += $(shell $(_PREFIX)pkg-config --libs)
+LDFLAGS += $(shell $(_PREFIX)pkg-config --libs opencv)
 
 OBJECTS := \
 	${OBJ_DIR}/beerobot.o
