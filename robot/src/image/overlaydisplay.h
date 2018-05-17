@@ -1,17 +1,16 @@
-#include "display/simpledisplay.h"
 #include "os/screen.h"
 #include "video/input.h"
+#include "video/simpledisplay.h"
 
 #include <opencv2/opencv.hpp>
 
 namespace Image {
 
-class OverlayDisplay : public Display::SimpleDisplay<Video::Input *>
+class OverlayDisplay : public Video::SimpleDisplay
 {
 public:
-    OverlayDisplay(Video::Input &vid, bool showOverlay)
-      : Display::SimpleDisplay<Video::Input *>(&vid)
-      , m_ShowOverlay(showOverlay)
+    OverlayDisplay(bool showOverlay)
+      : m_ShowOverlay(showOverlay)
     {
         if (!showOverlay) {
             std::cout << "Image overlay disabled" << std::endl;
@@ -37,10 +36,9 @@ public:
         m_ImInner.create(m_OverlayInner.size(), m_OverlayInner.type());
     }
 
-    void getNextFrame(cv::Mat &frame)
+    void getNextFrame(Video::Input &videoInput, cv::Mat &frame)
     {
-        if (!Display::SimpleDisplay<Video::Input *>::m_VideoInput
-                     ->readFrame(m_ImEyeOut)) {
+        if (!videoInput.readFrame(m_ImEyeOut)) {
             throw std::runtime_error("Error reading from video input");
         }
         if (!m_ShowOverlay) {

@@ -114,15 +114,16 @@ main(int argc, char **argv)
                 }
 
                 Net::ImageReceiver recv;
-                Image::OverlayDisplay display(recv, overlayFlag);
-                display.run();
+                Image::OverlayDisplay display(overlayFlag);
+                display.run(recv);
                 return 0;
             }
 
             // code run if just showing video locally
             Video::PanoramicCamera cam;
             Eye::BeeEye eye(cam);
-            Image::OverlayDisplay display(eye, overlayFlag);
+            Image::OverlayDisplay display(overlayFlag);
+            display.run(eye);
             return 0;
         }
     }
@@ -174,8 +175,8 @@ main(int argc, char **argv)
     if (localFlag) {
         Video::PanoramicCamera cam;
         Eye::BeeEye eye(cam);
-        Image::OverlayDisplay display(eye, overlayFlag);
-        display.run();
+        Image::OverlayDisplay display(overlayFlag);
+        display.run(eye);
     } else {
         // run main server
         Net::MainServer::runServer(pMotor);
