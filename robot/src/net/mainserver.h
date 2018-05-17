@@ -19,7 +19,6 @@ private:
     void run();
 };
 
-
 /*
  * Create a server listening on MAIN_PORT (TCP), sending motor commands to *mtr
  */
@@ -117,8 +116,8 @@ MainServer::run()
         float left, right;
         while ((len = readLine(sock, buff)) == -1) {
             sbuff = std::string(buff);
-            if (sbuff.compare(0, 4, "TNK ") ==
-                0) { // driving command (e.g. TNK 0.5 0.5)
+            // driving command (e.g. TNK 0.5 0.5)
+            if (sbuff.compare(0, 4, "TNK ") == 0) {
                 // second space separates left and right parameters
                 size_t space = sbuff.rfind(' ');
                 if (space == std::string::npos)

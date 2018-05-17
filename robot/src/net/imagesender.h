@@ -1,13 +1,19 @@
 #pragma once
 
-#include "eye/beeeye.h"
-#include "image/common.h"
-#include "os/net.h"
-
+// C++ includes
+#include <chrono>
 #include <errno.h>
+#include <thread>
+
+// POSIX includes
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
+
+// local includes
+#include "eye/beeeye.h"
+#include "image/common.h"
+#include "os/net.h"
 
 namespace Net {
 class ImageSender
