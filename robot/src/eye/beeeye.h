@@ -31,7 +31,6 @@ public:
     cv::Size getOutputSize() const;
     void getUnwrappedImage(cv::Mat &unwrap, cv::Mat &imorig);
     bool readFrame(cv::Mat &view);
-    void runDisplay();
 
 private:
     Input *m_Camera;
