@@ -76,7 +76,7 @@ BeeEye::getEyeView(cv::Mat &view)
         return false;
     }
 
-    m_Unwrapper.unwrap(m_ImUnwrap, m_ImOrig);
+    m_Unwrapper.unwrap(m_ImOrig, m_ImUnwrap);
     getEyeView(view, m_ImUnwrap);
     return true;
 }
