@@ -5,7 +5,7 @@ ifndef USE_LOCAL_GENN_ROBOTICS
 	GENN_ROBOTICS_PATH := GeNN_Robotics
 endif
 CXXFLAGS := -g -pthread -std=c++11 -Isrc \
-	-I$(GENN_ROBOTICS_PATH)
+	-I$(GENN_ROBOTICS_PATH) -Wall
 LDFLAGS := -O2 -lstdc++ -lm
 
 ifdef NO_I2C_ROBOT
@@ -49,18 +49,12 @@ endif
 CXXFLAGS += $(shell $(_PREFIX)pkg-config --cflags opencv)
 LDFLAGS += $(shell $(_PREFIX)pkg-config --libs opencv)
 
-OBJECTS := \
-	${OBJ_DIR}/beerobot.o
-
 .PHONY: all build clean git_submodules mingw
 
 all: build $(TARGET)
 
 $(TARGET): git_submodules $(OBJECTS)
-	$(_PREFIX)$(CXX) -o $(TARGET) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS)
-
-$(OBJ_DIR)/%.o: src/%.cc
-	$(_PREFIX)$(CXX) -o $@ -c $< $(CXXFLAGS)
+	$(_PREFIX)$(CXX) -o $(TARGET) src/$(TARGET).cc $(CXXFLAGS) $(LDFLAGS)
 
 git_submodules:
 	git submodule update --init
