@@ -42,8 +42,8 @@ static const long max_period = (long) (1000000000.0 / max_fps);
 
 /* Create socket, start BeeEye (camera etc.) */
 ImageSender::ImageSender(Video::Input &cam, const sockaddr_in *dest)
-  : m_Eye(cam)
-  , m_DestAddr(dest)
+  : m_DestAddr(dest)
+  , m_Eye(cam)
 {
     std::cout << "Starting image sender" << std::endl;
 

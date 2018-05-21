@@ -6,7 +6,8 @@
 #endif
 #include <opencv2/opencv.hpp>
 
-namespace OS::Screen {
+namespace OS {
+namespace Screen {
 #ifndef _WIN32
 extern "C" {
 #include <X11/Xlib.h>
@@ -34,4 +35,5 @@ getResolution()
     return cv::Size(screen->width, screen->height);
 #endif
 }
-}
+} // Screen
+} // OS
