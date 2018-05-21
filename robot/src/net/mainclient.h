@@ -1,13 +1,15 @@
 #pragma once
 
-#include "common/motor.h"
-#include "socketcommon.h"
-
+// C++ includes
 #include <limits>
 #include <string>
 
+// GeNN robotics includes
+#include "robots/motor.h"
+#include "socketcommon.h"
+
 namespace Net {
-class MainClient : public Motor
+class MainClient : public GeNNRobotics::Robots::Motor
 {
 public:
     MainClient(const std::string host);

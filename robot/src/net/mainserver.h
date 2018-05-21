@@ -1,8 +1,15 @@
 #pragma once
 
-#include "common/motor.h"
-#include "imagesender.h"
+// C++ includes
 #include <memory>
+
+// GeNN robotics includes
+#include "robots/motor.h"
+
+// local includes
+#include "imagesender.h"
+
+using namespace GeNNRobotics::Robots;
 
 namespace Net {
 class MainServer

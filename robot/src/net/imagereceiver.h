@@ -1,18 +1,23 @@
 #pragma once
 
-#include "image/common.h"
-#include "os/net.h"
-#include "video/input.h"
-
+// C includes
 #include <errno.h>
-#include <opencv2/opencv.hpp>
-
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
 
+// OpenCV
+#include <opencv2/opencv.hpp>
+
+// GeNN robotics includes
+#include "video/input.h"
+
+// local includes
+#include "image/common.h"
+#include "os/net.h"
+
 namespace Net {
-class ImageReceiver : public Video::Input
+class ImageReceiver : public GeNNRobotics::Video::Input
 {
 public:
     ImageReceiver();

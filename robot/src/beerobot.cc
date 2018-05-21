@@ -2,14 +2,14 @@
 #include <cstdlib>
 
 // GeNN robotics includes
-#include "common/motor_dummy.h"
-#include "video/panoramic.h"
+#include "robots/motor_dummy.h"
 #ifndef _WIN32
 #ifndef NO_I2C_ROBOT
-#include "common/motor_i2c.h"
+#include "robots/motor_i2c.h"
 #endif
-#include "common/motor_surveyor.h"
+#include "robots/motor_surveyor.h"
 #endif
+#include "video/panoramic.h"
 
 // for rendering bee's eye view on screen
 #include "image/overlaydisplay.h"
@@ -22,7 +22,7 @@
 // for using the Xbox controller to drive the robot
 #include "joystickthread.h"
 
-using namespace std;
+using namespace GeNNRobotics;
 
 /* different types of motor output */
 enum MotorType
@@ -108,7 +108,7 @@ main(int argc, char **argv)
             if (serverIP) { // then start the viewer
                 // code run by client (connecting to robot)
                 auto client =
-                        std::shared_ptr<Motor>(new Net::MainClient(serverIP));
+                        std::shared_ptr<Robots::Motor>(new Net::MainClient(serverIP));
                 if (controller) {
                     joystickThread = std::unique_ptr<JoystickThread>(
                             new JoystickThread(client));

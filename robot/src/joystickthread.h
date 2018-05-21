@@ -1,22 +1,24 @@
 #pragma once
 
-#include "common/motor.h"
-#include "joystick/joystick.h"
-
+// C includes
 #define _USE_MATH_DEFINES
 #include <cmath>
+
+// C++ includes
 #include <iostream>
 #include <limits>
 #include <memory>
 
-#ifdef max
-#undef max
-#endif
+// GeNN robotics includes
+#include "joystick/joystick.h"
+#include "robots/motor.h"
+
+using namespace GeNNRobotics;
 
 class JoystickThread
 {
 public:
-    JoystickThread(std::shared_ptr<Motor> motor)
+    JoystickThread(std::shared_ptr<Robots::Motor> motor)
       : m_Motor(motor)
     {
         m_Joystick.open();
@@ -25,7 +27,7 @@ public:
     }
 
 private:
-    std::shared_ptr<Motor> m_Motor;
+    std::shared_ptr<Robots::Motor> m_Motor;
     Joystick::Joystick m_Joystick;
     float m_X = 0;
     float m_Y = 0;

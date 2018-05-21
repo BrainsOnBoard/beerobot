@@ -5,9 +5,9 @@
 #include <opencv2/opencv.hpp>
 
 // GeNN_Robotics includes
-#include "common/opencv_unwrap_360.h"
+#include "imgproc/opencv_unwrap_360.h"
 #if !defined(NO_SEE3CAM) && !defined(_WIN32)
-#include "common/see3cam_cu40.h"
+#include "video/see3cam_cu40.h"
 #endif
 #include "video/input.h"
 #include "video/panoramic.h"
@@ -17,11 +17,13 @@
 #include "beeeye.h"
 #include "gigerdatacam.h"
 
+using namespace GeNNRobotics;
+
 namespace Eye {
 class BeeEye : public Video::Input
 {
 public:
-    OpenCVUnwrap360 m_Unwrapper;
+    ImgProc::OpenCVUnwrap360 m_Unwrapper;
 
     BeeEye(Input &camera);
 
@@ -40,10 +42,8 @@ private:
 
 BeeEye::BeeEye(Video::Input &cam)
   : m_Camera(&cam)
+  , m_Unwrapper(cam.createDefaultUnwrapper(cv::Size(1280, 400)))
 {
-    // create unwrapper
-    m_Camera->createDefaultUnwrapper(m_Unwrapper);
-
     // create x and y pixel maps for bee-eye transform
     cv::Size outSize(eye_size[0], eye_size[1]);
     m_MapX.create(outSize, CV_32FC1);
@@ -64,7 +64,7 @@ BeeEye::BeeEye(Video::Input &cam)
                 floor(gdata[i][1]);
     }
 
-    m_ImUnwrap.create(m_Unwrapper.m_UnwrappedResolution, CV_8UC3);
+    m_ImUnwrap.create(1280, 400, CV_8UC3);
     m_ImEye.create(outSize, CV_8UC3);
 }
 

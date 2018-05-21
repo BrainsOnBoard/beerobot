@@ -1,12 +1,15 @@
-#include "os/screen.h"
+// OpenCV
+#include <opencv2/opencv.hpp>
+
+// GeNN robotics includes
 #include "video/input.h"
 #include "video/simpledisplay.h"
 
-#include <opencv2/opencv.hpp>
+// local includes
+#include "os/screen.h"
 
 namespace Image {
-
-class OverlayDisplay : public Video::SimpleDisplay
+class OverlayDisplay : public GeNNRobotics::Video::SimpleDisplay
 {
 public:
     OverlayDisplay(bool showOverlay)
@@ -18,7 +21,7 @@ public:
         }
 
         // create overlay
-        cv::Size screenSize = OS::Screen::getResolution();
+        cv::Size screenSize = ::OS::Screen::getResolution();
         if (screenSize.empty()) {
             throw std::runtime_error("Could not get screen resolution");
         }
@@ -36,7 +39,7 @@ public:
         m_ImInner.create(m_OverlayInner.size(), m_OverlayInner.type());
     }
 
-    void getNextFrame(Video::Input &videoInput, cv::Mat &frame)
+    void getNextFrame(GeNNRobotics::Video::Input &videoInput, cv::Mat &frame)
     {
         if (!videoInput.readFrame(m_ImEyeOut)) {
             throw std::runtime_error("Error reading from video input");
