@@ -22,7 +22,7 @@ public:
     static bool m_Running;
     static void startSending(const sockaddr_in *destAddress);
 
-    ImageSender(Video::Input &cam, const sockaddr_in *destAddress);
+    ImageSender(Video::Input *cam, const sockaddr_in *destAddress);
     ~ImageSender();
 
 private:
@@ -41,7 +41,7 @@ static const double max_fps = 40;
 static const long max_period = (long) (1000000000.0 / max_fps);
 
 /* Create socket, start BeeEye (camera etc.) */
-ImageSender::ImageSender(Video::Input &cam, const sockaddr_in *dest)
+ImageSender::ImageSender(Video::Input *cam, const sockaddr_in *dest)
   : m_DestAddr(dest)
   , m_Eye(cam)
 {
@@ -179,7 +179,7 @@ ImageSender::startSending(const sockaddr_in *destAddress)
 {
     // create new image sender and run in loop
     auto cam = Video::getPanoramicCamera();
-    ImageSender sender(cam, destAddress);
+    ImageSender sender(cam.get(), destAddress);
     sender.run();
 }
 }

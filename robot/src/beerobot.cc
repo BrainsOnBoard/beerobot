@@ -121,8 +121,8 @@ main(int argc, char **argv)
             }
 
             // code run if just showing video locally
-            auto cam = Video::getPanoramicCamera()
-            Eye::BeeEye eye(cam);
+            auto cam = Video::getPanoramicCamera();
+            Eye::BeeEye eye(cam.get());
             Image::OverlayDisplay display(overlayFlag);
             display.run(eye);
             return 0;
@@ -174,8 +174,8 @@ main(int argc, char **argv)
     }
 
     if (localFlag) {
-        auto cam = Video::getPanoramicCamera()
-        Eye::BeeEye eye(cam);
+        auto cam = Video::getPanoramicCamera();
+        Eye::BeeEye eye(cam.get());
         Image::OverlayDisplay display(overlayFlag);
         display.run(eye);
     } else {

@@ -10,8 +10,8 @@
 #include "video/see3cam_cu40.h"
 #endif
 #include "video/input.h"
-#include "video/panoramic.h"
 #include "video/opencvinput.h"
+#include "video/panoramic.h"
 
 // local includes
 #include "beeeye.h"
@@ -25,7 +25,7 @@ class BeeEye : public Video::Input
 public:
     ImgProc::OpenCVUnwrap360 m_Unwrapper;
 
-    BeeEye(Input &camera);
+    BeeEye(Input *cam);
 
     bool getEyeView(cv::Mat &view);
     void getEyeView(cv::Mat &view, cv::Mat &imunwrap);
@@ -40,9 +40,9 @@ private:
     cv::Mat m_ImOrig, m_ImUnwrap, m_ImEye;
 };
 
-BeeEye::BeeEye(Video::Input &cam)
-  : m_Camera(&cam)
-  , m_Unwrapper(cam.createDefaultUnwrapper(cv::Size(1280, 400)))
+BeeEye::BeeEye(Video::Input *cam)
+  : m_Unwrapper(cam->createDefaultUnwrapper(cv::Size(1280, 400)))
+  , m_Camera(cam)
 {
     // create x and y pixel maps for bee-eye transform
     cv::Size outSize(eye_size[0], eye_size[1]);
