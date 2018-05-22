@@ -16,8 +16,8 @@
 
 // to exchange messages between robot and viewer
 #include "net/imagereceiver.h"
-#include "net/mainclient.h"
-#include "net/mainserver.h"
+#include "net/client.h"
+#include "net/server.h"
 
 // for using the Xbox controller to drive the robot
 #include "joystickthread.h"
@@ -36,10 +36,10 @@ enum MotorType
 void
 showusage()
 {
-    cout << "Usage: beerobot "
-            "[--controller|--no-controller|--local|--no-overlay] "
-            "[--motor dummy|surveyor|arduino] [viewer [ip]]"
-         << endl;
+    std::cout << "Usage: beerobot "
+                 "[--controller|--no-controller|--local|--no-overlay] "
+                 "[--motor dummy|surveyor|arduino] [viewer [ip]]"
+              << std::endl;
     exit(1);
 }
 
@@ -107,8 +107,8 @@ main(int argc, char **argv)
         if (!localFlag) {
             if (serverIP) { // then start the viewer
                 // code run by client (connecting to robot)
-                auto client =
-                        std::shared_ptr<Robots::Motor>(new Net::MainClient(serverIP));
+                auto client = std::shared_ptr<Robots::Motor>(
+                        new Net::MainClient(serverIP));
                 if (controller) {
                     joystickThread = std::unique_ptr<JoystickThread>(
                             new JoystickThread(client));
@@ -132,32 +132,34 @@ main(int argc, char **argv)
     // start appropriate motor device
     Motor *motor;
 #ifdef _WIN32
-    cout << "Motor disabled on Windows" << endl;
+    std::cout << "Motor disabled on Windows" << std::endl;
     motor = new MotorDummy();
 #else
     switch (motorType) {
     case Surveyor:
-        cout << "Using Surveyor as motor" << endl;
+        std::cout << "Using Surveyor as motor" << std::endl;
         try {
             motor = new MotorSurveyor("192.168.1.1", 2000);
-        } catch (exception &e) {
-            cout << "An error occurred: Disabling motor output" << endl;
+        } catch (std::exception &) {
+            std::cout << "An error occurred: Disabling motor output"
+                      << std::endl;
             motor = new MotorDummy();
         }
         break;
 #ifndef NO_I2C_ROBOT
     case Arduino:
-        cout << "Using Arduino as motor" << endl;
+        std::cout << "Using Arduino as motor" << std::endl;
         try {
             motor = new MotorI2C();
-        } catch (exception &e) {
-            cout << "An error occurred: Disabling motor output" << endl;
+        } catch (std::exception &) {
+            std::cout << "An error occurred: Disabling motor output"
+                      << std::endl;
             motor = new MotorDummy();
         }
         break;
 #endif
     default:
-        cout << "Motor disabled" << endl;
+        std::cout << "Motor disabled" << std::endl;
         motor = new MotorDummy();
     }
 #endif
@@ -170,7 +172,7 @@ main(int argc, char **argv)
         joystickThread =
                 std::unique_ptr<JoystickThread>(new JoystickThread(pMotor));
     } else {
-        cout << "Use of controller is disabled" << endl;
+        std::cout << "Use of controller is disabled" << std::endl;
     }
 
     if (localFlag) {

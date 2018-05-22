@@ -2,12 +2,14 @@
 
 // C++ includes
 #include <memory>
+#include <string>
 
 // GeNN robotics includes
 #include "robots/motor.h"
 
 // local includes
 #include "imagesender.h"
+#include "socket.h"
 
 using namespace GeNNRobotics::Robots;
 
@@ -17,32 +19,36 @@ class MainServer
 public:
     static void runServer(std::shared_ptr<Motor> &motor);
 
-    MainServer(std::shared_ptr<Motor> motor);
+    MainServer(std::shared_ptr<Motor> motor,
+               int port = Socket::DefaultListenPort);
     virtual ~MainServer();
 
 private:
-    socket_t m_Socket = INVALID_SOCKET;
+    socket_t m_ListenSocket = INVALID_SOCKET;
     std::shared_ptr<Motor> m_Motor;
     void run();
 };
 
 /*
- * Create a server listening on MAIN_PORT (TCP), sending motor commands to *mtr
+ * Create a server to send motor commands
  */
-MainServer::MainServer(std::shared_ptr<Motor> motor)
+MainServer::MainServer(std::shared_ptr<Motor> motor, int port)
   : m_Motor(motor)
 {
     struct sockaddr_in addr;
     int on = 1;
 
+    // needed for Windows
     WSAStartup();
 
-    m_Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (m_Socket == INVALID_SOCKET) {
+    m_ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (m_ListenSocket == INVALID_SOCKET) {
         goto error;
     }
+
 #ifndef _WIN32
-    if (setsockopt(m_Socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) {
+    if (setsockopt(m_ListenSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) <
+        0) {
         goto error;
     }
 #endif
@@ -50,20 +56,20 @@ MainServer::MainServer(std::shared_ptr<Motor> motor)
     memset(&addr, '0', sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr.sin_port = htons(MAIN_PORT);
+    addr.sin_port = htons(port);
 
-    if (bind(m_Socket, (const sockaddr *) &addr, (int) sizeof(addr))) {
+    if (bind(m_ListenSocket, (const sockaddr *) &addr, (int) sizeof(addr))) {
         goto error;
     }
-    if (listen(m_Socket, 10)) {
+    if (listen(m_ListenSocket, 10)) {
         goto error;
     }
-    std::cout << "Listening on port " << MAIN_PORT << std::endl;
+    std::cout << "Listening on port " << port << std::endl;
 
     return;
 
 error:
-    std::cerr << "Error (" << errno << "): Could not bind to port " << MAIN_PORT
+    std::cerr << "Error (" << errno << "): Could not bind to port " << port
               << std::endl;
     exit(1);
 }
@@ -71,10 +77,11 @@ error:
 /* Stop listening */
 MainServer::~MainServer()
 {
-    if (m_Socket != INVALID_SOCKET) {
-        close(m_Socket);
+    if (m_ListenSocket != INVALID_SOCKET) {
+        close(m_ListenSocket);
     }
 
+    // needed for Windows
     WSACleanup();
 }
 
@@ -95,13 +102,11 @@ MainServer::run()
     dest.sin_port = htons(Image::IMAGE_PORT);
 
     // loop for ever
-    for (;;) {
+    while (true) {
         // wait for incoming TCP connection
-        std::cout << "Waiting for incoming connection..." << std::endl;
-        socket_t sock = accept(m_Socket, (sockaddr *) &addr, &addrlen);
-        if (!send(sock, "HEY\n", 4)) {
-            throw std::runtime_error("Could not write to socket");
-        }
+        std::cout << "Waiting for incoming connection..." <<std::endl;
+        Socket sock(accept(m_ListenSocket, (sockaddr *) &addr, &addrlen));
+        sock.send("HEY\n");
 
         // convert IP to string
         char saddr[INET_ADDRSTRLEN];
@@ -114,42 +119,32 @@ MainServer::run()
         // start ImageSending thread
         std::thread tsend(ImageSender::startSending, &dest);
 
-        // for reading in data
-        char buff[MAIN_BUFFSIZE];
-        std::string sbuff;
-        int len;
-
-        // motor command
         float left, right;
-        while ((len = readLine(sock, buff)) == -1) {
-            sbuff = std::string(buff);
+        std::string msg;
+        // TODO: implement some kind of way to quit this loop
+        while (true) {
+            msg = sock.readLine();
+
             // driving command (e.g. TNK 0.5 0.5)
-            if (sbuff.compare(0, 4, "TNK ") == 0) {
+            if (msg.compare(0, 4, "TNK ") == 0) {
                 // second space separates left and right parameters
-                size_t space = sbuff.rfind(' ');
+                size_t space = msg.rfind(' ');
                 if (space == std::string::npos)
                     throw std::runtime_error("Error: Bad command");
 
                 // parse strings to floats
-                left = stof(sbuff.substr(4, space - 4));
-                right = stof(sbuff.substr(space + 1));
+                left = stof(msg.substr(4, space - 4));
+                right = stof(msg.substr(space + 1));
 
                 // send motor command
                 m_Motor->tank(left, right);
-            } else if (sbuff.compare(0, 3, "BYE") == 0) {
+            } else if (msg.compare(0, 3, "BYE") == 0) {
                 // client closing connection
                 break;
             } else { // no other commands supported
                 throw std::runtime_error("Error: Unknown command received");
             }
         }
-        if (len == -1) { // loop ended because an error occurred
-            throw std::runtime_error(std::string("Error: ") + strerror(errno));
-        }
-
-        // close current connection
-        close(sock);
-        std::cout << "Connection closed" << std::endl;
 
         // stop ImageSender thread
         ImageSender::m_Running = false;

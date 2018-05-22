@@ -6,10 +6,10 @@
 
 // GeNN robotics includes
 #include "robots/motor.h"
-#include "socketcommon.h"
+#include "socket.h"
 
 namespace Net {
-class MainClient : public GeNNRobotics::Robots::Motor
+class MainClient : public GeNNRobotics::Robots::Motor, Socket
 {
 public:
     MainClient(const std::string host);
@@ -17,10 +17,9 @@ public:
     virtual void tank(float left, float right);
 
 private:
-    socket_t m_Socket = INVALID_SOCKET;
     float m_OldLeft = std::numeric_limits<float>::quiet_NaN();
     float m_OldRight = std::numeric_limits<float>::quiet_NaN();
-    char m_Buffer[MAIN_BUFFSIZE];
+    char m_Buffer[DefaultBufferSize];
 };
 
 
@@ -30,43 +29,33 @@ MainClient::MainClient(const std::string host)
     WSAStartup();
 
     // Create socket
-    m_Socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_Socket == INVALID_SOCKET) {
-        throw std::runtime_error("Cannot open socket");
-    }
+    setSocket(socket(AF_INET, SOCK_STREAM, 0));
 
     // Create socket address structure
     in_addr addr;
     addr.s_addr = inet_addr(host.c_str());
     sockaddr_in destAddress;
     destAddress.sin_family = AF_INET;
-    destAddress.sin_port = htons(MAIN_PORT);
+    destAddress.sin_port = htons(DefaultListenPort);
     destAddress.sin_addr = addr;
 
     // Connect socket
-    if (connect(m_Socket,
+    if (connect(getSocket(),
                 reinterpret_cast<sockaddr *>(&destAddress),
                 sizeof(destAddress)) < 0) {
         throw std::runtime_error("Cannot connect socket to " + host + ":" +
-                                 std::to_string(MAIN_PORT));
+                                 std::to_string(DefaultListenPort));
     }
 
     std::cout << "Opened socket" << std::endl;
 
     // NB: this will give info about "image server" in future
-    if (readLine(m_Socket, m_Buffer) == -1) {
-        throw std::runtime_error(std::string("Error: ") + strerror(errno));
-    }
+    readLine();
 }
 
 /* Destructor: send BYE message and close connection */
 MainClient::~MainClient()
 {
-    if (m_Socket != INVALID_SOCKET) {
-        send(m_Socket, "BYE\n", 4);
-        close(m_Socket);
-    }
-
     WSACleanup();
 }
 
@@ -75,16 +64,12 @@ void
 MainClient::tank(float left, float right)
 {
     // don't send a command if it's the same as the last one
-    if (left == m_OldLeft && right == m_OldRight)
+    if (left == m_OldLeft && right == m_OldRight) {
         return;
+    }
 
     // send steering command
-    int len = sprintf(m_Buffer, "TNK %g %g\n", left, right);
-    if (!send(m_Socket, m_Buffer, len)) {
-        throw std::runtime_error(
-                std::string("Could not send steering command: ") +
-                strerror(errno));
-    }
+    send("TNK " + std::to_string(left) + " " + std::to_string(right));
 
     // store current left/right values to compare next time
     m_OldLeft = left;
