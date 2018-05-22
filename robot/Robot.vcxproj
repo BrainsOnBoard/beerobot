@@ -125,6 +125,10 @@
     <PreBuildEvent>
       <Message>Update git submodules</Message>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(OPENCV_DIR)\$(Platform)\vc15\bin\opencv_world341d.dll" "$(TargetDir)"
+xcopy /d /y "$(ProjectDir)honeycomb_overlay.png" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -164,6 +168,14 @@
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);opencv_world341.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\opencv\build\x64\vc15\lib;</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>git submodule update --init</Command>
+      <Message>Update git submodules</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(OPENCV_DIR)\$(Platform)\vc15\bin\opencv_world341.dll" "$(TargetDir)"
+xcopy /d /y "$(ProjectDir)honeycomb_overlay.png" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\eye\beeeye.h" />
@@ -186,6 +198,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\eye\gigerommatidiamodel.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="honeycomb_overlay.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </Image>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

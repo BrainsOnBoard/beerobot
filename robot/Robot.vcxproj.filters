@@ -60,4 +60,7 @@
       <Filter>eye</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="honeycomb_overlay.png" />
+  </ItemGroup>
 </Project>
