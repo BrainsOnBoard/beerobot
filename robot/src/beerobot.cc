@@ -15,8 +15,8 @@
 #include "image/overlaydisplay.h"
 
 // to exchange messages between robot and viewer
-#include "net/imagereceiver.h"
 #include "net/client.h"
+#include "net/imagereceiver.h"
 #include "net/server.h"
 
 // for using the Xbox controller to drive the robot
@@ -104,22 +104,21 @@ main(int argc, char **argv)
                 showusage();
         }
 
-        if (!localFlag) {
-            if (serverIP) { // then start the viewer
-                // code run by client (connecting to robot)
-                auto client = std::shared_ptr<Robots::Motor>(
-                        new Net::MainClient(serverIP));
-                if (controller) {
-                    joystickThread = std::unique_ptr<JoystickThread>(
-                            new JoystickThread(client));
-                }
-
-                Net::ImageReceiver recv;
-                Image::OverlayDisplay display(overlayFlag);
-                display.run(recv);
-                return 0;
+        if (serverIP) {
+            // code run by client (connecting to robot)
+            auto client = std::shared_ptr<Robots::Motor>(
+                    new Net::MainClient(serverIP));
+            if (controller) {
+                joystickThread = std::unique_ptr<JoystickThread>(
+                        new JoystickThread(client));
             }
 
+            Net::ImageReceiver recv;
+            Image::OverlayDisplay display(overlayFlag);
+            display.run(recv);
+            return 0;
+        }
+        if (localFlag) {
             // code run if just showing video locally
             auto cam = Video::getPanoramicCamera();
             Eye::BeeEye eye(cam.get());
