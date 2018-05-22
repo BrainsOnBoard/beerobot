@@ -107,7 +107,7 @@ main(int argc, char **argv)
         if (serverIP) {
             // code run by client (connecting to robot)
             auto client = std::shared_ptr<Robots::Motor>(
-                    new Net::MainClient(serverIP));
+                    new Net::Client(serverIP));
             if (controller) {
                 joystickThread = std::unique_ptr<JoystickThread>(
                         new JoystickThread(client));
@@ -181,7 +181,7 @@ main(int argc, char **argv)
         display.run(eye);
     } else {
         // run main server
-        Net::MainServer::runServer(pMotor);
+        Net::Server::runServer(pMotor);
     }
 
     return 0;

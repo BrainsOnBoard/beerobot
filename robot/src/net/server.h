@@ -15,14 +15,14 @@
 using namespace GeNNRobotics::Robots;
 
 namespace Net {
-class MainServer
+class Server
 {
 public:
     static void runServer(std::shared_ptr<Motor> &motor);
 
-    MainServer(std::shared_ptr<Motor> motor,
+    Server(std::shared_ptr<Motor> motor,
                int port = Socket::DefaultListenPort);
-    virtual ~MainServer();
+    virtual ~Server();
 
 private:
     socket_t m_ListenSocket = INVALID_SOCKET;
@@ -33,7 +33,7 @@ private:
 /*
  * Create a server to send motor commands
  */
-MainServer::MainServer(std::shared_ptr<Motor> motor, int port)
+Server::Server(std::shared_ptr<Motor> motor, int port)
   : m_Motor(motor)
 {
     struct sockaddr_in addr;
@@ -76,7 +76,7 @@ error:
 }
 
 /* Stop listening */
-MainServer::~MainServer()
+Server::~Server()
 {
     if (m_ListenSocket != INVALID_SOCKET) {
         close(m_ListenSocket);
@@ -91,7 +91,7 @@ MainServer::~MainServer()
  * one connection at a time.
  */
 void
-MainServer::run()
+Server::run()
 {
     // for incoming connection
     sockaddr_in addr;
@@ -153,9 +153,9 @@ MainServer::run()
 }
 
 void
-MainServer::runServer(std::shared_ptr<Motor> &motor)
+Server::runServer(std::shared_ptr<Motor> &motor)
 {
-    MainServer server(motor);
+    Server server(motor);
     server.run();
 }
 }

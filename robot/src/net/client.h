@@ -9,11 +9,11 @@
 #include "socket.h"
 
 namespace Net {
-class MainClient : public GeNNRobotics::Robots::Motor, Socket
+class Client : public GeNNRobotics::Robots::Motor, Socket
 {
 public:
-    MainClient(const std::string host);
-    virtual ~MainClient();
+    Client(const std::string host);
+    virtual ~Client();
     virtual void tank(float left, float right);
 
 private:
@@ -24,7 +24,7 @@ private:
 
 
 /* Create client, connect to host on MAIN_PORT over TCP */
-MainClient::MainClient(const std::string host)
+Client::Client(const std::string host)
 {
     WSAStartup();
 
@@ -54,14 +54,14 @@ MainClient::MainClient(const std::string host)
 }
 
 /* Destructor: send BYE message and close connection */
-MainClient::~MainClient()
+Client::~Client()
 {
     WSACleanup();
 }
 
 /* Motor command: send TNK command over TCP */
 void
-MainClient::tank(float left, float right)
+Client::tank(float left, float right)
 {
     // don't send a command if it's the same as the last one
     if (left == m_OldLeft && right == m_OldRight) {
