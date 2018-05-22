@@ -69,7 +69,7 @@ MainClient::tank(float left, float right)
     }
 
     // send steering command
-    send("TNK " + std::to_string(left) + " " + std::to_string(right));
+    send("TNK " + std::to_string(left) + " " + std::to_string(right) + "\n");
 
     // store current left/right values to compare next time
     m_OldLeft = left;
