@@ -178,7 +178,7 @@ void
 ImageSender::startSending(const sockaddr_in *destAddress)
 {
     // create new image sender and run in loop
-    Video::PanoramicCamera cam;
+    auto cam = Video::getPanoramicCamera();
     ImageSender sender(cam, destAddress);
     sender.run();
 }
