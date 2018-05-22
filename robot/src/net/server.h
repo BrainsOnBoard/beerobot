@@ -3,6 +3,7 @@
 // C++ includes
 #include <memory>
 #include <string>
+#include <vector>
 
 // GeNN robotics includes
 #include "robots/motor.h"
@@ -120,25 +121,24 @@ MainServer::run()
         std::thread tsend(ImageSender::startSending, &dest);
 
         float left, right;
-        std::string msg;
         // TODO: implement some kind of way to quit this loop
         while (true) {
-            msg = sock.readLine();
+            std::vector<std::string> command = sock.readCommand();
 
             // driving command (e.g. TNK 0.5 0.5)
-            if (msg.compare(0, 4, "TNK ") == 0) {
+            if (command[0] == "TNK") {
                 // second space separates left and right parameters
-                size_t space = msg.rfind(' ');
-                if (space == std::string::npos)
+                if (command.size() != 3) {
                     throw std::runtime_error("Error: Bad command");
+                }
 
                 // parse strings to floats
-                left = stof(msg.substr(4, space - 4));
-                right = stof(msg.substr(space + 1));
+                left = stof(command[1]);
+                right = stof(command[2]);
 
                 // send motor command
                 m_Motor->tank(left, right);
-            } else if (msg.compare(0, 3, "BYE") == 0) {
+            } else if (command[0] == "BYE") {
                 // client closing connection
                 break;
             } else { // no other commands supported

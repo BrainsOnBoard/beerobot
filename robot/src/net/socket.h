@@ -2,9 +2,11 @@
 
 #include <chrono>
 #include <iostream>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <vector>
 
 #include "os/net.h"
 
@@ -36,6 +38,15 @@ public:
     socket_t getSocket() const
     {
         return m_Socket;
+    }
+
+    std::vector<std::string> readCommand()
+    {
+        std::istringstream iss(readLine());
+        std::vector<std::string> results(
+                std::istream_iterator<std::string>{ iss },
+                std::istream_iterator<std::string>());
+        return results;
     }
 
     /*
