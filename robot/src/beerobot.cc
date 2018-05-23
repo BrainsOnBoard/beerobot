@@ -174,14 +174,14 @@ main(int argc, char **argv)
         std::cout << "Use of controller is disabled" << std::endl;
     }
 
+    auto cam = Video::getPanoramicCamera();
+    Eye::BeeEye eye(cam.get());
     if (localFlag) {
-        auto cam = Video::getPanoramicCamera();
-        Eye::BeeEye eye(cam.get());
         Image::OverlayDisplay display(overlayFlag);
         display.run(eye);
     } else {
         // run main server
-        Net::Server::runServer(pMotor);
+        Net::Server::runServer(&eye, pMotor);
     }
 
     return 0;
