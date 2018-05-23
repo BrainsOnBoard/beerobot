@@ -1,13 +1,22 @@
 #pragma once
 
+// C includes
+#include <cerrno>
+#include <cstring>
+
+// C++ includes
+#include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <iterator>
+#include <mutex>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <thread>
 #include <vector>
 
+// local includes
 #include "os/net.h"
 
 namespace Net {
@@ -16,7 +25,7 @@ class Socket
 public:
     static const size_t DefaultBufferSize = 512;
     static const int DefaultListenPort = 2000;
-    static const bool PrintDebug = true;
+    static const bool PrintDebug = false;
 
     Socket(bool print = PrintDebug)
       : m_Print(print)
@@ -42,11 +51,34 @@ public:
 
     std::vector<std::string> readCommand()
     {
-        std::istringstream iss(readLine());
+        std::string line = readLine();
+        std::istringstream iss(line);
         std::vector<std::string> results(
                 std::istream_iterator<std::string>{ iss },
                 std::istream_iterator<std::string>());
         return results;
+    }
+
+    void read(void *buffer, size_t len)
+    {
+        std::lock_guard<std::mutex> guard(m_Mutex);
+        checkSocket();
+
+        size_t start = 0;
+        // initially, copy over any leftover bytes in m_Buffer
+        if (m_BufferBytes > 0) {
+            size_t tocopy = std::min(len, m_BufferBytes);
+            memcpy(buffer, &m_Buffer[m_BufferStart], tocopy);
+            start += tocopy;
+            len -= tocopy;
+            debitBytes(tocopy);
+        }
+
+        while (len > 0) {
+            size_t nbytes = readOnce((char *) buffer, start, len);
+            start += nbytes;
+            len -= nbytes;
+        }
     }
 
     /*
@@ -54,42 +86,58 @@ public:
      */
     std::string readLine()
     {
+        std::lock_guard<std::mutex> guard(m_Mutex);
         checkSocket();
 
-        int len =
-                ::OS::Net::readBlocking(m_Socket, m_Buffer, DefaultBufferSize);
-        if (len == -1) {
-            throw std::runtime_error("Could not read line from socket");
-        }
-        if ((size_t) len > DefaultBufferSize) {
-            throw std::runtime_error("Line read from socket was too long");
-        }
+        std::ostringstream oss;
+        while (true) {
+            if (m_BufferBytes == 0) {
+                m_BufferBytes += readOnce(m_Buffer,
+                                          m_BufferStart,
+                                          DefaultBufferSize - m_BufferStart);
+            }
 
-        char *last = m_Buffer;
-        for (; *last && *last != '\n'; last++)
-            ;
-        *last = 0;
+            // look for newline char
+            for (size_t i = 0; i < m_BufferBytes; i++) {
+                char &c = m_Buffer[m_BufferStart + i];
+                if (c == '\n') {
+                    c = '\0';
+                    oss << std::string(&m_Buffer[m_BufferStart]);
+                    debitBytes(i + 1);
 
-        if (m_Print) {
-            std::cout << "<<< " << m_Buffer << std::endl;
+                    std::string outstring = oss.str();
+                    if (m_Print) {
+                        std::cout << ">>> " << outstring << std::endl;
+                    }
+                    return outstring;
+                }
+            }
+
+            // if newline is not present, append the text we received and try
+            // another read
+            oss << std::string(&m_Buffer[m_BufferStart], m_BufferBytes);
+            debitBytes(m_BufferBytes);
         }
+    }
 
-        return std::string(m_Buffer);
+    void send(const void *buffer, size_t len)
+    {
+        // std::lock_guard<std::mutex> guard(m_Mutex);
+        checkSocket();
+
+        int ret = ::send(m_Socket, buffer, (socklen_t) len, MSG_NOSIGNAL);
+        if (ret == -1) {
+            fatalError("Could not send message");
+        }
     }
 
     /* Send a message, return false on error */
     void send(const std::string &msg)
     {
-        checkSocket();
-
-        int ret = ::send(
-                m_Socket, msg.c_str(), (socklen_t) msg.length(), MSG_NOSIGNAL);
-        if (ret == -1) {
-            throw std::runtime_error("Could not send message from socket");
-        }
+        send(msg.c_str(), msg.length());
 
         if (m_Print) {
-            std::cout << ">>> " << msg;
+            std::cout << "<<< " << msg;
         }
     }
 
@@ -100,15 +148,43 @@ public:
     }
 
 private:
-    char m_Buffer[DefaultBufferSize + 1];
+    char m_Buffer[DefaultBufferSize];
+    size_t m_BufferStart = 0;
+    size_t m_BufferBytes = 0;
+    std::mutex m_Mutex;
     bool m_Print;
     socket_t m_Socket = INVALID_SOCKET;
 
-    void inline checkSocket()
+    void debitBytes(size_t nbytes)
+    {
+        m_BufferStart += nbytes;
+        if (m_BufferStart == DefaultBufferSize) {
+            m_BufferStart = 0;
+        }
+        m_BufferBytes -= nbytes;
+    }
+
+    void checkSocket()
     {
         if (m_Socket == INVALID_SOCKET) {
-            throw std::runtime_error("Bad socket");
+            fatalError("Bad socket");
         }
+    }
+
+    size_t readOnce(char *buffer, size_t start, size_t maxlen)
+    {
+        int len = ::OS::Net::readBlocking(m_Socket, &buffer[start], maxlen);
+        if (len == -1) {
+            fatalError("Could not read from socket");
+        }
+
+        return (size_t) len;
+    }
+
+    static void fatalError(std::string msg)
+    {
+        throw std::runtime_error("Error (" + std::to_string(errno) +
+                                 "): " + msg + ": " + std::strerror(errno));
     }
 };
 }

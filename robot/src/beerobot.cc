@@ -12,11 +12,11 @@
 #include "video/panoramic.h"
 
 // for rendering bee's eye view on screen
+#include "eye/beeeye.h"
 #include "image/overlaydisplay.h"
 
 // to exchange messages between robot and viewer
 #include "net/client.h"
-#include "net/imagereceiver.h"
 #include "net/server.h"
 
 // for using the Xbox controller to drive the robot
@@ -106,16 +106,16 @@ main(int argc, char **argv)
 
         if (serverIP) {
             // code run by client (connecting to robot)
-            auto client = std::shared_ptr<Robots::Motor>(
+            auto client = std::shared_ptr<Net::Client>(
                     new Net::Client(serverIP));
             if (controller) {
                 joystickThread = std::unique_ptr<JoystickThread>(
                         new JoystickThread(client));
             }
 
-            Net::ImageReceiver recv;
+            client->startStreaming();
             Image::OverlayDisplay display(overlayFlag);
-            display.run(recv);
+            display.run(*client.get());
             return 0;
         }
         if (localFlag) {
@@ -129,42 +129,42 @@ main(int argc, char **argv)
     }
 
     // start appropriate motor device
-    Motor *motor;
+    Robots::Motor *motor;
 #ifdef _WIN32
     std::cout << "Motor disabled on Windows" << std::endl;
-    motor = new MotorDummy();
+    motor = new Robots::MotorDummy();
 #else
     switch (motorType) {
     case Surveyor:
         std::cout << "Using Surveyor as motor" << std::endl;
         try {
-            motor = new MotorSurveyor("192.168.1.1", 2000);
+            motor = new Robots::MotorSurveyor("192.168.1.1", 2000);
         } catch (std::exception &) {
             std::cout << "An error occurred: Disabling motor output"
                       << std::endl;
-            motor = new MotorDummy();
+            motor = new Robots::MotorDummy();
         }
         break;
 #ifndef NO_I2C_ROBOT
     case Arduino:
         std::cout << "Using Arduino as motor" << std::endl;
         try {
-            motor = new MotorI2C();
+            motor = new Robots::MotorI2C();
         } catch (std::exception &) {
             std::cout << "An error occurred: Disabling motor output"
                       << std::endl;
-            motor = new MotorDummy();
+            motor = new Robots::MotorDummy();
         }
         break;
 #endif
     default:
         std::cout << "Motor disabled" << std::endl;
-        motor = new MotorDummy();
+        motor = new Robots::MotorDummy();
     }
 #endif
 
     // so motor is freed when program exits
-    auto pMotor = std::shared_ptr<Motor>(motor);
+    auto pMotor = std::shared_ptr<Robots::Motor>(motor);
 
     // if using Xbox controller, start it
     if (controller) {

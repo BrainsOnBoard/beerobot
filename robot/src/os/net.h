@@ -56,7 +56,7 @@ typedef int socket_t;
 namespace OS {
 namespace Net {
 int
-readBlocking(socket_t sock, char *buff, size_t bufflen)
+readBlocking(socket_t sock, void *buff, size_t bufflen)
 {
 #ifdef _MSC_VER
     return recv(sock, buff, DefaultBufferSize, 0);

@@ -3,25 +3,40 @@
 // C++ includes
 #include <limits>
 #include <string>
+#include <vector>
+
+// OpenCV
+#include <opencv2/opencv.hpp>
 
 // GeNN robotics includes
 #include "robots/motor.h"
+#include "video/input.h"
+
+// local includes
 #include "socket.h"
 
+using namespace GeNNRobotics;
+
 namespace Net {
-class Client : public GeNNRobotics::Robots::Motor, Socket
+class Client
+  : public Robots::Motor
+  , public Video::Input
+  , Socket
 {
 public:
     Client(const std::string host);
-    virtual ~Client();
-    virtual void tank(float left, float right);
+    ~Client();
+    void startStreaming();
+    void tank(float left, float right) override;
+    cv::Size getOutputSize() const override;
+    bool readFrame(cv::Mat &frame) override;
 
 private:
+    cv::Size m_CameraResolution;
     float m_OldLeft = std::numeric_limits<float>::quiet_NaN();
     float m_OldRight = std::numeric_limits<float>::quiet_NaN();
-    char m_Buffer[DefaultBufferSize];
+    std::vector<uchar> m_FrameBuffer;
 };
-
 
 /* Create client, connect to host on MAIN_PORT over TCP */
 Client::Client(const std::string host)
@@ -49,7 +64,7 @@ Client::Client(const std::string host)
 
     std::cout << "Opened socket" << std::endl;
 
-    // NB: this will give info about "image server" in future
+    // first command is HEY
     readLine();
 }
 
@@ -57,6 +72,40 @@ Client::Client(const std::string host)
 Client::~Client()
 {
     WSACleanup();
+}
+
+void
+Client::startStreaming()
+{
+    send("IMS\n");
+    auto command = readCommand();
+    if (command[0] != "IMP" || command.size() != 3) {
+        throw std::runtime_error("Bad command");
+    }
+
+    m_CameraResolution.width = stoi(command[1]);
+    m_CameraResolution.height = stoi(command[2]);
+}
+
+cv::Size
+Client::getOutputSize() const
+{
+    return m_CameraResolution;
+}
+
+bool
+Client::readFrame(cv::Mat &frame)
+{
+    auto command = readCommand();
+    if (command[0] != "IMG" || command.size() != 2) {
+        throw std::runtime_error("Bad command");
+    }
+
+    size_t nbytes = stoi(command[1]);
+    m_FrameBuffer.resize(nbytes);
+    read(m_FrameBuffer.data(), nbytes);
+    cv::imdecode(m_FrameBuffer, cv::IMREAD_UNCHANGED, &frame);
+    return true;
 }
 
 /* Motor command: send TNK command over TCP */

@@ -3,37 +3,51 @@
 // C++ includes
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 // GeNN robotics includes
 #include "robots/motor.h"
+#include "video/panoramic.h"
 
 // local includes
-#include "imagesender.h"
+#include "eye/beeeye.h"
 #include "socket.h"
 
-using namespace GeNNRobotics::Robots;
+using namespace GeNNRobotics;
 
 namespace Net {
+class Server;
+
 class Server
 {
 public:
-    static void runServer(std::shared_ptr<Motor> &motor);
+    static void runServer(std::shared_ptr<Robots::Motor> &motor);
 
-    Server(std::shared_ptr<Motor> motor,
-               int port = Socket::DefaultListenPort);
+    Server(std::shared_ptr<Robots::Motor> motor,
+           int port = Socket::DefaultListenPort);
     virtual ~Server();
 
 private:
+    std::unique_ptr<Video::Input> m_Camera, m_Eye;
     socket_t m_ListenSocket = INVALID_SOCKET;
-    std::shared_ptr<Motor> m_Motor;
+    std::shared_ptr<Socket> m_Socket;
+    std::shared_ptr<Robots::Motor> m_Motor;
+    bool m_SendingImages = false;
+    std::unique_ptr<std::thread> m_ImageThread;
+    cv::Mat m_Frame;
+    std::vector<uchar> m_FrameBuffer;
+
+    bool parseCommand();
     void run();
+    void sendFrame();
+    static void runImageThread(Server *server);
 };
 
 /*
  * Create a server to send motor commands
  */
-Server::Server(std::shared_ptr<Motor> motor, int port)
+Server::Server(std::shared_ptr<Robots::Motor> motor, int port)
   : m_Motor(motor)
 {
     struct sockaddr_in addr;
@@ -78,12 +92,75 @@ error:
 /* Stop listening */
 Server::~Server()
 {
+    if (m_SendingImages && m_ImageThread) {
+        m_SendingImages = false;
+        m_ImageThread->join();
+    }
+
     if (m_ListenSocket != INVALID_SOCKET) {
         close(m_ListenSocket);
     }
 
     // needed for Windows
     WSACleanup();
+}
+
+void
+Server::sendFrame()
+{
+    if (!m_Eye->readFrame(m_Frame)) {
+        throw std::runtime_error("Could not read from camera");
+    }
+
+    cv::imencode(".jpg", m_Frame, m_FrameBuffer);
+    m_Socket->send("IMG " + std::to_string(m_FrameBuffer.size()) + "\n");
+    m_Socket->send(m_FrameBuffer.data(), m_FrameBuffer.size());
+}
+
+bool
+Server::parseCommand()
+{
+    std::vector<std::string> command = m_Socket->readCommand();
+
+    // driving command (e.g. TNK 0.5 0.5)
+    if (command[0] == "TNK") {
+        // second space separates left and right parameters
+        if (command.size() != 3) {
+            throw std::runtime_error("Error: Bad command");
+        }
+
+        // parse strings to floats
+        const float left = stof(command[1]);
+        const float right = stof(command[2]);
+
+        // send motor command
+        m_Motor->tank(left, right);
+        return true;
+    } else if (command[0] == "IMS") {
+        if (m_Eye) {
+            throw std::runtime_error("Camera already opened");
+        }
+
+        // get default panoramic camera
+        m_Camera = Video::getPanoramicCamera();
+        m_Eye = std::unique_ptr<Video::Input>(new Eye::BeeEye(m_Camera.get()));
+
+        // ACK the command and tell client the camera resolution
+        cv::Size res = m_Eye->getOutputSize();
+        m_Socket->send("IMP " + std::to_string(res.width) + " " +
+                  std::to_string(res.height) + "\n");
+
+        m_SendingImages = true;
+        m_ImageThread = std::unique_ptr<std::thread>(new std::thread(runImageThread, this));
+
+        return true;
+    } else if (command[0] == "BYE") {
+        // client closing connection
+        return false;
+    }
+
+    // no other commands supported
+    throw std::runtime_error("Error: Unknown command received");
 }
 
 /*
@@ -97,65 +174,37 @@ Server::run()
     sockaddr_in addr;
     socklen_t addrlen = sizeof(addr);
 
-    // for outgoing (ImageSender) connection (UDP)
-    sockaddr_in dest;
-    dest.sin_family = AF_INET;
-    dest.sin_port = htons(Image::IMAGE_PORT);
-
     // loop for ever
     while (true) {
         // wait for incoming TCP connection
-        std::cout << "Waiting for incoming connection..." <<std::endl;
-        Socket sock(accept(m_ListenSocket, (sockaddr *) &addr, &addrlen));
-        sock.send("HEY\n");
+        std::cout << "Waiting for incoming connection..." << std::endl;
+        m_Socket = std::shared_ptr<Socket>(new Socket(
+                accept(m_ListenSocket, (sockaddr *) &addr, &addrlen)));
+        m_Socket->send("HEY\n");
 
         // convert IP to string
         char saddr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, (void *) &addr.sin_addr, saddr, addrlen);
         std::cout << "Incoming connection from " << saddr << std::endl;
 
-        // our destination IP is the same IP as the current connection
-        dest.sin_addr = addr.sin_addr;
-
-        // start ImageSending thread
-        std::thread tsend(ImageSender::startSending, &dest);
-
-        float left, right;
         // TODO: implement some kind of way to quit this loop
-        while (true) {
-            std::vector<std::string> command = sock.readCommand();
-
-            // driving command (e.g. TNK 0.5 0.5)
-            if (command[0] == "TNK") {
-                // second space separates left and right parameters
-                if (command.size() != 3) {
-                    throw std::runtime_error("Error: Bad command");
-                }
-
-                // parse strings to floats
-                left = stof(command[1]);
-                right = stof(command[2]);
-
-                // send motor command
-                m_Motor->tank(left, right);
-            } else if (command[0] == "BYE") {
-                // client closing connection
-                break;
-            } else { // no other commands supported
-                throw std::runtime_error("Error: Unknown command received");
-            }
-        }
-
-        // stop ImageSender thread
-        ImageSender::m_Running = false;
-        tsend.join();
+        while (parseCommand())
+            ;
     }
 }
 
 void
-Server::runServer(std::shared_ptr<Motor> &motor)
+Server::runServer(std::shared_ptr<Robots::Motor> &motor)
 {
     Server server(motor);
     server.run();
+}
+
+void
+Server::runImageThread(Server *server)
+{
+    while (server->m_SendingImages) {
+        server->sendFrame();
+    }
 }
 }
