@@ -20,6 +20,22 @@
 #include "os/net.h"
 
 namespace Net {
+class socket_error : public std::runtime_error
+{
+public:
+    socket_error(std::string msg)
+      : std::runtime_error("Socket error: " + msg)
+    {}
+};
+
+class bad_command_error : public socket_error
+{
+public:
+    bad_command_error()
+      : socket_error("Bad command received")
+    {}
+};
+
 class Socket
 {
 public:
@@ -127,7 +143,7 @@ public:
 
         int ret = ::send(m_Socket, buffer, (socklen_t) len, MSG_NOSIGNAL);
         if (ret == -1) {
-            fatalError("Could not send message");
+            throw socket_error("Could not send " + errorMessage());
         }
     }
 
@@ -167,7 +183,7 @@ private:
     void checkSocket()
     {
         if (m_Socket == INVALID_SOCKET) {
-            fatalError("Bad socket");
+            throw std::runtime_error("Bad socket " + errorMessage());
         }
     }
 
@@ -175,16 +191,15 @@ private:
     {
         int len = ::OS::Net::readBlocking(m_Socket, &buffer[start], maxlen);
         if (len == -1) {
-            fatalError("Could not read from socket");
+            throw socket_error("Could not read from socket " + errorMessage());
         }
 
         return (size_t) len;
     }
 
-    static void fatalError(std::string msg)
+    static std::string errorMessage()
     {
-        throw std::runtime_error("Error (" + std::to_string(errno) +
-                                 "): " + msg + ": " + std::strerror(errno));
+        return " (" + std::to_string(errno) + ": " + std::strerror(errno) + ")";
     }
 };
 }

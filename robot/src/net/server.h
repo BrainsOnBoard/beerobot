@@ -126,7 +126,7 @@ Server::parseCommand()
     if (command[0] == "TNK") {
         // second space separates left and right parameters
         if (command.size() != 3) {
-            throw std::runtime_error("Error: Bad command");
+            throw bad_command_error();
         }
 
         // parse strings to floats
@@ -148,10 +148,11 @@ Server::parseCommand()
         // ACK the command and tell client the camera resolution
         cv::Size res = m_Eye->getOutputSize();
         m_Socket->send("IMP " + std::to_string(res.width) + " " +
-                  std::to_string(res.height) + "\n");
+                       std::to_string(res.height) + "\n");
 
         m_SendingImages = true;
-        m_ImageThread = std::unique_ptr<std::thread>(new std::thread(runImageThread, this));
+        m_ImageThread = std::unique_ptr<std::thread>(
+                new std::thread(runImageThread, this));
 
         return true;
     } else if (command[0] == "BYE") {
@@ -160,7 +161,7 @@ Server::parseCommand()
     }
 
     // no other commands supported
-    throw std::runtime_error("Error: Unknown command received");
+    throw bad_command_error();
 }
 
 /*
@@ -175,6 +176,7 @@ Server::run()
     socklen_t addrlen = sizeof(addr);
 
     // loop for ever
+
     while (true) {
         // wait for incoming TCP connection
         std::cout << "Waiting for incoming connection..." << std::endl;
@@ -187,9 +189,13 @@ Server::run()
         inet_ntop(AF_INET, (void *) &addr.sin_addr, saddr, addrlen);
         std::cout << "Incoming connection from " << saddr << std::endl;
 
-        // TODO: implement some kind of way to quit this loop
-        while (parseCommand())
-            ;
+        try {
+            while (parseCommand())
+                ;
+        } catch (socket_error &e) {
+            std::cout << "Connection closed [" + std::string(e.what()) + "]"
+                      << std::endl;
+        }
     }
 }
 

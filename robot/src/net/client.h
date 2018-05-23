@@ -80,7 +80,7 @@ Client::startStreaming()
     send("IMS\n");
     auto command = readCommand();
     if (command[0] != "IMP" || command.size() != 3) {
-        throw std::runtime_error("Bad command");
+        throw bad_command_error();
     }
 
     m_CameraResolution.width = stoi(command[1]);
@@ -98,7 +98,7 @@ Client::readFrame(cv::Mat &frame)
 {
     auto command = readCommand();
     if (command[0] != "IMG" || command.size() != 2) {
-        throw std::runtime_error("Bad command");
+        throw bad_command_error();
     }
 
     size_t nbytes = stoi(command[1]);
