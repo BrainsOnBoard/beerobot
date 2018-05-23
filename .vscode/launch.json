@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/robot/beerobot",
-            "args": ["--local"],
+            "args": [""],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/robot",
             "environment": [],

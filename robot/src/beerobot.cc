@@ -9,6 +9,7 @@
 #endif
 #include "robots/motor_surveyor.h"
 #endif
+#include "video/netsink.h"
 #include "video/panoramic.h"
 
 // for rendering bee's eye view on screen
@@ -181,7 +182,9 @@ main(int argc, char **argv)
         display.run(eye);
     } else {
         // run main server
-        Net::Server::runServer(&eye, pMotor);
+        Net::Server server(pMotor);
+        Video::NetSink netsink(&eye, &server);
+        server.run();
     }
 
     return 0;
