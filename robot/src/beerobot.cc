@@ -24,7 +24,7 @@
 
 // for rendering bee's eye view on screen
 #include "eye/beeeye.h"
-#include "image/overlaydisplay.h"
+#include "overlaydisplay.h"
 
 // to exchange messages between robot and viewer
 #include "net/client.h"
@@ -134,8 +134,8 @@ main(int argc, char **argv)
             Video::NetSource videoIn(client.get());
 
             // show video on screen
-            Image::OverlayDisplay display(overlayFlag);
-            display.run(videoIn);
+            OverlayDisplay display(&videoIn, overlayFlag);
+            display.run();
 
             return 0;
         }
@@ -143,8 +143,7 @@ main(int argc, char **argv)
             // code run if just showing video locally
             auto cam = Video::getPanoramicCamera();
             Eye::BeeEye eye(cam.get());
-            Image::OverlayDisplay display(overlayFlag);
-            display.run(eye);
+            OverlayDisplay display(&eye, overlayFlag);
             return 0;
         }
     }
@@ -197,8 +196,8 @@ main(int argc, char **argv)
     auto cam = Video::getPanoramicCamera();
     Eye::BeeEye eye(cam.get());
     if (localFlag) {
-        Image::OverlayDisplay display(overlayFlag);
-        display.run(eye);
+        OverlayDisplay display(&eye, overlayFlag);
+        display.run();
     } else {
         // run main server
         Net::Server server;
