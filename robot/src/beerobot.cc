@@ -6,7 +6,7 @@
 
 #include "os/windows_include.h"
 
-// GeNN robotics includes
+// GeNN robotics robot includes
 #include "robots/motor_dummy.h"
 #ifndef _WIN32
 #ifndef NO_I2C_ROBOT
@@ -14,6 +14,10 @@
 #endif
 #include "robots/motor_surveyor.h"
 #endif
+#include "robots/motor_netsink.h"
+#include "robots/motor_netsource.h"
+
+// GeNN robotics video includes
 #include "video/netsink.h"
 #include "video/netsource.h"
 #include "video/panoramic.h"
@@ -117,18 +121,21 @@ main(int argc, char **argv)
                     std::shared_ptr<Net::Client>(new Net::Client(serverIP));
             client->runInBackground();
 
+            // send motor commands over network
+            Robots::MotorNetSink motorOut(client.get());
+
             // start joystick
             if (controller) {
                 joystickThread = std::unique_ptr<JoystickThread>(
-                        new JoystickThread(client));
+                        new JoystickThread(&motorOut));
             }
 
             // start reading video stream over network
-            Video::NetSource netsource(client.get());
+            Video::NetSource videoIn(client.get());
 
             // show video on screen
             Image::OverlayDisplay display(overlayFlag);
-            display.run(netsource);
+            display.run(videoIn);
 
             return 0;
         }
@@ -178,12 +185,11 @@ main(int argc, char **argv)
 #endif
 
     // so motor is freed when program exits
-    auto pMotor = std::shared_ptr<Robots::Motor>(motor);
+    auto pMotor = std::unique_ptr<Robots::Motor>(motor);
 
     // if using Xbox controller, start it
     if (controller) {
-        joystickThread =
-                std::unique_ptr<JoystickThread>(new JoystickThread(pMotor));
+        joystickThread = std::unique_ptr<JoystickThread>(new JoystickThread(motor));
     } else {
         std::cout << "Use of controller is disabled" << std::endl;
     }
@@ -195,8 +201,9 @@ main(int argc, char **argv)
         display.run(eye);
     } else {
         // run main server
-        Net::Server server(pMotor);
-        Video::NetSink netsink(&eye, &server);
+        Net::Server server;
+        Robots::MotorNetSource motorIn(&server, motor);
+        Video::NetSink videoOut(&server, &eye);
         server.run();
     }
 

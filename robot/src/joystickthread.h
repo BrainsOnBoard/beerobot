@@ -18,7 +18,7 @@ using namespace GeNNRobotics;
 class JoystickThread
 {
 public:
-    JoystickThread(std::shared_ptr<Robots::Motor> motor)
+    JoystickThread(Robots::Motor *motor)
       : m_Motor(motor)
     {
         m_Joystick.open();
@@ -27,7 +27,7 @@ public:
     }
 
 private:
-    std::shared_ptr<Robots::Motor> m_Motor;
+    Robots::Motor *m_Motor;
     Joystick::Joystick m_Joystick;
     float m_X = 0;
     float m_Y = 0;
