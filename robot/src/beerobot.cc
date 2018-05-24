@@ -144,6 +144,7 @@ main(int argc, char **argv)
             auto cam = Video::getPanoramicCamera();
             Eye::BeeEye eye(cam.get());
             OverlayDisplay display(&eye, overlayFlag);
+            display.run();
             return 0;
         }
     }
