@@ -1,5 +1,10 @@
-#include "os/windows_include.h"
+// C includes
 #include <cstdlib>
+
+// C++ includes
+#include <thread>
+
+#include "os/windows_include.h"
 
 // GeNN robotics includes
 #include "robots/motor_dummy.h"
@@ -10,6 +15,7 @@
 #include "robots/motor_surveyor.h"
 #endif
 #include "video/netsink.h"
+#include "video/netsource.h"
 #include "video/panoramic.h"
 
 // for rendering bee's eye view on screen
@@ -107,16 +113,21 @@ main(int argc, char **argv)
 
         if (serverIP) {
             // code run by client (connecting to robot)
-            auto client = std::shared_ptr<Net::Client>(
-                    new Net::Client(serverIP));
+            auto client =
+                    std::shared_ptr<Net::Client>(new Net::Client(serverIP));
             if (controller) {
                 joystickThread = std::unique_ptr<JoystickThread>(
                         new JoystickThread(client));
             }
 
-            client->startStreaming();
+            // start reading video stream over network
+            Video::NetSource netsource(client.get());
+            std::thread t([](Video::NetSource *src) { src->run(); },
+                        &netsource);
+
+            // show video on screen
             Image::OverlayDisplay display(overlayFlag);
-            display.run(*client.get());
+            display.run(netsource);
             return 0;
         }
         if (localFlag) {
@@ -184,7 +195,7 @@ main(int argc, char **argv)
         // run main server
         Net::Server server(pMotor);
         Video::NetSink netsink(&eye, &server);
-        server.run();
+        server.serve();
     }
 
     return 0;
