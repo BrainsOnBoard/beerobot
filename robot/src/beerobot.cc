@@ -130,9 +130,6 @@ main(int argc, char **argv)
             Image::OverlayDisplay display(overlayFlag);
             display.run(netsource);
 
-            // disconnect from server
-            client->stop();
-
             return 0;
         }
         if (localFlag) {
