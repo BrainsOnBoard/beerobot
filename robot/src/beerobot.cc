@@ -116,22 +116,21 @@ main(int argc, char **argv)
         }
 
         if (serverIP) {
+            Video::NetSource videoIn; // for receiving a video feed
+
             // code run by client (connecting to robot)
-            auto client =
-                    std::shared_ptr<Net::Client>(new Net::Client(serverIP));
-            client->runInBackground();
+            Net::Client client(serverIP);
+            client.addHandler(videoIn);
+            client.runInBackground();
 
             // send motor commands over network
-            Robots::MotorNetSink motorOut(client.get());
+            Robots::MotorNetSink motorOut(&client);
 
             // start joystick
             if (controller) {
                 joystickThread = std::unique_ptr<JoystickThread>(
                         new JoystickThread(&motorOut));
             }
-
-            // start reading video stream over network
-            Video::NetSource videoIn(client.get());
 
             // show video on screen
             OverlayDisplay display(&videoIn, overlayFlag);
@@ -200,10 +199,13 @@ main(int argc, char **argv)
         OverlayDisplay display(&eye, overlayFlag);
         display.run();
     } else {
+        Robots::MotorNetSource motorIn(motor); // read motor commands from socket
+        Video::NetSink videoOut(&eye); // send video over socket
+
         // run main server
         Net::Server server;
-        Robots::MotorNetSource motorIn(&server, motor);
-        Video::NetSink videoOut(&server, &eye);
+        server.addHandler(motorIn);
+        server.addHandler(videoOut);
         server.run();
     }
 

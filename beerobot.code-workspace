@@ -1,0 +1,70 @@
+{
+	"folders": [
+		{
+			"path": "/home/alex/git/GeNN_Robotics"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"limits": "cpp",
+			"iostream": "cpp",
+			"ostream": "cpp",
+			"istream": "cpp",
+			"optional": "cpp",
+			"ratio": "cpp",
+			"system_error": "cpp",
+			"type_traits": "cpp",
+			"*.ipp": "cpp",
+			"array": "cpp",
+			"bitset": "cpp",
+			"initializer_list": "cpp",
+			"string_view": "cpp",
+			"utility": "cpp",
+			"valarray": "cpp",
+			"cctype": "cpp",
+			"clocale": "cpp",
+			"cmath": "cpp",
+			"csignal": "cpp",
+			"cstdarg": "cpp",
+			"cstddef": "cpp",
+			"cstdio": "cpp",
+			"cstdlib": "cpp",
+			"cstring": "cpp",
+			"ctime": "cpp",
+			"cwchar": "cpp",
+			"cwctype": "cpp",
+			"atomic": "cpp",
+			"strstream": "cpp",
+			"*.tcc": "cpp",
+			"chrono": "cpp",
+			"codecvt": "cpp",
+			"condition_variable": "cpp",
+			"cstdint": "cpp",
+			"exception": "cpp",
+			"fstream": "cpp",
+			"functional": "cpp",
+			"future": "cpp",
+			"iomanip": "cpp",
+			"iosfwd": "cpp",
+			"memory": "cpp",
+			"mutex": "cpp",
+			"new": "cpp",
+			"numeric": "cpp",
+			"sstream": "cpp",
+			"stdexcept": "cpp",
+			"streambuf": "cpp",
+			"thread": "cpp",
+			"tuple": "cpp",
+			"typeinfo": "cpp",
+			"algorithm": "cpp",
+			"slist": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"unordered_map": "cpp",
+			"vector": "cpp"
+		}
+	}
+}
