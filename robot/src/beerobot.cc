@@ -15,10 +15,8 @@
 #include "robots/motor_surveyor.h"
 #endif
 #include "robots/motor_netsink.h"
-#include "robots/motor_netsource.h"
 
 // GeNN robotics video includes
-#include "video/netsink.h"
 #include "video/netsource.h"
 #include "video/panoramic.h"
 
@@ -199,13 +197,10 @@ main(int argc, char **argv)
         OverlayDisplay display(&eye, overlayFlag);
         display.run();
     } else {
-        Robots::MotorNetSource motorIn(motor); // read motor commands from socket
-        Video::NetSink videoOut(&eye); // send video over socket
-
         // run main server
         Net::Server server;
-        server.addHandler(motorIn);
-        server.addHandler(videoOut);
+        server.addHandler(*motor);
+        server.addHandler(eye);
         server.run();
     }
 
