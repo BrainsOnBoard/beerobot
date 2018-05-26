@@ -11,7 +11,7 @@ using namespace GeNNRobotics;
 class OverlayDisplay : public Video::Display
 {
 public:
-    OverlayDisplay(Video::Input *videoInput, bool showOverlay)
+    OverlayDisplay(Video::Input &videoInput, bool showOverlay)
       : Display(videoInput), m_ShowOverlay(showOverlay)
     {
         if (!showOverlay) {

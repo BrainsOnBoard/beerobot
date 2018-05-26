@@ -15,6 +15,7 @@
 #include "robots/motor_surveyor.h"
 #endif
 #include "robots/motor_netsink.h"
+#include "robots/motor_joystick.h"
 
 // GeNN robotics video includes
 #include "video/netsource.h"
@@ -27,9 +28,6 @@
 // to exchange messages between robot and viewer
 #include "net/client.h"
 #include "net/server.h"
-
-// for using the Xbox controller to drive the robot
-#include "joystickthread.h"
 
 using namespace GeNNRobotics;
 
@@ -64,7 +62,7 @@ main(int argc, char **argv)
     bool controller = false;       // controller enabled
     MotorType motorType = Arduino; // type of Motor to use (server only)
     char *serverIP = nullptr;      // IP of robot
-    std::unique_ptr<JoystickThread> joystickThread(nullptr);
+    std::unique_ptr<Robots::MotorJoystick> joystick;
 
     if (argc > 1) { // if we have command line args
         for (int i = 1; i < argc; i++) {
@@ -122,16 +120,17 @@ main(int argc, char **argv)
             client.runInBackground();
 
             // send motor commands over network
-            Robots::MotorNetSink motorOut(&client);
+            Robots::MotorNetSink motorOut(client);
 
             // start joystick
             if (controller) {
-                joystickThread = std::unique_ptr<JoystickThread>(
-                        new JoystickThread(&motorOut));
+                joystick = std::unique_ptr<Robots::MotorJoystick>(
+                        new Robots::MotorJoystick(motorOut));
+                joystick->runInBackground();
             }
 
             // show video on screen
-            OverlayDisplay display(&videoIn, overlayFlag);
+            OverlayDisplay display(videoIn, overlayFlag);
             display.run();
 
             return 0;
@@ -140,7 +139,7 @@ main(int argc, char **argv)
             // code run if just showing video locally
             auto cam = Video::getPanoramicCamera();
             Eye::BeeEye eye(cam.get());
-            OverlayDisplay display(&eye, overlayFlag);
+            OverlayDisplay display(eye, overlayFlag);
             display.run();
             return 0;
         }
@@ -186,7 +185,8 @@ main(int argc, char **argv)
 
     // if using Xbox controller, start it
     if (controller) {
-        joystickThread = std::unique_ptr<JoystickThread>(new JoystickThread(motor));
+        joystick = std::unique_ptr<Robots::MotorJoystick>(new Robots::MotorJoystick(motor));
+        joystick->runInBackground();
     } else {
         std::cout << "Use of controller is disabled" << std::endl;
     }
@@ -194,7 +194,7 @@ main(int argc, char **argv)
     auto cam = Video::getPanoramicCamera();
     Eye::BeeEye eye(cam.get());
     if (localFlag) {
-        OverlayDisplay display(&eye, overlayFlag);
+        OverlayDisplay display(eye, overlayFlag);
         display.run();
     } else {
         // run main server
