@@ -5,7 +5,7 @@ ifndef USE_LOCAL_GENN_ROBOTICS
 	GENN_ROBOTICS_PATH := GeNN_Robotics
 endif
 CXXFLAGS := -pthread -std=c++11 -Isrc \
-	-I$(GENN_ROBOTICS_PATH) -Wall
+	-I$(GENN_ROBOTICS_PATH) -Wall -Wpedantic
 LDFLAGS := -lstdc++ -lm
 ifdef DEBUG
 	CXXFLAGS += -g
