@@ -3,4 +3,7 @@
   <ItemGroup>
     <ClCompile Include="example.cc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.txt" />
+  </ItemGroup>
 </Project>

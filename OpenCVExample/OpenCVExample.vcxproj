@@ -9,6 +9,11 @@
   <ItemGroup>
     <ClCompile Include="example.cc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.txt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{ED2C909E-B5DD-424F-94DE-71470601044F}</ProjectGuid>
