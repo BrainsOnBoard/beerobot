@@ -7,15 +7,14 @@
 #include "os/windows_include.h"
 
 // GeNN robotics robot includes
-#include "robots/motor_dummy.h"
+#include "robots/tank.h"
 #ifndef _WIN32
 #ifndef NO_I2C_ROBOT
-#include "robots/motor_i2c.h"
+#include "robots/norbot.h"
 #endif
-#include "robots/motor_surveyor.h"
+#include "robots/surveyor.h"
 #endif
-#include "robots/motor_netsink.h"
-#include "robots/motor_joystick.h"
+#include "robots/tank_netsink.h"
 
 // GeNN robotics video includes
 #include "video/netsource.h"
@@ -32,7 +31,7 @@
 using namespace GeNNRobotics;
 
 /* different types of motor output */
-enum MotorType
+enum RobotType
 {
     Dummy,
     Surveyor,
@@ -60,9 +59,9 @@ main(int argc, char **argv)
     bool overlayFlag = true;
 
     bool controller = false;       // controller enabled
-    MotorType motorType = Arduino; // type of Motor to use (server only)
+    RobotType robotType = Arduino; // type of Motor to use (server only)
     char *serverIP = nullptr;      // IP of robot
-    std::unique_ptr<Robots::MotorJoystick> joystick;
+    std::unique_ptr<HID::Joystick> joystick;
 
     if (argc > 1) { // if we have command line args
         for (int i = 1; i < argc; i++) {
@@ -96,11 +95,11 @@ main(int argc, char **argv)
 
                 i++;
                 if (strcmp(argv[i], "dummy") == 0) {
-                    motorType = Dummy;
+                    robotType = Dummy;
                 } else if (strcmp(argv[i], "surveyor") == 0) {
-                    motorType = Surveyor;
+                    robotType = Surveyor;
                 } else if (strcmp(argv[i], "arduino") == 0) {
-                    motorType = Arduino;
+                    robotType = Arduino;
                 } else {
                     showusage();
                 }
@@ -112,20 +111,21 @@ main(int argc, char **argv)
         }
 
         if (serverIP) {
-            Video::NetSource videoIn; // for receiving a video feed
 
             // code run by client (connecting to robot)
             Net::Client client(serverIP);
-            client.addHandler(videoIn);
             client.runInBackground();
 
+            // read video stream from network
+            Video::NetSource videoIn(client);            
+
             // send motor commands over network
-            Robots::MotorNetSink motorOut(client);
+            Robots::TankNetSink motorOut(client);
 
             // start joystick
             if (controller) {
-                joystick = std::unique_ptr<Robots::MotorJoystick>(
-                        new Robots::MotorJoystick(motorOut));
+                joystick.reset(new HID::Joystick());
+                motorOut.addJoystick(*joystick.get());
                 joystick->runInBackground();
             }
 
@@ -146,46 +146,44 @@ main(int argc, char **argv)
     }
 
     // start appropriate motor device
-    Robots::Motor *motor;
+    std::unique_ptr<Robots::Tank> motor;
 #ifdef _WIN32
     std::cout << "Motor disabled on Windows" << std::endl;
-    motor = new Robots::MotorDummy();
+    motor.reset(new Robots::Tank());
 #else
-    switch (motorType) {
+    switch (robotType) {
     case Surveyor:
         std::cout << "Using Surveyor as motor" << std::endl;
         try {
-            motor = new Robots::MotorSurveyor("192.168.1.1", 2000);
+            motor.reset(new Robots::Surveyor("192.168.1.1", 2000));
         } catch (std::exception &) {
             std::cout << "An error occurred: Disabling motor output"
                       << std::endl;
-            motor = new Robots::MotorDummy();
+            motor.reset(new Robots::Tank());
         }
         break;
 #ifndef NO_I2C_ROBOT
     case Arduino:
         std::cout << "Using Arduino as motor" << std::endl;
         try {
-            motor = new Robots::MotorI2C();
+            motor.reset(new Robots::Norbot());
         } catch (std::exception &) {
             std::cout << "An error occurred: Disabling motor output"
                       << std::endl;
-            motor = new Robots::MotorDummy();
+            motor.reset(new Robots::Tank());
         }
         break;
 #endif
     default:
         std::cout << "Motor disabled" << std::endl;
-        motor = new Robots::MotorDummy();
+        motor.reset(new Robots::Tank());
     }
 #endif
 
-    // so motor is freed when program exits
-    auto pMotor = std::unique_ptr<Robots::Motor>(motor);
-
     // if using Xbox controller, start it
     if (controller) {
-        joystick = std::unique_ptr<Robots::MotorJoystick>(new Robots::MotorJoystick(motor));
+        joystick.reset(new HID::Joystick());
+        motor->addJoystick(*joystick.get());
         joystick->runInBackground();
     } else {
         std::cout << "Use of controller is disabled" << std::endl;
@@ -199,8 +197,8 @@ main(int argc, char **argv)
     } else {
         // run main server
         Net::Server server;
-        server.addHandler(*motor);
-        server.addHandler(eye);
+        motor->readFromNetwork(server);
+        eye.streamToNetwork(server);
         server.run();
     }
 

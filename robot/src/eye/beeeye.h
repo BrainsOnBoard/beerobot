@@ -41,7 +41,7 @@ private:
 };
 
 BeeEye::BeeEye(Video::Input *cam)
-  : m_Unwrapper(cam->createDefaultUnwrapper(cv::Size(1280, 400)))
+  : m_Unwrapper(cam->createUnwrapper(1280, 400))
   , m_Camera(cam)
 {
     // create x and y pixel maps for bee-eye transform
