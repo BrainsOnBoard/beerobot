@@ -180,18 +180,7 @@ xcopy /d /y "$(ProjectDir)honeycomb_overlay.png" "$(TargetDir)"</Command>
   <ItemGroup>
     <ClInclude Include="src\eye\beeeye.h" />
     <ClInclude Include="src\eye\gigerdatacam.h" />
-    <ClInclude Include="src\image\common.h" />
-    <ClInclude Include="src\image\overlaydisplay.h" />
-    <ClInclude Include="src\net\imagereceiver.h" />
-    <ClInclude Include="src\net\imagesender.h" />
-    <ClInclude Include="src\net\mainclient.h" />
-    <ClInclude Include="src\net\mainserver.h" />
-    <ClInclude Include="src\net\socketcommon.h" />
-    <ClInclude Include="src\os\net.h" />
-    <ClInclude Include="src\os\screen.h" />
-    <ClInclude Include="src\readable.h" />
-    <ClInclude Include="src\targetver.h" />
-    <ClInclude Include="src\xboxrobot.h" />
+    <ClInclude Include="src\overlaydisplay.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\beerobot.cc" />

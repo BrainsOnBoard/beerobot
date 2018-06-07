@@ -4,55 +4,17 @@
     <ClCompile Include="src\beerobot.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\readable.h" />
-    <ClInclude Include="src\targetver.h" />
-    <ClInclude Include="src\xboxrobot.h" />
     <ClInclude Include="src\eye\beeeye.h">
       <Filter>eye</Filter>
     </ClInclude>
     <ClInclude Include="src\eye\gigerdatacam.h">
       <Filter>eye</Filter>
     </ClInclude>
-    <ClInclude Include="src\net\imagereceiver.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="src\net\imagesender.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="src\net\mainclient.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="src\net\mainserver.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="src\net\socketcommon.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="src\image\common.h">
-      <Filter>image</Filter>
-    </ClInclude>
-    <ClInclude Include="src\os\net.h">
-      <Filter>os</Filter>
-    </ClInclude>
-    <ClInclude Include="src\os\screen.h">
-      <Filter>os</Filter>
-    </ClInclude>
-    <ClInclude Include="src\image\overlaydisplay.h">
-      <Filter>image</Filter>
-    </ClInclude>
+    <ClInclude Include="src\overlaydisplay.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="eye">
       <UniqueIdentifier>{c57e7cd5-e2bd-4988-9cd2-55ee8e09fa97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="net">
-      <UniqueIdentifier>{cd161868-b803-45c5-9bb2-9f466c01ac75}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="image">
-      <UniqueIdentifier>{1b575382-92b5-45a7-bf59-55aa0fba3289}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="os">
-      <UniqueIdentifier>{cf5c9a3a-a4b6-4f33-8eac-226c5f325a81}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
