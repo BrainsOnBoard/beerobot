@@ -18,7 +18,6 @@
 
 // GeNN robotics video includes
 #include "video/netsource.h"
-#include "video/panoramic.h"
 
 // for rendering bee's eye view on screen
 #include "eye/beeeye.h"
@@ -137,8 +136,7 @@ main(int argc, char **argv)
         }
         if (localFlag) {
             // code run if just showing video locally
-            auto cam = Video::getPanoramicCamera();
-            Eye::BeeEye eye(cam.get());
+            Eye::BeeEye eye;
             OverlayDisplay display(eye, overlayFlag);
             display.run();
             return 0;
@@ -189,8 +187,7 @@ main(int argc, char **argv)
         std::cout << "Use of controller is disabled" << std::endl;
     }
 
-    auto cam = Video::getPanoramicCamera();
-    Eye::BeeEye eye(cam.get());
+    Eye::BeeEye eye;
     if (localFlag) {
         OverlayDisplay display(eye, overlayFlag);
         display.run();

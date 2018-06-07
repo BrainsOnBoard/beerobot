@@ -1,7 +1,12 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
+// C includes
 #include <cmath>
+
+// C++ includes
+#include <memory>
+
+// OpenCV
 #include <opencv2/opencv.hpp>
 
 // GeNN_Robotics includes
@@ -22,10 +27,15 @@ using namespace GeNNRobotics;
 namespace Eye {
 class BeeEye : public Video::Input
 {
+private:
+    std::unique_ptr<Input> m_Camera;
+    cv::Mat m_MapX, m_MapY;
+    cv::Mat m_ImOrig, m_ImUnwrap, m_ImEye;
+
 public:
     ImgProc::OpenCVUnwrap360 m_Unwrapper;
 
-    BeeEye(Input *cam);
+    BeeEye();
 
     bool getEyeView(cv::Mat &view);
     void getEyeView(cv::Mat &view, cv::Mat &imunwrap);
@@ -33,16 +43,11 @@ public:
     cv::Size getOutputSize() const;
     void getUnwrappedImage(cv::Mat &unwrap, cv::Mat &imorig);
     bool readFrame(cv::Mat &view);
+}; // BeeEye
 
-private:
-    Input *m_Camera;
-    cv::Mat m_MapX, m_MapY;
-    cv::Mat m_ImOrig, m_ImUnwrap, m_ImEye;
-};
-
-BeeEye::BeeEye(Video::Input *cam)
-  : m_Unwrapper(cam->createUnwrapper(1280, 400))
-  , m_Camera(cam)
+BeeEye::BeeEye()
+  : m_Camera(Video::getPanoramicCamera())
+  , m_Unwrapper(m_Camera->createUnwrapper(1280, 400))
 {
     // create x and y pixel maps for bee-eye transform
     cv::Size outSize(eye_size[0], eye_size[1]);
@@ -114,4 +119,4 @@ BeeEye::readFrame(cv::Mat &view)
 {
     return getEyeView(view);
 }
-}
+} // Eye
