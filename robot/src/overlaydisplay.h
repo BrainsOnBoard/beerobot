@@ -39,19 +39,20 @@ public:
     }
 
 protected:
-    void readNextFrame(cv::Mat &frame) override
+    virtual bool readFrame(cv::Mat &frame) override
     {
         if (!m_VideoInput->readFrame(m_ImEyeOut)) {
-            throw std::runtime_error("Error reading from video input");
+            return false;
         }
         if (!m_ShowOverlay) {
             frame = m_ImEyeOut;
-            return;
+            return true;
         }
 
         cv::resize(m_ImEyeOut, m_ImInner, m_ImInner.size());
         m_ImInner.copyTo(m_OverlayInner, m_Mask);
         frame = m_Overlay;
+        return true;
     }
 
 private:
