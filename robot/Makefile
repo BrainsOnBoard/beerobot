@@ -4,9 +4,14 @@ BUILD := build
 ifndef USE_LOCAL_GENN_ROBOTICS
 	GENN_ROBOTICS_PATH := GeNN_Robotics
 endif
-CXXFLAGS := -g -pthread -std=c++11 -Isrc \
-	-I$(GENN_ROBOTICS_PATH) -Wall
-LDFLAGS := -O2 -lstdc++ -lm
+CXXFLAGS := -pthread -std=c++11 -Isrc \
+	-I$(GENN_ROBOTICS_PATH) -Wall -Wpedantic
+LDFLAGS := -lstdc++ -lm
+ifdef DEBUG
+	CXXFLAGS += -g
+else
+	LDFLAGS += -O2
+endif
 
 ifdef NO_I2C_ROBOT
 	CXXFLAGS += -DNO_I2C_ROBOT

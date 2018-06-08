@@ -2,18 +2,17 @@
 #include <opencv2/opencv.hpp>
 
 // GeNN robotics includes
+#include "video/display.h"
 #include "video/input.h"
-#include "video/simpledisplay.h"
-
-// local includes
 #include "os/screen.h"
 
-namespace Image {
-class OverlayDisplay : public GeNNRobotics::Video::SimpleDisplay
+using namespace GeNNRobotics;
+
+class OverlayDisplay : public Video::Display
 {
 public:
-    OverlayDisplay(bool showOverlay)
-      : m_ShowOverlay(showOverlay)
+    OverlayDisplay(Video::Input &videoInput, bool showOverlay)
+      : Display(videoInput), m_ShowOverlay(showOverlay)
     {
         if (!showOverlay) {
             std::cout << "Image overlay disabled" << std::endl;
@@ -21,7 +20,7 @@ public:
         }
 
         // create overlay
-        cv::Size screenSize = ::OS::Screen::getResolution();
+        cv::Size screenSize = OS::Screen::getResolution();
         if (screenSize.empty()) {
             throw std::runtime_error("Could not get screen resolution");
         }
@@ -39,23 +38,24 @@ public:
         m_ImInner.create(m_OverlayInner.size(), m_OverlayInner.type());
     }
 
-    void getNextFrame(GeNNRobotics::Video::Input &videoInput, cv::Mat &frame)
+protected:
+    virtual bool readFrame(cv::Mat &frame) override
     {
-        if (!videoInput.readFrame(m_ImEyeOut)) {
-            throw std::runtime_error("Error reading from video input");
+        if (!m_VideoInput->readFrame(m_ImEyeOut)) {
+            return false;
         }
         if (!m_ShowOverlay) {
             frame = m_ImEyeOut;
-            return;
+            return true;
         }
 
         cv::resize(m_ImEyeOut, m_ImInner, m_ImInner.size());
         m_ImInner.copyTo(m_OverlayInner, m_Mask);
         frame = m_Overlay;
+        return true;
     }
 
 private:
     bool m_ShowOverlay;
     cv::Mat m_Overlay, m_OverlayInner, m_ImInner, m_Mask, m_ImEyeOut;
 };
-}
