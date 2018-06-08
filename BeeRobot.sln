@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Robot", "robot\Robot.vcxproj", "{3F520B70-CC75-465F-965A-CF9141583B2B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusIntegration", "OculusIntegration\OculusIntegration.vcxproj", "{69B04061-6EFB-4C88-8CED-A7A7E78470B0}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenCVExample", "OpenCVExample\OpenCVExample.vcxproj", "{ED2C909E-B5DD-424F-94DE-71470601044F}"
 EndProject
 Global
@@ -22,6 +23,8 @@ Global
 		{3F520B70-CC75-465F-965A-CF9141583B2B}.Release|x64.Build.0 = Release|x64
 		{69B04061-6EFB-4C88-8CED-A7A7E78470B0}.Debug|x64.ActiveCfg = Debug|x64
 		{69B04061-6EFB-4C88-8CED-A7A7E78470B0}.Debug|x64.Build.0 = Debug|x64
+		{69B04061-6EFB-4C88-8CED-A7A7E78470B0}.OpenCVExample|x64.ActiveCfg = Release|x64
+		{69B04061-6EFB-4C88-8CED-A7A7E78470B0}.OpenCVExample|x64.Build.0 = Release|x64
 		{69B04061-6EFB-4C88-8CED-A7A7E78470B0}.Release|x64.ActiveCfg = Release|x64
 		{69B04061-6EFB-4C88-8CED-A7A7E78470B0}.Release|x64.Build.0 = Release|x64
 		{ED2C909E-B5DD-424F-94DE-71470601044F}.Debug|x64.ActiveCfg = Debug|x64
