@@ -1,10 +1,11 @@
+struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error: 'identifier' was unexpected here" when using /permissive-
+#include "os/windows_include.h"
+
 // C includes
 #include <cstdlib>
 
 // C++ includes
 #include <thread>
-
-#include "os/windows_include.h"
 
 // GeNN robotics robot includes
 #include "robots/tank.h"
