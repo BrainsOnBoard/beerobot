@@ -1,3 +1,3 @@
-[submodule "robot/GeNN_Robotics"]
-	path = robot/GeNN_Robotics
-	url = https://github.com/BrainsOnBoard/GeNN_Robotics.git
+[submodule "robot/bob_robotics"]
+	path = robot/bob_robotics
+	url = https://github.com/BrainsOnBoard/bob_robotics

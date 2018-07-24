@@ -1,11 +1,11 @@
 NAME := beerobot
 BUILD := build
 
-ifndef USE_LOCAL_GENN_ROBOTICS
-	GENN_ROBOTICS_PATH := GeNN_Robotics
+ifndef USE_LOCAL_BOB_ROBOTICS
+	BOB_ROBOTICS_PATH := bob_robotics
 endif
 CXXFLAGS := -pthread -std=c++11 -Isrc \
-	-I$(GENN_ROBOTICS_PATH) -Wall -Wpedantic
+	-I$(BOB_ROBOTICS_PATH) -Wall -Wpedantic
 LDFLAGS := -lstdc++ -lm
 ifdef DEBUG
 	CXXFLAGS += -g
