@@ -4,7 +4,7 @@ BUILD := build
 ifndef USE_LOCAL_BOB_ROBOTICS
 	BOB_ROBOTICS_PATH := bob_robotics
 endif
-CXXFLAGS := -pthread -std=c++11 -Isrc \
+CXXFLAGS := -pthread -std=c++14 -Isrc \
 	-I$(BOB_ROBOTICS_PATH) -Wall -Wpedantic
 LDFLAGS := -lstdc++ -lm
 ifdef DEBUG

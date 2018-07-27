@@ -18,6 +18,7 @@ struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error
 #include "robots/tank_netsink.h"
 
 // GeNN robotics video includes
+#include "video/netsink.h"
 #include "video/netsource.h"
 
 // for rendering bee's eye view on screen
@@ -28,7 +29,7 @@ struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error
 #include "net/client.h"
 #include "net/server.h"
 
-using namespace GeNNRobotics;
+using namespace BoBRobotics;
 
 /* different types of motor output */
 enum RobotType
@@ -196,7 +197,11 @@ main(int argc, char **argv)
         // run main server
         Net::Server server;
         motor->readFromNetwork(server);
-        eye.streamToNetwork(server);
+
+        // stream video to network
+        Video::NetSink sink(server, eye);
+
+        // run server on main thread
         server.run();
     }
 

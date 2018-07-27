@@ -6,7 +6,7 @@
 #include "video/input.h"
 #include "os/screen.h"
 
-using namespace GeNNRobotics;
+using namespace BoBRobotics;
 
 class OverlayDisplay : public Video::Display
 {

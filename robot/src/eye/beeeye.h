@@ -22,7 +22,7 @@
 #include "beeeye.h"
 #include "gigerdatacam.h"
 
-using namespace GeNNRobotics;
+using namespace BoBRobotics;
 
 namespace Eye {
 class BeeEye : public Video::Input
