@@ -1,7 +1,7 @@
 // OpenCV
 #include <opencv2/opencv.hpp>
 
-// GeNN robotics includes
+// BoB robotics includes
 #include "video/display.h"
 #include "video/input.h"
 #include "os/screen.h"

@@ -7,7 +7,7 @@ struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error
 // C++ includes
 #include <thread>
 
-// GeNN robotics robot includes
+// BoB robotics robot includes
 #include "robots/tank.h"
 #ifndef _WIN32
 #ifndef NO_I2C_ROBOT
@@ -17,7 +17,7 @@ struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error
 #endif
 #include "robots/tank_netsink.h"
 
-// GeNN robotics video includes
+// BoB robotics video includes
 #include "video/netsink.h"
 #include "video/netsource.h"
 

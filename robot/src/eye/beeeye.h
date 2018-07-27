@@ -9,7 +9,7 @@
 // OpenCV
 #include <opencv2/opencv.hpp>
 
-// GeNN_Robotics includes
+// BoB robotics includes
 #include "imgproc/opencv_unwrap_360.h"
 #if !defined(NO_SEE3CAM) && !defined(_WIN32)
 #include "video/see3cam_cu40.h"
