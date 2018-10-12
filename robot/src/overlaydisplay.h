@@ -12,7 +12,7 @@ class OverlayDisplay : public Video::Display
 {
 public:
     OverlayDisplay(Video::Input &videoInput, bool showOverlay)
-      : Display(videoInput), m_ShowOverlay(showOverlay)
+      : Display(videoInput, true), m_ShowOverlay(showOverlay)
     {
         if (!showOverlay) {
             std::cout << "Image overlay disabled" << std::endl;
