@@ -47,7 +47,7 @@ public:
 
 BeeEye::BeeEye()
   : m_Camera(Video::getPanoramicCamera())
-  , m_Unwrapper(m_Camera->createUnwrapper(1280, 400))
+  , m_Unwrapper(m_Camera->createUnwrapper({1280, 400}))
 {
     // create x and y pixel maps for bee-eye transform
     cv::Size outSize(eye_size[0], eye_size[1]);

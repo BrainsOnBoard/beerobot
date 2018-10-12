@@ -41,7 +41,7 @@ public:
 protected:
     virtual bool readFrame(cv::Mat &frame) override
     {
-        if (!m_VideoInput->readFrame(m_ImEyeOut)) {
+        if (!m_VideoInput.readFrame(m_ImEyeOut)) {
             return false;
         }
         if (!m_ShowOverlay) {
