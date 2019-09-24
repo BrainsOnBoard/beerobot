@@ -1,3 +1,3 @@
 [submodule "robot/bob_robotics"]
 	path = robot/bob_robotics
-	url = https://github.com/BrainsOnBoard/bob_robotics
+	url = ../../alexdewar/bob_robotics
