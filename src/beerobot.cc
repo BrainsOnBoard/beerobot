@@ -196,13 +196,14 @@ main(int argc, char **argv)
     } else {
         // run main server
         Net::Server server;
-        motor->readFromNetwork(server);
+        Net::Connection connection{ server.waitForConnection() };
+        motor->readFromNetwork(connection);
 
         // stream video to network
-        Video::NetSink sink(server, eye);
+        Video::NetSink sink(connection, eye);
 
         // run server on main thread
-        server.run();
+        connection.run();
     }
 
     return 0;

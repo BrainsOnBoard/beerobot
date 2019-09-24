@@ -20,7 +20,8 @@ public:
         }
 
         // create overlay
-        cv::Size screenSize = OS::Screen::getResolution();
+        const auto res = OS::Screen::getResolution();
+        const cv::Size screenSize{ res.first, res.second };
         if (screenSize.width == 0) {
             throw std::runtime_error("Could not get screen resolution");
         }
