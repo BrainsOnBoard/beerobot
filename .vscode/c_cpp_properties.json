@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/robot/src",
+                "${workspaceFolder}/bob_robotics/include",
+                "${workspaceFolder}/bob_robotics",
+                "/usr/include/opencv4"
+            ],
+            "defines": [],
+            "cppStandard": "c++14",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
